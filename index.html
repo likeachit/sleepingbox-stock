@@ -4,86 +4,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - Stock System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #f472b6;
             --primary-hover: #ec4899;
             --bg-color: #fff1f2;
             --card-bg: #ffffff;
-            --text-color: #57534e;
+            --text-color: #44403c;
             --border-color: #fbcfe8;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Mitr', sans-serif !important; font-weight: 300 !important; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 750px; background: var(--card-bg); padding: 24px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.15); border: 2px solid #ffffff; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h1 { font-size: 1.6rem; color: #db2777; margin: 0; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #fff1f2; padding: 6px; border-radius: 14px; border: 1px solid #fce7f3; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; cursor: pointer; border-radius: 10px; transition: all 0.2s; color: #db2777; }
-        .tab-btn.active { background: #ffffff; color: #be185d; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.15); }
-        .search-filter-box { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-        .search-input { flex: 2; min-width: 150px; padding: 12px 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; }
-        .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
-        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
-        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); white-space: nowrap; }
-        .toggle-advanced-btn { width: 100%; background: #fff1f2; color: #db2777; border: 2px dashed #fda4af; padding: 10px; border-radius: 12px; font-size: 0.9rem; cursor: pointer; margin-bottom: 12px; }
-        .advanced-filter-panel { display: none; background: #fff1f2; border: 2px solid #fda4af; padding: 12px; border-radius: 12px; margin-bottom: 16px; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 24px 16px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        
+        .container { width: 100%; max-width: 720px; background: var(--card-bg); padding: 28px; border-radius: 24px; box-shadow: 0 12px 30px -10px rgba(244, 114, 182, 0.2); border: 2px solid #ffffff; }
+        
+        .header-container { text-align: center; margin-bottom: 24px; }
+        h1 { font-size: 1.8rem; color: #db2777; font-weight: 500 !important; letter-spacing: 0.5px; }
+
+        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 6px; border-radius: 16px; border: 1px solid #fce7f3; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.25s ease; color: #db2777; font-size: 1rem; }
+        .tab-btn.active { background: #ffffff; color: #be185d; font-weight: 400 !important; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.2); }
+
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .search-input { flex: 2; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.95rem; outline: none; background: #fff; transition: 0.2s; }
+        .search-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
+        
+        .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.95rem; outline: none; background: #fff; cursor: pointer; transition: 0.2s; }
+        .filter-select:focus { border-color: var(--primary-color); }
+
+        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 14px; font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); white-space: nowrap; }
+        .search-btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+        .toggle-advanced-btn { width: 100%; background: #fff1f2; color: #db2777; border: 2px dashed #fda4af; padding: 12px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; margin-bottom: 16px; transition: 0.2s; text-align: center; }
+        .toggle-advanced-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
+
+        .advanced-filter-panel { display: none; background: #fff1f2; border: 2px solid #fda4af; padding: 16px; border-radius: 16px; margin-bottom: 20px; }
         .advanced-filter-panel.active { display: block; }
-        .alert-filter-group { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .alert-filter-group label { font-size: 0.85rem; color: #e11d48; margin: 0; }
-        .operator-group { display: flex; gap: 4px; background: #ffe4e6; padding: 3px; border-radius: 8px; }
-        .op-btn { background: transparent; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; color: #e11d48; cursor: pointer; }
-        .op-btn.active { background: #e11d48; color: white; }
-        .alert-input { width: 80px; padding: 6px; border: 2px solid #fda4af; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; }
-        .alert-filter-btn { background-color: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #db2777; }
-        select, input { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: #ffffff; }
-        .color-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
-        .color-btn { padding: 10px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; cursor: pointer; text-align: center; background-color: #ffffff; }
-        .color-btn.active { border-color: #be185d; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3); }
-        .sku-preview { background: #fff1f2; border: 2px dashed var(--primary-color); color: #db2777; text-align: center; letter-spacing: 2px; font-weight: bold; }
-        .action-btn { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); }
-        .delete-action-btn { width: 100%; padding: 12px; background: #fff1f2; color: #ef4444; border: 2px solid #fecdd3; border-radius: 12px; font-size: 0.95rem; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+        .alert-filter-group { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .alert-filter-group label { font-size: 0.9rem; color: #e11d48; margin: 0; }
+        
+        .operator-group { display: flex; gap: 4px; background: #ffe4e6; padding: 4px; border-radius: 10px; }
+        .op-btn { background: transparent; border: none; padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; color: #e11d48; cursor: pointer; transition: 0.2s; }
+        .op-btn.active { background: #e11d48; color: white; box-shadow: 0 2px 6px rgba(225, 29, 72, 0.3); }
+
+        .alert-input { width: 90px; padding: 8px; border: 2px solid #fda4af; border-radius: 10px; text-align: center; font-size: 0.95rem; background: #fff; color: #e11d48; font-weight: bold; outline: none; }
+        .alert-filter-btn { background-color: #e11d48; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+        .alert-filter-btn:hover { background-color: #be123c; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-size: 0.95rem; color: #db2777; font-weight: 400 !important; }
+        select, input[type="text"], input[type="number"] { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 1rem; outline: none; background: #fff; transition: 0.2s; }
+        select:focus, input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
+
+        .color-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 8px; }
+        .color-btn { padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; text-align: center; background-color: #fff; }
+        .color-btn:hover { transform: scale(1.02); }
+        .color-btn.active { border-color: #be185d; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25); transform: scale(1.03); }
+
+        .sku-preview { background: #fff1f2; border: 2px dashed var(--primary-color); color: #db2777; text-align: center; letter-spacing: 2px; font-weight: 500 !important; }
+
+        .action-btn { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 14px; font-size: 1rem; cursor: pointer; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3); }
+        .action-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+        .delete-action-btn { width: 100%; padding: 12px; background: #fff1f2; color: #ef4444; border: 2px solid #fecdd3; border-radius: 14px; font-size: 0.95rem; cursor: pointer; margin-top: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .delete-action-btn:hover { background: #fee2e2; border-color: #f87171; }
+
         .mode-section { display: none; }
         .mode-section.active { display: block; }
-        .fabric-categories { display: flex; gap: 10px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 5px; }
-        .fabric-chip { padding: 8px 18px; background: #fff1f2; border: 1px solid #fce7f3; border-radius: 20px; cursor: pointer; white-space: nowrap; color: #db2777; }
-        .fabric-chip.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .product-card { background: #ffffff; border: 2px solid #fce7f3; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; }
-        .product-img-container { width: 100%; height: 130px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.85rem; position: relative; }
+
+        .fabric-categories { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 6px; }
+        .fabric-chip { padding: 10px 22px; background: #fff1f2; border: 1px solid #fce7f3; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; color: #db2777; font-size: 0.95rem; }
+        .fabric-chip.active { background: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); font-weight: 400 !important; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .product-card { background: #ffffff; border: 2px solid #fce7f3; border-radius: 18px; overflow: hidden; cursor: pointer; transition: all 0.25s ease; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -6px rgba(244, 114, 182, 0.2); border-color: var(--primary-color); }
+
+        .product-img-container { width: 100%; height: 150px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
         .product-img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .out-of-stock-badge { position: absolute; top: 8px; right: 8px; background: rgba(244, 63, 94, 0.9); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 6px; z-index: 2; }
-        .low-stock-badge { position: absolute; top: 8px; left: 8px; background: rgba(234, 179, 8, 0.95); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 6px; z-index: 2; font-weight: bold; }
-        .product-info { padding: 10px; }
-        .product-name { font-size: 0.95rem; margin-bottom: 2px; color: #831843; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-fabric { font-size: 0.78rem; color: #db2777; line-height: 1.4; }
-        .product-update { font-size: 0.72rem; color: #db2777; margin-top: 2px; opacity: 0.85; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 620px; padding: 24px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; border: 2px solid #fce7f3; }
-        .close-btn { position: absolute; top: 15px; right: 18px; font-size: 1.4rem; cursor: pointer; border: none; background: none; color: #db2777; z-index: 10; }
-        .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 12px; }
-        .modal-img-container { position: relative; display: inline-block; border-radius: 14px; overflow: hidden; background: #fff1f2; max-height: 250px; border: 2px solid #fce7f3; }
-        .modal-img-container img { display: block; max-height: 250px; width: auto; object-fit: contain; }
-        .zoom-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(244, 114, 182, 0.85); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
-        .lightbox-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .lightbox-content { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 12px; }
+
+        .out-of-stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(244, 63, 94, 0.95); color: white; padding: 3px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .low-stock-badge { position: absolute; top: 10px; left: 10px; background: rgba(234, 179, 8, 0.95); color: white; padding: 3px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; font-weight: 500 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+        .product-info { padding: 14px; }
+        .product-name { font-size: 1rem; margin-bottom: 3px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-fabric { font-size: 0.8rem; color: #db2777; line-height: 1.4; }
+        .product-update { font-size: 0.72rem; color: #9ca3af; margin-top: 4px; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 16px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 580px; padding: 28px; border-radius: 24px; position: relative; max-height: 90vh; overflow-y: auto; border: 2px solid #fce7f3; box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: scaleUp 0.3s ease; }
+        
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn { position: absolute; top: 18px; right: 20px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: #db2777; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
+        .close-btn:hover { background: #fce7f3; color: #be185d; }
+
+        .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 16px; }
+        .modal-img-container { position: relative; display: inline-block; border-radius: 16px; overflow: hidden; background: #fff1f2; max-height: 240px; border: 2px solid #fce7f3; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .modal-img-container img { display: block; max-height: 240px; width: auto; object-fit: contain; }
+        
+        .zoom-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(244, 114, 182, 0.9); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: 0.2s; }
+        .zoom-btn:hover { background: rgba(236, 72, 153, 1); transform: scale(1.05); }
+
+        .lightbox-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .lightbox-content { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 16px; }
         .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 2.5rem; cursor: pointer; border: none; background: none; }
-        .stock-table-wrapper { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 12px; }
-        .stock-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-        .stock-table th, .stock-table td { border: 1px solid #fce7f3; padding: 8px; text-align: center; font-size: 0.85rem; }
-        .stock-table th { background: #fff1f2; color: #be185d; }
-        .stock-table td:first-child { text-align: left; color: #831843; font-weight: bold; }
-        .stock-input { width: 100%; padding: 6px; border: 2px solid transparent; border-radius: 8px; text-align: center; font-size: 0.9rem; background: transparent; color: #57534e; outline: none; pointer-events: none; }
-        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; pointer-events: auto; }
-        .modal-header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
-        .action-buttons-group { display: flex; gap: 6px; flex-wrap: wrap; }
-        .edit-toggle-btn { background: #fff1f2; color: #db2777; border: 1px solid #fbcfe8; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+
+        .modal-header-action { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; gap: 12px; border-bottom: 2px solid #fdf2f8; padding-bottom: 12px; }
+        .action-buttons-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .edit-toggle-btn { background: #fff1f2; color: #db2777; border: 1px solid #fbcfe8; padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; transition: 0.2s; }
+        .edit-toggle-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
         .edit-toggle-btn.active { background: #f43f5e; color: white; border-color: #f43f5e; }
-        .edit-info-container { background: #fff1f2; border: 2px solid #fbcfe8; padding: 12px; border-radius: 12px; margin-bottom: 12px; width: 100%; }
-        .edit-info-container input { margin-bottom: 8px; padding: 8px; font-size: 0.9rem; }
+
+        .edit-info-container { background: #fff1f2; border: 2px solid #fbcfe8; padding: 14px; border-radius: 14px; margin-bottom: 12px; width: 100%; }
+        .edit-info-container input { margin-bottom: 8px; padding: 10px; font-size: 0.95rem; }
+
+        .stock-table-wrapper { width: 100%; overflow-x: auto; border-radius: 14px; border: 1px solid #fce7f3; }
+        .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+        .stock-table th, .stock-table td { border: 1px solid #fce7f3; padding: 10px; text-align: center; font-size: 0.9rem; }
+        .stock-table th { background: #fff1f2; color: #be185d; font-weight: 400 !important; }
+        .stock-table td:first-child { text-align: left; color: #831843; font-weight: 400 !important; background: #fffbfc; }
+        
+        .stock-input { width: 100%; padding: 6px; border: 2px solid transparent; border-radius: 8px; text-align: center; font-size: 0.95rem; background: transparent; color: #44403c; outline: none; pointer-events: none; transition: 0.2s; }
+        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; pointer-events: auto; box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.1); }
+
+        @media screen and (max-width: 600px) {
+            body { padding: 12px 8px; }
+            .container { padding: 18px; border-radius: 20px; }
+            .search-top-row { flex-direction: column; }
+            .search-input, .filter-select, .search-btn { width: 100%; }
+            .modal-content { padding: 18px; }
+            .modal-header-action { flex-direction: column; align-items: stretch; }
+            .action-buttons-group { justify-content: space-between; }
+        }
     </style>
 </head>
 <body>
@@ -108,25 +167,23 @@
         </div>
 
         <div class="search-top-row">
-            <div class="search-filter-box" style="flex: 1; margin-bottom: 0;">
-                <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
-                <select id="filter-style" class="filter-select">
-                    <option value="">ทุกรูปแบบ</option>
-                    <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
-                    <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
-                    <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
-                    <option value="กระโปรง">กระโปรง</option>
-                </select>
-                <select id="filter-size" class="filter-select">
-                    <option value="">ทุกขนาด</option>
-                    <option value="43">ไซส์ 43</option>
-                    <option value="48">ไซส์ 48</option>
-                    <option value="52">ไซส์ 52</option>
-                    <option value="60">ไซส์ 60</option>
-                </select>
-            </div>
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
+            <select id="filter-style" class="filter-select">
+                <option value="">ทุกรูปแบบ</option>
+                <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
+                <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
+                <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
+                <option value="กระโปรง">กระโปรง</option>
+            </select>
+            <select id="filter-size" class="filter-select">
+                <option value="">ทุกขนาด</option>
+                <option value="43">ไซส์ 43</option>
+                <option value="48">ไซส์ 48</option>
+                <option value="52">ไซส์ 52</option>
+                <option value="60">ไซส์ 60</option>
+            </select>
             <button type="button" class="search-btn" onclick="fetchProductsFromFirebase(false)">
-                <span>🔍 ค้นหาปกติ</span>
+                <span>🔍 ค้นหา</span>
             </button>
         </div>
 
@@ -160,7 +217,7 @@
             <input type="file" id="update-image" accept="image/*" onchange="previewImage(event)">
         </div>
         <div class="form-group" id="image-preview-box" style="display:none; text-align: center;">
-            <img id="img-preview" src="" alt="Preview" style="max-height: 120px; border-radius: 10px; border: 2px solid #fce7f3;">
+            <img id="img-preview" src="" alt="Preview" style="max-height: 130px; border-radius: 12px; border: 2px solid #fce7f3; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
         </div>
         <div class="form-group">
             <label>ชื่อลายสินค้า:</label>
@@ -184,7 +241,7 @@
                 <button type="button" class="color-btn" style="background-color: #ffdab9; color: #000;" onclick="selectColor('โอรส', this)">โอรส</button>
                 <button type="button" class="color-btn" style="background-color: #000080; color: #fff;" onclick="selectColor('กรม', this)">กรม</button>
             </div>
-            <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.9rem; padding: 8px;">
+            <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.95rem;">
         </div>
 
         <div class="form-group">
@@ -240,24 +297,24 @@
         <div class="modal-header-action">
             <div style="flex: 1;">
                 <div id="view-info-box">
-                    <h2 id="modal-title" style="font-size: 1.2rem; margin-bottom: 2px; color: #be185d;">ชื่อลาย</h2>
+                    <h2 id="modal-title" style="font-size: 1.25rem; margin-bottom: 2px; color: #be185d; font-weight: 500 !important;">ชื่อลาย</h2>
                     <p id="modal-subtitle" style="font-size: 0.85rem; color: #db2777;"></p>
                 </div>
                 <div id="edit-info-box" class="edit-info-container" style="display: none;">
-                    <label style="font-size: 0.8rem; color: #db2777; margin-bottom: 2px;">ชื่อลาย:</label>
+                    <label style="font-size: 0.85rem; color: #db2777; margin-bottom: 2px;">ชื่อลาย:</label>
                     <input type="text" id="edit-pattern-input" class="search-input" style="width: 100%; margin-bottom: 6px;">
-                    <label style="font-size: 0.8rem; color: #db2777; margin-bottom: 2px;">สี:</label>
+                    <label style="font-size: 0.85rem; color: #db2777; margin-bottom: 2px;">สี:</label>
                     <input type="text" id="edit-color-input" class="search-input" style="width: 100%; margin-bottom: 8px;">
-                    <button type="button" class="action-btn" style="margin-top: 0; padding: 10px; font-size: 0.9rem;" onclick="saveInfoChanges()">💾 บันทึกชื่อและสี</button>
+                    <button type="button" class="action-btn" style="margin-top: 0; padding: 10px; font-size: 0.95rem;" onclick="saveInfoChanges()">💾 บันทึกชื่อและสี</button>
                 </div>
             </div>
             
             <div class="action-buttons-group">
                 <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">
-                    <span>✏️ แก้ไขชื่อ/สี</span>
+                    <span>✏️ แก้ชื่อ/สี</span>
                 </button>
                 <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">
-                    <span>✏️ แก้ไขจำนวน</span>
+                    <span>✏️ แก้จำนวน</span>
                 </button>
             </div>
         </div>
@@ -277,7 +334,7 @@
             </table>
         </div>
 
-        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
+        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 18px;">💾 บันทึกการแก้ไขจำนวน</button>
         <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
     </div>
 </div>
@@ -494,9 +551,9 @@
         isStockEditable = false;
         isInfoEditable = false;
         document.getElementById('edit-mode-btn').classList.remove('active');
-        document.getElementById('edit-mode-btn').innerHTML = "<span>✏️ แก้ไขจำนวน</span>";
+        document.getElementById('edit-mode-btn').innerHTML = "<span>✏️ แก้จำนวน</span>";
         document.getElementById('edit-info-btn').classList.remove('active');
-        document.getElementById('edit-info-btn').innerHTML = "<span>✏️ แก้ไขชื่อ/สี</span>";
+        document.getElementById('edit-info-btn').innerHTML = "<span>✏️ แก้ชื่อ/สี</span>";
         document.getElementById('edit-info-box').style.display = 'none';
         document.getElementById('view-info-box').style.display = 'block';
 
@@ -532,7 +589,7 @@
         isStockEditable = !isStockEditable;
         const btn = document.getElementById('edit-mode-btn');
         btn.classList.toggle('active', isStockEditable);
-        btn.innerHTML = isStockEditable ? "<span>🔒 ล็อกจำนวน</span>" : "<span>✏️ แก้ไขจำนวน</span>";
+        btn.innerHTML = isStockEditable ? "<span>🔒 ล็อกจำนวน</span>" : "<span>✏️ แก้จำนวน</span>";
         document.querySelectorAll('.stock-input').forEach(input => {
             input.classList.toggle('editable', isStockEditable);
             if (isStockEditable) input.removeAttribute('readonly'); else input.setAttribute('readonly', 'true');
@@ -543,7 +600,7 @@
         isInfoEditable = !isInfoEditable;
         const btn = document.getElementById('edit-info-btn');
         btn.classList.toggle('active', isInfoEditable);
-        btn.innerHTML = isInfoEditable ? "<span>🔒 ปิดแก้ชื่อ/สี</span>" : "<span>✏️ แก้ไขชื่อ/สี</span>";
+        btn.innerHTML = isInfoEditable ? "<span>🔒 ปิดแก้ชื่อ</span>" : "<span>✏️ แก้ชื่อ/สี</span>";
         document.getElementById('edit-info-box').style.display = isInfoEditable ? 'block' : 'none';
         document.getElementById('view-info-box').style.display = isInfoEditable ? 'none' : 'block';
     };
