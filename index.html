@@ -3,145 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sleepingbox - Stock System</title>
+    <title>Sleepingbox - Premium Stock</title>
     <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #f472b6;
             --primary-hover: #ec4899;
-            --bg-color: #fff1f2;
+            --bg-color: #fdf2f8;
             --card-bg: #ffffff;
             --text-color: #44403c;
-            --border-color: #fbcfe8;
+            --border-color: #fce7f3;
+            --accent-color: #be185d;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Mitr', sans-serif !important; font-weight: 300 !important; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding: 24px 16px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         
-        .container { width: 100%; max-width: 720px; background: var(--card-bg); padding: 28px; border-radius: 24px; box-shadow: 0 12px 30px -10px rgba(244, 114, 182, 0.2); border: 2px solid #ffffff; }
+        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 28px; box-shadow: 0 20px 40px -15px rgba(244, 114, 182, 0.25); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
         
-        .header-container { text-align: center; margin-bottom: 24px; }
-        h1 { font-size: 1.8rem; color: #db2777; font-weight: 500 !important; letter-spacing: 0.5px; }
+        .header-container { text-align: center; margin-bottom: 28px; }
+        h1 { font-size: 2rem; color: var(--accent-color); font-weight: 500 !important; letter-spacing: 0.5px; text-shadow: 0 2px 10px rgba(190, 24, 93, 0.1); }
 
-        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 6px; border-radius: 16px; border: 1px solid #fce7f3; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.25s ease; color: #db2777; font-size: 1rem; }
-        .tab-btn.active { background: #ffffff; color: #be185d; font-weight: 400 !important; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.2); }
+        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 20px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 14px; border: none; background: transparent; cursor: pointer; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: var(--accent-color); font-size: 1.05rem; }
+        .tab-btn.active { background: #ffffff; color: var(--accent-color); font-weight: 400 !important; box-shadow: 0 8px 20px rgba(244, 114, 182, 0.15); transform: translateY(-2px); }
 
-        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
-        .search-input { flex: 2; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.95rem; outline: none; background: #fff; transition: 0.2s; }
-        .search-input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
+        .search-top-row { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+        .search-input { flex: 2; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: all 0.3s ease; }
+        .search-input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.15); }
         
-        .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.95rem; outline: none; background: #fff; cursor: pointer; transition: 0.2s; }
+        .filter-select { flex: 1; padding: 14px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.95rem; outline: none; background: #fafaf9; cursor: pointer; transition: 0.3s; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 14px; font-size: 0.95rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); white-space: nowrap; }
-        .search-btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+        .search-btn { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px 28px; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(190, 24, 93, 0.25); white-space: nowrap; font-weight: 400 !important; }
+        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(190, 24, 93, 0.35); }
 
-        .toggle-advanced-btn { width: 100%; background: #fff1f2; color: #db2777; border: 2px dashed #fda4af; padding: 12px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; margin-bottom: 16px; transition: 0.2s; text-align: center; }
-        .toggle-advanced-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
+        .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fda4af; padding: 12px; border-radius: 16px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; }
+        .toggle-advanced-btn:hover { background: #fff1f2; border-color: var(--primary-color); }
 
-        .advanced-filter-panel { display: none; background: #fff1f2; border: 2px solid #fda4af; padding: 16px; border-radius: 16px; margin-bottom: 20px; }
+        .advanced-filter-panel { display: none; background: #fff1f2; border: 1.5px solid #fda4af; padding: 18px; border-radius: 18px; margin-bottom: 24px; animation: slideDown 0.3s ease; }
         .advanced-filter-panel.active { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .alert-filter-group { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .alert-filter-group label { font-size: 0.9rem; color: #e11d48; margin: 0; }
+        .alert-filter-group { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .alert-filter-group label { font-size: 0.95rem; color: #e11d48; margin: 0; font-weight: 400 !important; }
         
-        .operator-group { display: flex; gap: 4px; background: #ffe4e6; padding: 4px; border-radius: 10px; }
-        .op-btn { background: transparent; border: none; padding: 6px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; color: #e11d48; cursor: pointer; transition: 0.2s; }
-        .op-btn.active { background: #e11d48; color: white; box-shadow: 0 2px 6px rgba(225, 29, 72, 0.3); }
+        .operator-group { display: flex; gap: 6px; background: #ffe4e6; padding: 6px; border-radius: 14px; }
+        .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 500 !important; color: #e11d48; cursor: pointer; transition: 0.3s; }
+        .op-btn.active { background: #e11d48; color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
 
-        .alert-input { width: 90px; padding: 8px; border: 2px solid #fda4af; border-radius: 10px; text-align: center; font-size: 0.95rem; background: #fff; color: #e11d48; font-weight: bold; outline: none; }
-        .alert-filter-btn { background-color: #e11d48; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
-        .alert-filter-btn:hover { background-color: #be123c; }
-
-        .form-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.95rem; color: #db2777; font-weight: 400 !important; }
-        select, input[type="text"], input[type="number"] { width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 1rem; outline: none; background: #fff; transition: 0.2s; }
-        select:focus, input:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
-
-        .color-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 8px; }
-        .color-btn { padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; text-align: center; background-color: #fff; }
-        .color-btn:hover { transform: scale(1.02); }
-        .color-btn.active { border-color: #be185d; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.25); transform: scale(1.03); }
-
-        .sku-preview { background: #fff1f2; border: 2px dashed var(--primary-color); color: #db2777; text-align: center; letter-spacing: 2px; font-weight: 500 !important; }
-
-        .action-btn { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 14px; font-size: 1rem; cursor: pointer; margin-top: 12px; transition: 0.2s; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3); }
-        .action-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-
-        .delete-action-btn { width: 100%; padding: 12px; background: #fff1f2; color: #ef4444; border: 2px solid #fecdd3; border-radius: 14px; font-size: 0.95rem; cursor: pointer; margin-top: 10px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .delete-action-btn:hover { background: #fee2e2; border-color: #f87171; }
-
-        .mode-section { display: none; }
-        .mode-section.active { display: block; }
-
-        .fabric-categories { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 6px; }
-        .fabric-chip { padding: 10px 22px; background: #fff1f2; border: 1px solid #fce7f3; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; color: #db2777; font-size: 0.95rem; }
-        .fabric-chip.active { background: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); font-weight: 400 !important; }
-
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .product-card { background: #ffffff; border: 2px solid #fce7f3; border-radius: 18px; overflow: hidden; cursor: pointer; transition: all 0.25s ease; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -6px rgba(244, 114, 182, 0.2); border-color: var(--primary-color); }
-
-        .product-img-container { width: 100%; height: 150px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
-        .product-img-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        .out-of-stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(244, 63, 94, 0.95); color: white; padding: 3px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .low-stock-badge { position: absolute; top: 10px; left: 10px; background: rgba(234, 179, 8, 0.95); color: white; padding: 3px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; font-weight: 500 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-
-        .product-info { padding: 14px; }
-        .product-name { font-size: 1rem; margin-bottom: 3px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-fabric { font-size: 0.8rem; color: #db2777; line-height: 1.4; }
-        .product-update { font-size: 0.72rem; color: #9ca3af; margin-top: 4px; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: center; align-items: center; padding: 16px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 580px; padding: 28px; border-radius: 24px; position: relative; max-height: 90vh; overflow-y: auto; border: 2px solid #fce7f3; box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: scaleUp 0.3s ease; }
+        .alert-input { width: 100px; padding: 10px; border: 2px solid #fda4af; border-radius: 12px; text-align: center; font-size: 1rem; background: #fff; color: #e11d48; font-weight: 500 !important; outline: none; }
         
-        @keyframes scaleUp {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        .fabric-categories { display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .fabric-categories::-webkit-scrollbar { display: none; }
+        .fabric-chip { padding: 12px 26px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 24px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .fabric-chip.active { background: var(--accent-color); color: white; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.3); border-color: var(--accent-color); font-weight: 400 !important; transform: scale(1.05); }
 
-        .close-btn { position: absolute; top: 18px; right: 20px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: #db2777; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
-        .close-btn:hover { background: #fce7f3; color: #be185d; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
+        .product-card { background: #ffffff; border: 1.5px solid #fce7f3; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; box-shadow: 0 6px 15px rgba(0,0,0,0.04); animation: fadeIn 0.5s ease backwards; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px -5px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 16px; }
-        .modal-img-container { position: relative; display: inline-block; border-radius: 16px; overflow: hidden; background: #fff1f2; max-height: 240px; border: 2px solid #fce7f3; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .modal-img-container img { display: block; max-height: 240px; width: auto; object-fit: contain; }
-        
-        .zoom-btn { position: absolute; bottom: 10px; right: 10px; background: rgba(244, 114, 182, 0.9); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: 0.2s; }
-        .zoom-btn:hover { background: rgba(236, 72, 153, 1); transform: scale(1.05); }
+        .product-img-container { width: 100%; height: 170px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
+        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .product-card:hover .product-img-container img { transform: scale(1.08); }
 
-        .lightbox-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .lightbox-content { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 16px; }
-        .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 2.5rem; cursor: pointer; border: none; background: none; }
+        .out-of-stock-badge { position: absolute; top: 12px; right: 12px; background: rgba(244, 63, 94, 0.95); color: white; padding: 4px 12px; font-size: 0.75rem; border-radius: 10px; z-index: 2; box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3); font-weight: 400 !important; backdrop-filter: blur(4px); }
+        .low-stock-badge { position: absolute; top: 12px; left: 12px; background: rgba(234, 179, 8, 0.95); color: white; padding: 4px 12px; font-size: 0.75rem; border-radius: 10px; z-index: 2; font-weight: 400 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(4px); }
 
-        .modal-header-action { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; gap: 12px; border-bottom: 2px solid #fdf2f8; padding-bottom: 12px; }
-        .action-buttons-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        
-        .edit-toggle-btn { background: #fff1f2; color: #db2777; border: 1px solid #fbcfe8; padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; transition: 0.2s; }
-        .edit-toggle-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
-        .edit-toggle-btn.active { background: #f43f5e; color: white; border-color: #f43f5e; }
+        .product-info { padding: 16px; }
+        .product-name { font-size: 1.05rem; margin-bottom: 4px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-fabric { font-size: 0.85rem; color: #db2777; }
+        .product-update { font-size: 0.75rem; color: #9ca3af; margin-top: 6px; }
 
-        .edit-info-container { background: #fff1f2; border: 2px solid #fbcfe8; padding: 14px; border-radius: 14px; margin-bottom: 12px; width: 100%; }
-        .edit-info-container input { margin-bottom: 8px; padding: 10px; font-size: 0.95rem; }
+        /* Loader */
+        .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: var(--primary-color); }
+        .spinner { width: 40px; height: 40px; border: 4px solid #fce7f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .stock-table-wrapper { width: 100%; overflow-x: auto; border-radius: 14px; border: 1px solid #fce7f3; }
+        /* Toast Notification */
+        .toast { visibility: hidden; min-width: 280px; background-color: var(--accent-color); color: #fff; text-align: center; border-radius: 16px; padding: 16px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; font-size: 1rem; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(190, 24, 93, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .toast.show { visibility: visible; animation: fadein 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeout 0.4s 2.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        @keyframes fadein { from {bottom: 0; opacity: 0; transform: translate(-50%, 20px);} to {bottom: 40px; opacity: 1; transform: translate(-50%, 0);} }
+        @keyframes fadeout { from {bottom: 40px; opacity: 1; transform: translate(-50%, 0);} to {bottom: 0; opacity: 0; transform: translate(-50%, 20px);} }
+        .toast.success { background-color: var(--accent-color); }
+        .toast.error { background-color: #e11d48; }
+
+        /* Modal Styles (Optimized) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 16px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 600px; padding: 32px; border-radius: 28px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-btn { position: absolute; top: 20px; right: 24px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10; }
+        .close-btn:hover { background: #fce7f3; transform: rotate(90deg); }
+
+        .modal-img-container { position: relative; display: inline-block; border-radius: 20px; overflow: hidden; background: #fdf2f8; max-height: 260px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); text-align: center; width: 100%; margin-bottom: 20px;}
+        .modal-img-container img { display: inline-block; max-height: 260px; width: auto; object-fit: contain; }
+
+        .stock-table-wrapper { border-radius: 16px; overflow: hidden; border: 1.5px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
-        .stock-table th, .stock-table td { border: 1px solid #fce7f3; padding: 10px; text-align: center; font-size: 0.9rem; }
-        .stock-table th { background: #fff1f2; color: #be185d; font-weight: 400 !important; }
-        .stock-table td:first-child { text-align: left; color: #831843; font-weight: 400 !important; background: #fffbfc; }
+        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 12px; text-align: center; font-size: 0.95rem; }
+        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 400 !important; }
+        .stock-table td:first-child { text-align: left; color: #831843; background: #fffbfc; }
+        .stock-input { width: 100%; padding: 8px; border: 2px solid transparent; border-radius: 10px; text-align: center; font-size: 1rem; background: transparent; color: #44403c; outline: none; transition: 0.3s; }
+        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
+
+        .mode-section { display: none; animation: fadeIn 0.4s ease; }
+        .mode-section.active { display: block; }
         
-        .stock-input { width: 100%; padding: 6px; border: 2px solid transparent; border-radius: 8px; text-align: center; font-size: 0.95rem; background: transparent; color: #44403c; outline: none; pointer-events: none; transition: 0.2s; }
-        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; pointer-events: auto; box-shadow: 0 0 0 2px rgba(244, 114, 182, 0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 1rem; color: var(--accent-color); }
+        select, input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: 0.3s; }
+        select:focus, input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.15); }
+
+        .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        .color-btn { padding: 14px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; text-align: center; }
+        .color-btn:hover { transform: translateY(-2px); }
+        .color-btn.active { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.2); transform: scale(1.05); }
+
+        .action-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; border-radius: 16px; font-size: 1.05rem; cursor: pointer; margin-top: 16px; transition: 0.3s; box-shadow: 0 10px 25px rgba(190, 24, 93, 0.3); font-weight: 400 !important; }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(190, 24, 93, 0.4); }
+        
+        .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 16px; font-size: 1rem; cursor: pointer; margin-top: 12px; transition: 0.3s; }
+        .delete-action-btn:hover { background: #fff1f2; border-color: #ef4444; }
 
         @media screen and (max-width: 600px) {
-            body { padding: 12px 8px; }
-            .container { padding: 18px; border-radius: 20px; }
+            .container { padding: 24px; border-radius: 24px; }
             .search-top-row { flex-direction: column; }
             .search-input, .filter-select, .search-btn { width: 100%; }
-            .modal-content { padding: 18px; }
-            .modal-header-action { flex-direction: column; align-items: stretch; }
-            .action-buttons-group { justify-content: space-between; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .product-img-container { height: 140px; }
+            .fabric-chip { padding: 10px 20px; }
         }
     </style>
 </head>
@@ -149,12 +139,12 @@
 
 <div class="container">
     <div class="header-container">
-        <h1>🎀 Sleepingbox Stock</h1>
+        <h1>✨ Sleepingbox Stock</h1>
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อกสินค้า</button>
-        <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้าใหม่</button>
+        <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อก</button>
+        <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้า</button>
     </div>
 
     <!-- โหมดที่ 1: เช็คและค้นหาสินค้า -->
@@ -167,46 +157,36 @@
         </div>
 
         <div class="search-top-row">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
-            <select id="filter-style" class="filter-select">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU (ค้นหาทันที)..." onkeyup="renderProductsLocally(false)">
+            <select id="filter-style" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกรูปแบบ</option>
                 <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
                 <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
                 <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
                 <option value="กระโปรง">กระโปรง</option>
             </select>
-            <select id="filter-size" class="filter-select">
-                <option value="">ทุกขนาด</option>
-                <option value="43">ไซส์ 43</option>
-                <option value="48">ไซส์ 48</option>
-                <option value="52">ไซส์ 52</option>
-                <option value="60">ไซส์ 60</option>
-            </select>
-            <button type="button" class="search-btn" onclick="fetchProductsFromFirebase(false)">
-                <span>🔍 ค้นหา</span>
-            </button>
         </div>
 
         <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
-            <span id="toggle-icon">⚙️ เปิดตัวกรองสต๊อกขั้นสูง (น้อยกว่า / มากกว่า)</span>
+            <span id="toggle-icon">⚙️ เปิดตัวกรองสต๊อกขั้นสูง</span>
         </button>
 
         <div id="advanced-panel" class="advanced-filter-panel">
             <div class="alert-filter-group">
-                <label>เงื่อนไขสต๊อก:</label>
+                <label>สต๊อกรวม:</label>
                 <div class="operator-group">
                     <button type="button" id="op-lt" class="op-btn active" onclick="setOperator('<')">&lt; น้อยกว่า</button>
                     <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt; มากกว่า</button>
                 </div>
                 <input type="number" id="low-stock-limit" class="alert-input" value="50" min="0">
-                <button type="button" class="alert-filter-btn" onclick="fetchProductsFromFirebase(true)">
-                    <span>🔥 กรองสต๊อก</span>
+                <button type="button" class="search-btn" style="padding: 10px 20px; font-size:0.9rem;" onclick="renderProductsLocally(true)">
+                    🔥 กรองข้อมูล
                 </button>
             </div>
         </div>
 
         <div class="product-grid" id="product-grid">
-            <p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 กรุณาเลือกเนื้อผ้าและกดปุ่มค้นหาเพื่อแสดงรายการสินค้า</p>
+            <!-- Products will be injected here -->
         </div>
     </div>
 
@@ -217,7 +197,7 @@
             <input type="file" id="update-image" accept="image/*" onchange="previewImage(event)">
         </div>
         <div class="form-group" id="image-preview-box" style="display:none; text-align: center;">
-            <img id="img-preview" src="" alt="Preview" style="max-height: 130px; border-radius: 12px; border: 2px solid #fce7f3; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <img id="img-preview" src="" alt="Preview" style="max-height: 150px; border-radius: 16px; border: 2px solid #fce7f3; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
         </div>
         <div class="form-group">
             <label>ชื่อลายสินค้า:</label>
@@ -232,16 +212,11 @@
                 <button type="button" class="color-btn" style="background-color: #ffffff; color: #000;" onclick="selectColor('ขาว', this)">ขาว</button>
                 <button type="button" class="color-btn" style="background-color: #000000; color: #fff;" onclick="selectColor('ดำ', this)">ดำ</button>
                 <button type="button" class="color-btn" style="background-color: #fdf5e6; color: #000;" onclick="selectColor('ครีม', this)">ครีม</button>
-                <button type="button" class="color-btn" style="background-color: #ffd700; color: #000;" onclick="selectColor('เหลือง', this)">เหลือง</button>
-                <button type="button" class="color-btn" style="background-color: #98fb98; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
                 <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
-                <button type="button" class="color-btn" style="background-color: #d3d3d3; color: #000;" onclick="selectColor('เทา', this)">เทา</button>
                 <button type="button" class="color-btn" style="background-color: #ef4444; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
-                <button type="button" class="color-btn" style="background-color: #ffa500; color: #fff;" onclick="selectColor('ส้ม', this)">ส้ม</button>
-                <button type="button" class="color-btn" style="background-color: #ffdab9; color: #000;" onclick="selectColor('โอรส', this)">โอรส</button>
                 <button type="button" class="color-btn" style="background-color: #000080; color: #fff;" onclick="selectColor('กรม', this)">กรม</button>
             </div>
-            <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.95rem;">
+            <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 8px;">
         </div>
 
         <div class="form-group">
@@ -263,8 +238,8 @@
             </select>
         </div>
         <div class="form-group">
-            <label>รหัส SKU:</label>
-            <input type="text" id="generated-sku" class="sku-preview" readonly value="Satin-0000">
+            <label>รหัส SKU (สร้างอัตโนมัติ):</label>
+            <input type="text" id="generated-sku" style="background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; text-align: center; letter-spacing: 2px;" readonly value="Satin-0000">
         </div>
         <div class="form-group">
             <label>ขนาด:</label>
@@ -279,7 +254,7 @@
             <label>จำนวนเริ่มต้น:</label>
             <input type="number" id="update-qty" placeholder="เช่น 10">
         </div>
-        <button class="action-btn" onclick="submitUpdate()">🎀 บันทึกสินค้าใหม่</button>
+        <button class="action-btn" onclick="submitUpdate()">✨ บันทึกสินค้าใหม่</button>
     </div>
 </div>
 
@@ -288,33 +263,19 @@
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
-        <div class="modal-img-wrapper">
-            <div class="modal-img-container" id="modal-img-box">
-                <span style="color: #db2777; padding: 20px;">ไม่มีรูปภาพ</span>
-            </div>
+        <div class="modal-img-container" id="modal-img-box">
+            <span style="color: var(--accent-color); padding: 40px; display: inline-block;">ไม่มีรูปภาพ</span>
         </div>
 
-        <div class="modal-header-action">
-            <div style="flex: 1;">
-                <div id="view-info-box">
-                    <h2 id="modal-title" style="font-size: 1.25rem; margin-bottom: 2px; color: #be185d; font-weight: 500 !important;">ชื่อลาย</h2>
-                    <p id="modal-subtitle" style="font-size: 0.85rem; color: #db2777;"></p>
-                </div>
-                <div id="edit-info-box" class="edit-info-container" style="display: none;">
-                    <label style="font-size: 0.85rem; color: #db2777; margin-bottom: 2px;">ชื่อลาย:</label>
-                    <input type="text" id="edit-pattern-input" class="search-input" style="width: 100%; margin-bottom: 6px;">
-                    <label style="font-size: 0.85rem; color: #db2777; margin-bottom: 2px;">สี:</label>
-                    <input type="text" id="edit-color-input" class="search-input" style="width: 100%; margin-bottom: 8px;">
-                    <button type="button" class="action-btn" style="margin-top: 0; padding: 10px; font-size: 0.95rem;" onclick="saveInfoChanges()">💾 บันทึกชื่อและสี</button>
-                </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <div id="view-info-box" style="flex: 1;">
+                <h2 id="modal-title" style="font-size: 1.4rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 4px;">ชื่อลาย</h2>
+                <p id="modal-subtitle" style="font-size: 0.9rem; color: var(--primary-hover);"></p>
             </div>
             
-            <div class="action-buttons-group">
-                <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">
-                    <span>✏️ แก้ชื่อ/สี</span>
-                </button>
-                <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">
-                    <span>✏️ แก้จำนวน</span>
+            <div style="display: flex; gap: 8px;">
+                <button type="button" id="edit-mode-btn" class="search-btn" style="padding: 10px 16px; font-size: 0.9rem;" onclick="toggleStockEditMode()">
+                    ✏️ แก้จำนวนสต๊อก
                 </button>
             </div>
         </div>
@@ -323,7 +284,7 @@
             <table class="stock-table">
                 <thead>
                     <tr>
-                        <th>รูปแบบ / ไซส์</th>
+                        <th>รูปแบบ/ไซส์</th>
                         <th>43</th>
                         <th>48</th>
                         <th>52</th>
@@ -334,21 +295,18 @@
             </table>
         </div>
 
-        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 18px;">💾 บันทึกการแก้ไขจำนวน</button>
-        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
+        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 24px;">💾 บันทึกสต๊อก</button>
+        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
     </div>
 </div>
 
-<!-- Lightbox -->
-<div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
-    <img id="lightbox-img" class="lightbox-content" src="" alt="Zoomed Image">
-</div>
+<!-- Toast Notification -->
+<div id="toast" class="toast">✔️ ทำรายการสำเร็จ</div>
 
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao",
@@ -356,8 +314,7 @@
         projectId: "sleepingbox-store",
         storageBucket: "sleepingbox-store.firebasestorage.app",
         messagingSenderId: "103888013687",
-        appId: "1:103888013687:web:b65485adec7acafdf2b972",
-        measurementId: "G-YWZK92XG7N"
+        appId: "1:103888013687:web:b65485adec7acafdf2b972"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -370,16 +327,22 @@
     let currentFabric = "ซาติน";
     let activeSku = "";
     let tempImageBase64 = "";
-    let currentImgUrl = "";
     let currentOperator = "<";
     let isStockEditable = false;
-    let isInfoEditable = false;
+
+    // Toast Notification System
+    window.showToast = function(message, type="success") {
+        const toast = document.getElementById("toast");
+        toast.className = "toast show " + type;
+        toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message;
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2800);
+    };
 
     window.toggleAdvancedFilter = function() {
         const panel = document.getElementById('advanced-panel');
         const iconSpan = document.getElementById('toggle-icon');
         panel.classList.toggle('active');
-        iconSpan.innerHTML = panel.classList.contains('active') ? "❌ ปิดตัวกรองสต๊อกขั้นสูง" : "⚙️ เปิดตัวกรองสต๊อกขั้นสูง (น้อยกว่า / มากกว่า)";
+        iconSpan.innerHTML = panel.classList.contains('active') ? "❌ ปิดตัวกรองสต๊อกขั้นสูง" : "⚙️ เปิดตัวกรองสต๊อกขั้นสูง";
     };
 
     window.setOperator = function(op) {
@@ -409,28 +372,15 @@
 
     window.generateSKU = async function() {
         const fabric = document.getElementById('fabric-select').value;
-        let prefix = "Satin";
-        if (fabric === "คอตตอน") prefix = "CT";
-        else if (fabric === "ไหม") prefix = "SILK";
-        else if (fabric === "ซาติน") prefix = "Satin";
-        else if (fabric === "ผ้าย่น") prefix = "AA";
-
-        let unique = false;
-        let finalSku = "";
+        let prefix = fabric === "คอตตอน" ? "CT" : fabric === "ไหม" ? "SILK" : fabric === "ผ้าย่น" ? "AA" : "Satin";
+        let unique = false, finalSku = "";
         
-        // วนลูปเช็คจนกว่าจะได้ SKU ที่ไม่ซ้ำในระบบ Firebase
         while (!unique) {
-            let randomFourDigits = Math.floor(1000 + Math.random() * 9000);
-            finalSku = `${prefix}-${randomFourDigits}`;
-            
-            const docRef = doc(db, "products", finalSku);
-            const docSnap = await getDoc(docRef);
-            
-            if (!docSnap.exists()) {
-                unique = true;
-            }
+            let randomFour = Math.floor(1000 + Math.random() * 9000);
+            finalSku = `${prefix}-${randomFour}`;
+            const docSnap = await getDoc(doc(db, "products", finalSku));
+            if (!docSnap.exists()) unique = true;
         }
-
         document.getElementById('generated-sku').value = finalSku;
     };
 
@@ -440,23 +390,22 @@
             chip.classList.toggle('active', chip.innerText.includes(fabric));
         });
         document.getElementById('search-keyword').value = "";
-        document.getElementById('product-grid').innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 คุณเลือกผ้า "${fabric}" แล้ว — กรุณากดปุ่มค้นหา</p>`;
-        productsData = [];
+        fetchProductsFromFirebase(); // Auto fetch when changing fabric
     };
 
-    window.fetchProductsFromFirebase = async function(isStockFilterActive = false) {
+    // ✨ Optimized Fetching using Query
+    window.fetchProductsFromFirebase = async function() {
         const grid = document.getElementById('product-grid');
-        grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Firebase...</p>`;
+        grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="font-weight:400; color:var(--accent-color);">กำลังโหลดผ้า${currentFabric}...</p></div>`;
         try {
-            const querySnapshot = await getDocs(collection(db, "products"));
+            const q = query(collection(db, "products"), where("fabric", "==", currentFabric));
+            const querySnapshot = await getDocs(q);
             productsData = [];
-            querySnapshot.forEach((docSnap) => {
-                let data = docSnap.data();
-                if (data.fabric === currentFabric) productsData.push(data);
-            });
-            renderProductsLocally(isStockFilterActive);
+            querySnapshot.forEach((docSnap) => { productsData.push(docSnap.data()); });
+            renderProductsLocally(false);
         } catch (error) {
-            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</p>`;
+            showToast("เชื่อมต่อฐานข้อมูลล้มเหลว", "error");
+            grid.innerHTML = `<p style="text-align:center; color:red; grid-column: 1/-1;">❌ โหลดข้อมูลไม่สำเร็จ</p>`;
         }
     };
 
@@ -469,11 +418,11 @@
             img.src = e.target.result;
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                let width = img.width, height = img.height, maxWidth = 400;
+                let width = img.width, height = img.height, maxWidth = 500; // Increased resolution slightly for Pro
                 if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
                 canvas.width = width; canvas.height = height;
                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                tempImageBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                tempImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
                 document.getElementById('img-preview').src = tempImageBase64;
                 document.getElementById('image-preview-box').style.display = 'block';
             }
@@ -481,192 +430,118 @@
         reader.readAsDataURL(file);
     };
 
-    window.handleKeyPress = function(event) { if (event.key === 'Enter') fetchProductsFromFirebase(false); };
-
-    function renderProductsLocally(isStockFilterActive) {
+    // ✨ Instant Local Search
+    window.renderProductsLocally = function(isStockFilterActive = false) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const styleFilter = document.getElementById('filter-style').value;
-        const sizeFilter = document.getElementById('filter-size').value;
         const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
         const filtered = productsData.filter(p => {
             if (!p) return false;
-            const hay = [(p['ชื่อลาย'] || ''), (p['สี'] || ''), (p['SKU'] != null ? String(p['SKU']) : '')].join(' ').toLowerCase();
+            const hay = [(p['ชื่อลาย'] || ''), (p['สี'] || ''), (p['SKU'] || '')].join(' ').toLowerCase();
             const matchKeyword = !keyword || hay.includes(keyword);
 
             let targetTotal = 0;
             STYLES.forEach(style => {
                 if (styleFilter && style !== styleFilter) return;
-                SIZES.forEach(size => {
-                    if (sizeFilter && size !== sizeFilter) return;
-                    targetTotal += parseInt(p[`${style} ${size}`]) || 0;
-                });
+                SIZES.forEach(size => { targetTotal += parseInt(p[`${style} ${size}`]) || 0; });
             });
 
-            let matchStockCondition = true;
-            if (isStockFilterActive) {
-                matchStockCondition = currentOperator === '<' ? (targetTotal < limitVal) : (targetTotal > limitVal);
-            } else if ((styleFilter || sizeFilter) && targetTotal <= 0) {
-                matchStockCondition = false;
-            }
-            return matchKeyword && matchStockCondition;
+            let matchStock = true;
+            if (isStockFilterActive) matchStock = currentOperator === '<' ? (targetTotal < limitVal) : (targetTotal > limitVal);
+            else if (styleFilter && targetTotal <= 0) matchStock = false;
+            
+            return matchKeyword && matchStock;
         });
 
-        renderProducts(filtered, isStockFilterActive, styleFilter, sizeFilter);
-    }
-
-    function calcTotalStock(p, styleFilter, sizeFilter) {
-        let total = 0;
-        STYLES.forEach(style => {
-            if (styleFilter && style !== styleFilter) return;
-            SIZES.forEach(size => {
-                if (sizeFilter && size !== sizeFilter) return;
-                let v = parseInt(p[`${style} ${size}`]);
-                if (!isNaN(v)) total += v;
-            });
-        });
-        return total;
-    }
-
-    function renderProducts(list, isStockFilterActive, styleFilter, sizeFilter) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = "";
-        if (list.length === 0) {
-            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">ไม่พบสินค้าที่ตรงตามเงื่อนไข</p>`;
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#9ca3af;"><div style="font-size:3rem; margin-bottom:10px;">🍃</div><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`;
             return;
         }
-        list.forEach(p => {
-            const displayName = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] || '-'));
-            const color = p['สี'] || '-';
-            let imgUrl = p['รูปภาพสินค้า'] || '';
-            let imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${displayName}">` : `รูปภาพสินค้า`;
-            let currentTotal = calcTotalStock(p, styleFilter, sizeFilter);
-            let isOutOfStock = currentTotal <= 0;
-            let cardClass = isOutOfStock ? "product-card out-of-stock" : "product-card";
-            let badgeHTML = isOutOfStock ? `<div class="out-of-stock-badge">สินค้าหมด</div>` : ((isStockFilterActive || styleFilter || sizeFilter) ? `<div class="low-stock-badge">รวม ${currentTotal} ชุด</div>` : "");
-            let updatedAtText = p['updatedAt'] ? `<div class="product-update">อัปเดต: ${p['updatedAt']}</div>` : "";
 
+        filtered.forEach((p, index) => {
+            const name = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] || '-'));
+            let total = 0;
+            STYLES.forEach(st => SIZES.forEach(sz => total += parseInt(p[`${st} ${sz}`]) || 0));
+            
+            let badge = total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : ((isStockFilterActive || styleFilter) ? `<div class="low-stock-badge">รวม ${total}</div>` : "");
+            let img = p['รูปภาพสินค้า'] ? `<img src="${p['รูปภาพสินค้า']}" loading="lazy">` : `📸 รูปภาพ`;
+            
+            // Staggered animation delay for premium feel
             grid.innerHTML += `
-                <div class="${cardClass}" onclick="openStockModal('${p['SKU']}', '${currentFabric}', '${String(displayName).replace(/'/g, "\\'")}')">
-                    <div class="product-img-container">${badgeHTML}${imgHTML}</div>
+                <div class="product-card" style="animation-delay: ${index * 0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g, "\\'")}')">
+                    <div class="product-img-container">${badge}${img}</div>
                     <div class="product-info">
-                        <div class="product-name">${displayName}</div>
-                        <div class="product-fabric">ผ้า${currentFabric} | สี: ${color}</div>
-                        ${updatedAtText}
+                        <div class="product-name">${name}</div>
+                        <div class="product-fabric">สี: ${p['สี'] || '-'} | SKU: ${p['SKU']}</div>
                     </div>
                 </div>`;
         });
     }
 
-    window.openStockModal = function(sku, fabric, displayName) {
+    window.openStockModal = function(sku, displayName) {
         activeSku = sku;
         isStockEditable = false;
-        isInfoEditable = false;
-        document.getElementById('edit-mode-btn').classList.remove('active');
-        document.getElementById('edit-mode-btn').innerHTML = "<span>✏️ แก้จำนวน</span>";
-        document.getElementById('edit-info-btn').classList.remove('active');
-        document.getElementById('edit-info-btn').innerHTML = "<span>✏️ แก้ชื่อ/สี</span>";
-        document.getElementById('edit-info-box').style.display = 'none';
-        document.getElementById('view-info-box').style.display = 'block';
-
+        const btn = document.getElementById('edit-mode-btn');
+        btn.classList.remove('active');
+        btn.innerHTML = "✏️ แก้จำนวนสต๊อก";
+        
         const product = productsData.find(p => p && String(p['SKU']) === String(sku)) || {};
-        const patternName = product['ชื่อลาย'] || displayName || '';
-        const colorName = product['สี'] || '';
-
-        document.getElementById('modal-title').innerText = patternName;
-        document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${fabric} | สี: ${colorName} | SKU: ${sku}`;
-        document.getElementById('edit-pattern-input').value = patternName;
-        document.getElementById('edit-color-input').value = colorName;
-
-        currentImgUrl = product['รูปภาพสินค้า'] || '';
-        const modalImgBox = document.getElementById('modal-img-box');
-        modalImgBox.innerHTML = currentImgUrl ? `<img src="${currentImgUrl}"><button type="button" class="zoom-btn" onclick="openLightbox(event)">🔍</button>` : `<span style="color: #db2777; padding: 20px;">ไม่มีรูปภาพ</span>`;
+        document.getElementById('modal-title').innerText = product['ชื่อลาย'] || displayName;
+        document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${product['สี']} | SKU: ${sku}`;
+        
+        const imgBox = document.getElementById('modal-img-box');
+        imgBox.innerHTML = product['รูปภาพสินค้า'] ? `<img src="${product['รูปภาพสินค้า']}">` : `<span style="color: var(--accent-color); padding: 40px; display: inline-block;">ไม่มีรูปภาพ</span>`;
 
         const tbody = document.getElementById('modal-stock-data');
         tbody.innerHTML = "";
-        document.getElementById('stockModal').style.display = 'flex';
-
         STYLES.forEach(style => {
-            let rowHTML = `<tr><td><b>${style}</b></td>`;
+            let row = `<tr><td><b>${style}</b></td>`;
             SIZES.forEach(size => {
-                let qty = product[`${style} ${size}`] !== undefined ? product[`${style} ${size}`] : 0;
-                rowHTML += `<td><input type="number" class="stock-input" data-key="${style} ${size}" value="${qty}" readonly></td>`;
+                let qty = product[`${style} ${size}`] || 0;
+                row += `<td><input type="number" class="stock-input" data-key="${style} ${size}" value="${qty}" readonly></td>`;
             });
-            rowHTML += `</tr>`;
-            tbody.innerHTML += rowHTML;
+            tbody.innerHTML += row + `</tr>`;
         });
+        document.getElementById('stockModal').style.display = 'flex';
     };
 
     window.toggleStockEditMode = function() {
         isStockEditable = !isStockEditable;
         const btn = document.getElementById('edit-mode-btn');
         btn.classList.toggle('active', isStockEditable);
-        btn.innerHTML = isStockEditable ? "<span>🔒 ล็อกจำนวน</span>" : "<span>✏️ แก้จำนวน</span>";
+        btn.innerHTML = isStockEditable ? "🔒 ล็อกการแก้ไข" : "✏️ แก้จำนวนสต๊อก";
         document.querySelectorAll('.stock-input').forEach(input => {
             input.classList.toggle('editable', isStockEditable);
             if (isStockEditable) input.removeAttribute('readonly'); else input.setAttribute('readonly', 'true');
         });
     };
 
-    window.toggleInfoEditMode = function() {
-        isInfoEditable = !isInfoEditable;
-        const btn = document.getElementById('edit-info-btn');
-        btn.classList.toggle('active', isInfoEditable);
-        btn.innerHTML = isInfoEditable ? "<span>🔒 ปิดแก้ชื่อ</span>" : "<span>✏️ แก้ชื่อ/สี</span>";
-        document.getElementById('edit-info-box').style.display = isInfoEditable ? 'block' : 'none';
-        document.getElementById('view-info-box').style.display = isInfoEditable ? 'none' : 'block';
-    };
-
-    window.saveInfoChanges = async function() {
-        const newPattern = document.getElementById('edit-pattern-input').value.trim();
-        const newColor = document.getElementById('edit-color-input').value.trim();
-        if (!newPattern) { alert("กรุณากรอกชื่อลายสินค้า"); return; }
-        if (!confirm("คุณต้องการบันทึกการเปลี่ยนแปลงชื่อและสีนี้ใช่หรือไม่?")) return;
-
-        try {
-            await updateDoc(doc(db, "products", String(activeSku)), { 'ชื่อลาย': newPattern, 'สี': newColor });
-            alert("อัปเดตชื่อและสีสำเร็จ!");
-            document.getElementById('modal-title').innerText = newPattern;
-            document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${currentFabric} | สี: ${newColor} | SKU: ${activeSku}`;
-            toggleInfoEditMode();
-            fetchProductsFromFirebase(false);
-        } catch (error) { alert("ไม่สามารถบันทึกข้อมูลได้"); }
-    };
-
-    window.openLightbox = function(event) {
-        if (event) event.stopPropagation();
-        if (!currentImgUrl) return;
-        document.getElementById('lightbox-img').src = currentImgUrl;
-        document.getElementById('lightboxModal').style.display = 'flex';
-    };
-
-    window.closeLightbox = function() { document.getElementById('lightboxModal').style.display = 'none'; };
-
     window.saveStockChanges = async function() {
-        if (!confirm("คุณต้องการบันทึกการเปลี่ยนแปลงจำนวนสต๊อกนี้ใช่หรือไม่?")) return;
+        if (!confirm("บันทึกจำนวนสต๊อกใช่หรือไม่?")) return;
         let updateData = {};
-        document.querySelectorAll('.stock-input').forEach(input => {
-            updateData[input.getAttribute('data-key')] = parseInt(input.value) || 0;
-        });
+        document.querySelectorAll('.stock-input').forEach(input => { updateData[input.getAttribute('data-key')] = parseInt(input.value) || 0; });
         const now = new Date();
-        updateData['updatedAt'] = `${now.toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit', year:'numeric'})} ${now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}`;
+        updateData['updatedAt'] = `${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}`;
 
         try {
             await updateDoc(doc(db, "products", String(activeSku)), updateData);
-            alert("อัปเดตจำนวนสต๊อกสำเร็จ!");
+            showToast("บันทึกสต๊อกเรียบร้อย!");
             closeModal();
-            fetchProductsFromFirebase(false);
-        } catch (error) { alert("ไม่สามารถบันทึกข้อมูลได้"); }
+            fetchProductsFromFirebase(); // Refresh data silently
+        } catch (error) { showToast("ไม่สามารถบันทึกได้", "error"); }
     };
 
     window.confirmDeleteProduct = async function() {
-        if (confirm(`คุณต้องการลบสินค้ารหัส SKU: ${activeSku} นี้ออกจากระบบใช่หรือไม่?`)) {
+        if (confirm(`ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) {
             try {
                 await deleteDoc(doc(db, "products", String(activeSku)));
-                alert("ลบสินค้าสำเร็จ!");
+                showToast("ลบสินค้าสำเร็จ!");
                 closeModal();
-                fetchProductsFromFirebase(false);
-            } catch (error) { alert("เกิดข้อผิดพลาดในการลบ"); }
+                fetchProductsFromFirebase();
+            } catch (error) { showToast("ลบสินค้าไม่สำเร็จ", "error"); }
         }
     };
 
@@ -679,23 +554,14 @@
         const style = document.getElementById('update-style').value;
         const sku = document.getElementById('generated-sku').value;
         const qty = parseInt(document.getElementById('update-qty').value) || 0;
-        if (!pattern) { alert("กรุณากรอกชื่อลายสินค้า"); return; }
+        if (!pattern) { showToast("กรุณากรอกชื่อลาย", "error"); return; }
 
-        const now = new Date();
-        let newProductData = {
-            'SKU': sku, 'ชื่อลาย': pattern, 'สี': color, 'fabric': fabric,
-            'รูปภาพสินค้า': tempImageBase64,
-            'updatedAt': `${now.toLocaleDateString('th-TH', {day:'2-digit', month:'2-digit', year:'numeric'})} ${now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit' })}`
-        };
-        STYLES.forEach(s => {
-            SIZES.forEach(sz => {
-                newProductData[`${s} ${sz}`] = (s === style && sz === document.getElementById('update-size').value) ? qty : 0;
-            });
-        });
+        let newProd = { 'SKU': sku, 'ชื่อลาย': pattern, 'สี': color, 'fabric': fabric, 'รูปภาพสินค้า': tempImageBase64 };
+        STYLES.forEach(s => SIZES.forEach(sz => newProd[`${s} ${sz}`] = (s === style && sz === document.getElementById('update-size').value) ? qty : 0));
 
         try {
-            await setDoc(doc(db, "products", String(sku)), newProductData);
-            alert(`เพิ่มสินค้าสำเร็จ! SKU: ${sku}`);
+            await setDoc(doc(db, "products", String(sku)), newProd);
+            showToast(`เพิ่มสินค้าสำเร็จ! (SKU: ${sku})`);
             document.getElementById('update-pattern').value = '';
             document.getElementById('update-qty').value = '';
             document.getElementById('update-image').value = '';
@@ -703,8 +569,12 @@
             tempImageBase64 = "";
             generateSKU();
             switchMode('check');
-        } catch (error) { alert("เกิดข้อผิดพลาดในการบันทึก"); }
+        } catch (error) { showToast("บันทึกไม่สำเร็จ", "error"); }
     };
+
+    // โหลดข้อมูลครั้งแรกทันทีที่เปิดเว็บ
+    window.onload = () => fetchProductsFromFirebase();
+
 </script>
 
 </body>
