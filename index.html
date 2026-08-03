@@ -32,14 +32,19 @@
         .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-btn-group { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-        .search-btn { flex: 1; min-width: 120px; background-color: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); white-space: nowrap; }
         .search-btn:hover { background-color: var(--primary-hover); }
+
+        .alert-filter-group { display: flex; gap: 6px; align-items: center; background: #fff1f2; border: 2px solid #fda4af; padding: 6px 10px; border-radius: 12px; width: 100%; justify-content: space-between; }
+        .alert-filter-group label { font-size: 0.85rem; color: #e11d48; margin: 0; white-space: nowrap; }
         
-        .alert-filter-group { flex: 2; display: flex; gap: 6px; align-items: center; background: #fff1f2; border: 2px solid #fda4af; padding: 6px 10px; border-radius: 12px; }
-        .alert-select { padding: 6px; border: 2px solid #fda4af; border-radius: 8px; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; cursor: pointer; }
-        .alert-input { width: 70px; padding: 6px; border: 2px solid #fda4af; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; }
-        .alert-filter-btn { flex: 1; background-color: #e11d48; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+        .operator-group { display: flex; gap: 4px; background: #ffe4e6; padding: 3px; border-radius: 8px; }
+        .op-btn { background: transparent; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.95rem; font-weight: bold; color: #e11d48; cursor: pointer; transition: 0.2s; }
+        .op-btn.active { background: #e11d48; color: white; box-shadow: 0 2px 5px rgba(225, 29, 72, 0.3); }
+
+        .alert-input { width: 80px; padding: 6px; border: 2px solid #fda4af; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; }
+        .alert-filter-btn { background-color: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
         .alert-filter-btn:hover { background-color: #be123c; }
 
         .form-group { margin-bottom: 16px; }
@@ -111,8 +116,8 @@
             body { padding: 10px; }
             .container { padding: 16px; border-radius: 16px; }
             .search-filter-box { flex-direction: column; }
-            .search-input, .filter-select, .search-btn-group { width: 100%; }
-            .alert-filter-group { width: 100%; }
+            .search-input, .filter-select, .search-top-row { width: 100%; }
+            .alert-filter-group { width: 100%; flex-wrap: wrap; justify-content: center; }
             .modal-content { padding: 16px; max-width: 100%; }
         }
     </style>
@@ -138,26 +143,31 @@
             <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
-        <div class="search-filter-box">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
-            <select id="filter-size" class="filter-select">
-                <option value="">ทุกขนาด</option>
-                <option value="43">ไซส์ 43</option>
-                <option value="48">ไซส์ 48</option>
-                <option value="52">ไซส์ 52</option>
-                <option value="60">ไซส์ 60</option>
-            </select>
-        </div>
-
-        <div class="search-btn-group">
+        <!-- แถวที่ 1: ค้นหาข้อความ + ขนาด + ค้นหาปกติ -->
+        <div class="search-top-row">
+            <div class="search-filter-box" style="flex: 1; margin-bottom: 0;">
+                <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
+                <select id="filter-size" class="filter-select">
+                    <option value="">ทุกขนาด</option>
+                    <option value="43">ไซส์ 43</option>
+                    <option value="48">ไซส์ 48</option>
+                    <option value="52">ไซส์ 52</option>
+                    <option value="60">ไซส์ 60</option>
+                </select>
+            </div>
             <button type="button" class="search-btn" onclick="fetchProductsFromFirebase(false)">
                 <span>🔍 ค้นหาปกติ</span>
             </button>
+        </div>
+
+        <!-- แถวที่ 2: กรองสต๊อก น้อยกว่า / มากกว่า -->
+        <div class="search-top-row" style="margin-bottom: 16px;">
             <div class="alert-filter-group">
-                <select id="stock-operator" class="alert-select">
-                    <option value="<">&lt;</option>
-                    <option value=">">&gt;</option>
-                </select>
+                <label>กรองสต๊อก:</label>
+                <div class="operator-group">
+                    <button type="button" id="op-lt" class="op-btn active" onclick="setOperator('<')">&lt;</button>
+                    <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt;</button>
+                </div>
                 <input type="number" id="low-stock-limit" class="alert-input" value="50" min="0">
                 <button type="button" class="alert-filter-btn" onclick="fetchProductsFromFirebase(true)">
                     <span>🔥 กรองสต๊อก</span>
@@ -307,6 +317,13 @@
     let activeSku = "";
     let tempImageBase64 = "";
     let currentImgUrl = "";
+    let currentOperator = "<";
+
+    window.setOperator = function(op) {
+        currentOperator = op;
+        document.getElementById('op-lt').classList.toggle('active', op === '<');
+        document.getElementById('op-gt').classList.toggle('active', op === '>');
+    };
 
     window.switchMode = function(mode) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -418,7 +435,6 @@
     function renderProductsLocally(isStockFilterActive) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const sizeFilter = document.getElementById('filter-size').value;
-        const operator = document.getElementById('stock-operator').value;
         const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
         const filtered = productsData.filter(p => {
@@ -441,9 +457,9 @@
                     });
                 });
 
-                if (operator === '<') {
+                if (currentOperator === '<') {
                     matchStockCondition = (targetTotal < limitVal);
-                } else if (operator === '>') {
+                } else if (currentOperator === '>') {
                     matchStockCondition = (targetTotal > limitVal);
                 }
             }
