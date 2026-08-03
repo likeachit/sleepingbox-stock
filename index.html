@@ -33,11 +33,11 @@
         .filter-select:focus { border-color: var(--primary-color); }
 
         .search-btn-group { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-        .search-btn { flex: 1; min-width: 130px; background-color: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
+        .search-btn { flex: 1; min-width: 120px; background-color: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
         .search-btn:hover { background-color: var(--primary-hover); }
         
         .alert-filter-group { flex: 2; display: flex; gap: 6px; align-items: center; background: #fff1f2; border: 2px solid #fda4af; padding: 6px 10px; border-radius: 12px; }
-        .alert-filter-group label { font-size: 0.85rem; color: #e11d48; margin: 0; white-space: nowrap; }
+        .alert-select { padding: 6px; border: 2px solid #fda4af; border-radius: 8px; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; cursor: pointer; }
         .alert-input { width: 70px; padding: 6px; border: 2px solid #fda4af; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; }
         .alert-filter-btn { flex: 1; background-color: #e11d48; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
         .alert-filter-btn:hover { background-color: #be123c; }
@@ -154,10 +154,13 @@
                 <span>🔍 ค้นหาปกติ</span>
             </button>
             <div class="alert-filter-group">
-                <label>เหลือน้อยกว่า:</label>
-                <input type="number" id="low-stock-limit" class="alert-input" value="50" min="1">
+                <select id="stock-operator" class="alert-select">
+                    <option value="<">&lt;</option>
+                    <option value=">">&gt;</option>
+                </select>
+                <input type="number" id="low-stock-limit" class="alert-input" value="50" min="0">
                 <button type="button" class="alert-filter-btn" onclick="fetchProductsFromFirebase(true)">
-                    <span>🔥 ค้นหา</span>
+                    <span>🔥 กรองสต๊อก</span>
                 </button>
             </div>
         </div>
@@ -351,7 +354,7 @@
         productsData = [];
     };
 
-    window.fetchProductsFromFirebase = async function(isLowStockAlert = false) {
+    window.fetchProductsFromFirebase = async function(isStockFilterActive = false) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Firebase...</p>`;
 
@@ -366,7 +369,7 @@
                 }
             });
 
-            renderProductsLocally(isLowStockAlert);
+            renderProductsLocally(isStockFilterActive);
         } catch (error) {
             console.error("Error fetching from Firebase:", error);
             grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</p>`;
@@ -412,10 +415,11 @@
         }
     };
 
-    function renderProductsLocally(isLowStockAlert) {
+    function renderProductsLocally(isStockFilterActive) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const sizeFilter = document.getElementById('filter-size').value;
-        const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 50;
+        const operator = document.getElementById('stock-operator').value;
+        const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
         const filtered = productsData.filter(p => {
             if (!p) return false;
@@ -426,13 +430,8 @@
             ].join(' ').toLowerCase();
             const matchKeyword = !keyword || hay.includes(keyword);
 
-            let matchSize = true;
-            if (sizeFilter) {
-                matchSize = STYLES.some(style => (`${style} ${sizeFilter}`) in p);
-            }
-
-            let matchLowStock = true;
-            if (isLowStockAlert) {
+            let matchStockCondition = true;
+            if (isStockFilterActive) {
                 let targetTotal = 0;
                 STYLES.forEach(style => {
                     SIZES.forEach(size => {
@@ -441,13 +440,18 @@
                         targetTotal += v;
                     });
                 });
-                matchLowStock = (targetTotal > 0 && targetTotal < limitVal);
+
+                if (operator === '<') {
+                    matchStockCondition = (targetTotal < limitVal);
+                } else if (operator === '>') {
+                    matchStockCondition = (targetTotal > limitVal);
+                }
             }
 
-            return matchKeyword && matchSize && matchLowStock;
+            return matchKeyword && matchStockCondition;
         });
 
-        renderProducts(filtered, isLowStockAlert, sizeFilter);
+        renderProducts(filtered, isStockFilterActive, sizeFilter);
     }
 
     function calcTotalStock(p, sizeFilter) {
@@ -462,12 +466,12 @@
         return total;
     }
 
-    function renderProducts(list, isLowStockAlert, sizeFilter) {
+    function renderProducts(list, isStockFilterActive, sizeFilter) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = "";
 
         if (list.length === 0) {
-            let msg = isLowStockAlert ? `ยอดเยี่ยม! ไม่มีสินค้าที่ตรงตามเงื่อนไขจำนวนนี้นะคะ` : `ไม่พบสินค้าที่ค้นหา`;
+            let msg = isStockFilterActive ? `ไม่พบสินค้าที่ตรงตามเงื่อนไขสต๊อกนี้ค่ะ` : `ไม่พบสินค้าที่ค้นหา`;
             grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">${msg}</p>`;
             return;
         }
@@ -486,8 +490,8 @@
             let badgeHTML = "";
             if (isOutOfStock) {
                 badgeHTML = `<div class="out-of-stock-badge">สินค้าหมด</div>`;
-            } else if (isLowStockAlert) {
-                badgeHTML = `<div class="low-stock-badge">เหลือ ${currentTotal} ชุด</div>`;
+            } else if (isStockFilterActive) {
+                badgeHTML = `<div class="low-stock-badge">รวม ${currentTotal} ชุด</div>`;
             }
 
             grid.innerHTML += `
