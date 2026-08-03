@@ -312,7 +312,6 @@
         productsData = [];
     };
 
-    // ดึงข้อมูลจาก Firebase Firestore
     window.fetchProductsFromFirebase = async function() {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Firebase...</p>`;
@@ -530,8 +529,7 @@
         };
 
         STYLES.forEach(s => {
-            SIZesList = ["43", "48", "52"];
-            SIZesList.forEach(sz => {
+            SIZES.forEach(sz => {
                 let keyName = `${s} ${sz}`;
                 if (s === style && sz === size) {
                     newProductData[keyName] = qty;
