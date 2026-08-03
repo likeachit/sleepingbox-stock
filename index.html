@@ -57,10 +57,13 @@
         .fabric-chip { padding: 12px 26px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 24px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .fabric-chip.active { background: var(--accent-color); color: white; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.3); border-color: var(--accent-color); font-weight: 400 !important; transform: scale(1.05); }
 
-        .sort-container { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .sort-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
         .sort-btn { background: #fff; border: 1.5px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
         .sort-btn:hover { background: #fff1f2; border-color: var(--primary-color); }
         .sort-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 400 !important; box-shadow: 0 4px 10px rgba(190, 24, 93, 0.2); }
+
+        .print-btn { background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .print-btn:hover { background: #059669; transform: translateY(-1px); }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
         .product-card { background: #ffffff; border: 1.5px solid #fce7f3; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; box-shadow: 0 6px 15px rgba(0,0,0,0.04); animation: fadeIn 0.5s ease backwards; }
@@ -133,9 +136,25 @@
         .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 16px; font-size: 1rem; cursor: pointer; margin-top: 12px; transition: 0.3s; }
         .delete-action-btn:hover { background: #fff1f2; border-color: #ef4444; }
 
-        /* ✨ ปุ่มแก้ไขแบบแยกหมวด */
         .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 1px solid #fbcfe8; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
         .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+
+        /* ✨ สไตล์การพิมพ์และแบ่งหน้าแยกเนื้อผ้า */
+        #print-section { display: none; }
+        @media print {
+            @page { size: A4 landscape; margin: 8mm; }
+            body * { visibility: hidden; }
+            #print-section, #print-section * { visibility: visible; }
+            #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; }
+            .print-page { page-break-before: always; }
+            .print-page:first-child { page-break-before: auto; }
+            .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; }
+            .print-table th { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; font-weight: bold !important; }
+            .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; }
+            .print-header { text-align: center; margin-bottom: 12px; }
+            .print-header h2 { font-size: 16px; font-weight: bold !important; }
+        }
 
         @media screen and (max-width: 600px) {
             .container { padding: 20px 14px; border-radius: 24px; }
@@ -144,7 +163,7 @@
             .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .product-img-container { height: 140px; }
             .fabric-chip { padding: 10px 20px; }
-            .sort-container { justify-content: flex-start; }
+            .sort-container { justify-content: space-between; }
             .modal-content { padding: 20px 12px; }
         }
     </style>
@@ -209,9 +228,11 @@
         </div>
 
         <div class="sort-container">
-            <span style="font-size: 0.95rem; color: var(--accent-color);">เรียงจำนวนสต๊อก:</span>
-            <button type="button" id="sort-asc" class="sort-btn" onclick="applySort('asc')">🔼 น้อยไปมาก</button>
-            <button type="button" id="sort-desc" class="sort-btn" onclick="applySort('desc')">🔽 มากไปน้อย</button>
+            <button type="button" class="print-btn" onclick="generatePrintReport()">🖨️ พิมพ์รายงานตารางสต๊อก</button>
+            <div style="display: flex; gap: 6px; align-items: center;">
+                <button type="button" id="sort-asc" class="sort-btn" onclick="applySort('asc')">🔼 น้อยไปมาก</button>
+                <button type="button" id="sort-desc" class="sort-btn" onclick="applySort('desc')">🔽 มากไปน้อย</button>
+            </div>
         </div>
 
         <div class="product-grid" id="product-grid"></div>
@@ -303,7 +324,6 @@
                     <h2 id="modal-title" style="font-size: 1.3rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 2px;">ชื่อลาย</h2>
                     <p id="modal-subtitle" style="font-size: 0.85rem; color: var(--primary-hover);"></p>
                 </div>
-                <!-- ✨ ฟอร์มแก้ไขชื่อและสี -->
                 <div id="edit-info-box" style="display: none; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 12px; border-radius: 14px; margin-bottom: 10px;">
                     <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">ชื่อลาย:</label>
                     <input type="text" id="edit-pattern-input" class="search-input" style="width: 100%; margin-bottom: 6px; padding: 8px 12px; font-size: 0.9rem;">
@@ -313,7 +333,6 @@
                 </div>
             </div>
             
-            <!-- ✨ ปุ่มสลับแก้ไขชื่อและจำนวน -->
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                 <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">✏️ แก้ชื่อ/สี</button>
                 <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">✏️ แก้สต๊อก</button>
@@ -342,6 +361,7 @@
     </div>
 </div>
 
+<div id="print-section"></div>
 <div id="toast" class="toast">✔️ ทำรายการสำเร็จ</div>
 
 <script type="module">
@@ -362,6 +382,7 @@
 
     const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"];
     const SIZES = ["43", "48", "52", "60"];
+    const FABRICS = ["ซาติน", "ไหม", "คอตตอน", "ผ้าย่น"];
 
     let productsData = [];
     let currentFabric = "ซาติน";
@@ -548,6 +569,71 @@
                 </div>`;
         });
     }
+
+    // ✨ ฟังก์ชันพิมพ์รายงานแบบแยกชนิดเนื้อผ้าไว้คนละหน้าอัตโนมัติ
+    window.generatePrintReport = async function() {
+        showToast("กำลังเตรียมรายงานแยกหน้า...", "success");
+        try {
+            const querySnapshot = await getDocs(collection(db, "products"));
+            let allProducts = [];
+            querySnapshot.forEach(docSnap => allProducts.push(docSnap.data()));
+
+            if (allProducts.length === 0) {
+                showToast("ไม่มีข้อมูลสินค้าในระบบ", "error");
+                return;
+            }
+
+            const columns = [
+                "แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", 
+                "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", 
+                "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", 
+                "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"
+            ];
+
+            let fullHTML = "";
+            const printDate = `${new Date().toLocaleDateString('th-TH')} ${new Date().toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'})}`;
+
+            FABRICS.forEach(fabricName => {
+                let items = allProducts.filter(p => p.fabric === fabricName);
+                if (items.length > 0) {
+                    fullHTML += `
+                        <div class="print-page">
+                            <div class="print-header">
+                                <h2>รายงานตารางสต๊อก - ผ้า${fabricName}</h2>
+                                <p style="font-size: 11px; margin-top:2px;">พิมพ์เมื่อ: ${printDate}</p>
+                            </div>
+                            <table class="print-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">รูปภาพ</th>
+                                        <th style="width: 55px;">SKU</th>
+                                        <th style="width: 45px;">สี</th>
+                                        ${columns.map(col => `<th>${col}</th>`).join('')}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${items.map(p => `
+                                        <tr>
+                                            <td>${p['รูปภาพสินค้า'] ? `<img src="${p['รูปภาพสินค้า']}" class="print-img">` : `-`}</td>
+                                            <td><b>${p['SKU'] || '-'}</b></td>
+                                            <td>${p['สี'] || '-'}</td>
+                                            ${columns.map(col => `<td>${(p[col] !== undefined && p[col] > 0) ? p[col] : ''}</td>`).join('')}
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>`;
+                }
+            });
+
+            const printArea = document.getElementById('print-section');
+            printArea.innerHTML = fullHTML;
+            setTimeout(() => window.print(), 500);
+
+        } catch (error) {
+            showToast("ไม่สามารถสร้างรายงานได้", "error");
+        }
+    };
 
     window.openStockModal = function(sku, displayName) {
         activeSku = sku;
