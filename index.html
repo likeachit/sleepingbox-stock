@@ -50,13 +50,18 @@
         .operator-group { display: flex; gap: 6px; background: #ffe4e6; padding: 6px; border-radius: 14px; }
         .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 500 !important; color: #e11d48; cursor: pointer; transition: 0.3s; }
         .op-btn.active { background: #e11d48; color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
-
         .alert-input { width: 100px; padding: 10px; border: 2px solid #fda4af; border-radius: 12px; text-align: center; font-size: 1rem; background: #fff; color: #e11d48; font-weight: 500 !important; outline: none; }
         
         .fabric-categories { display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .fabric-categories::-webkit-scrollbar { display: none; }
         .fabric-chip { padding: 12px 26px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 24px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .fabric-chip.active { background: var(--accent-color); color: white; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.3); border-color: var(--accent-color); font-weight: 400 !important; transform: scale(1.05); }
+
+        /* ✨ ปุ่มเรียงลำดับ */
+        .sort-container { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .sort-btn { background: #fff; border: 1.5px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .sort-btn:hover { background: #fff1f2; border-color: var(--primary-color); }
+        .sort-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 400 !important; box-shadow: 0 4px 10px rgba(190, 24, 93, 0.2); }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
         .product-card { background: #ffffff; border: 1.5px solid #fce7f3; border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; box-shadow: 0 6px 15px rgba(0,0,0,0.04); animation: fadeIn 0.5s ease backwards; }
@@ -73,14 +78,11 @@
         .product-info { padding: 16px; }
         .product-name { font-size: 1.05rem; margin-bottom: 4px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .product-fabric { font-size: 0.85rem; color: #db2777; }
-        .product-update { font-size: 0.75rem; color: #9ca3af; margin-top: 6px; }
-
-        /* Loader */
+        
         .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; color: var(--primary-color); }
         .spinner { width: 40px; height: 40px; border: 4px solid #fce7f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Toast Notification */
         .toast { visibility: hidden; min-width: 280px; background-color: var(--accent-color); color: #fff; text-align: center; border-radius: 16px; padding: 16px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; font-size: 1rem; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(190, 24, 93, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; }
         .toast.show { visibility: visible; animation: fadein 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeout 0.4s 2.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
         @keyframes fadein { from {bottom: 0; opacity: 0; transform: translate(-50%, 20px);} to {bottom: 40px; opacity: 1; transform: translate(-50%, 0);} }
@@ -88,7 +90,6 @@
         .toast.success { background-color: var(--accent-color); }
         .toast.error { background-color: #e11d48; }
 
-        /* Modal Styles (Optimized) */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 16px; z-index: 1000; }
         .modal-content { background: white; width: 100%; max-width: 600px; padding: 32px; border-radius: 28px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -132,6 +133,7 @@
             .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .product-img-container { height: 140px; }
             .fabric-chip { padding: 10px 20px; }
+            .sort-container { justify-content: flex-start; }
         }
     </style>
 </head>
@@ -157,7 +159,8 @@
         </div>
 
         <div class="search-top-row">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU (ค้นหาทันที)..." onkeyup="renderProductsLocally(false)">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeyup="renderProductsLocally(false)">
+            
             <select id="filter-style" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกรูปแบบ</option>
                 <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
@@ -165,6 +168,18 @@
                 <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
                 <option value="กระโปรง">กระโปรง</option>
             </select>
+            
+            <select id="filter-size" class="filter-select" onchange="renderProductsLocally(false)">
+                <option value="">ทุกขนาด</option>
+                <option value="43">ไซส์ 43</option>
+                <option value="48">ไซส์ 48</option>
+                <option value="52">ไซส์ 52</option>
+                <option value="60">ไซส์ 60</option>
+            </select>
+
+            <button type="button" class="search-btn" onclick="renderProductsLocally(false)">
+                🔍 ค้นหา
+            </button>
         </div>
 
         <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
@@ -173,16 +188,23 @@
 
         <div id="advanced-panel" class="advanced-filter-panel">
             <div class="alert-filter-group">
-                <label>สต๊อกรวม:</label>
+                <label>เงื่อนไขสต๊อก:</label>
                 <div class="operator-group">
                     <button type="button" id="op-lt" class="op-btn active" onclick="setOperator('<')">&lt; น้อยกว่า</button>
                     <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt; มากกว่า</button>
                 </div>
-                <input type="number" id="low-stock-limit" class="alert-input" value="50" min="0">
+                <input type="number" id="low-stock-limit" class="alert-input" value="100" min="0">
                 <button type="button" class="search-btn" style="padding: 10px 20px; font-size:0.9rem;" onclick="renderProductsLocally(true)">
-                    🔥 กรองข้อมูล
+                    🔥 กรองสต๊อก
                 </button>
             </div>
+        </div>
+
+        <!-- ✨ ส่วนปุ่มเรียงลำดับสต๊อก -->
+        <div class="sort-container">
+            <span style="font-size: 0.95rem; color: var(--accent-color);">เรียงจำนวนสต๊อก:</span>
+            <button type="button" id="sort-asc" class="sort-btn" onclick="applySort('asc')">🔼 น้อยไปมาก</button>
+            <button type="button" id="sort-desc" class="sort-btn" onclick="applySort('desc')">🔽 มากไปน้อย</button>
         </div>
 
         <div class="product-grid" id="product-grid">
@@ -192,6 +214,7 @@
 
     <!-- โหมดที่ 2: เพิ่มสินค้าใหม่ -->
     <div id="update-mode" class="mode-section">
+        <!-- ฟอร์มเพิ่มสินค้ายังคงเหมือนเดิม -->
         <div class="form-group">
             <label>อัปโหลดรูปภาพสินค้า:</label>
             <input type="file" id="update-image" accept="image/*" onchange="previewImage(event)">
@@ -329,8 +352,8 @@
     let tempImageBase64 = "";
     let currentOperator = "<";
     let isStockEditable = false;
+    let currentSortOrder = 'default'; // เก็บสถานะการเรียงลำดับ
 
-    // Toast Notification System
     window.showToast = function(message, type="success") {
         const toast = document.getElementById("toast");
         toast.className = "toast show " + type;
@@ -374,7 +397,6 @@
         const fabric = document.getElementById('fabric-select').value;
         let prefix = fabric === "คอตตอน" ? "CT" : fabric === "ไหม" ? "SILK" : fabric === "ผ้าย่น" ? "AA" : "Satin";
         let unique = false, finalSku = "";
-        
         while (!unique) {
             let randomFour = Math.floor(1000 + Math.random() * 9000);
             finalSku = `${prefix}-${randomFour}`;
@@ -390,10 +412,9 @@
             chip.classList.toggle('active', chip.innerText.includes(fabric));
         });
         document.getElementById('search-keyword').value = "";
-        fetchProductsFromFirebase(); // Auto fetch when changing fabric
+        fetchProductsFromFirebase();
     };
 
-    // ✨ Optimized Fetching using Query
     window.fetchProductsFromFirebase = async function() {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="font-weight:400; color:var(--accent-color);">กำลังโหลดผ้า${currentFabric}...</p></div>`;
@@ -418,7 +439,7 @@
             img.src = e.target.result;
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                let width = img.width, height = img.height, maxWidth = 500; // Increased resolution slightly for Pro
+                let width = img.width, height = img.height, maxWidth = 500; 
                 if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
                 canvas.width = width; canvas.height = height;
                 canvas.getContext('2d').drawImage(img, 0, 0, width, height);
@@ -430,46 +451,80 @@
         reader.readAsDataURL(file);
     };
 
-    // ✨ Instant Local Search
+    // ✨ ฟังก์ชันจัดการปุ่มเรียงลำดับ
+    window.applySort = function(order) {
+        if (currentSortOrder === order) {
+            currentSortOrder = 'default'; // กดซ้ำเพื่อยกเลิกการเรียง
+        } else {
+            currentSortOrder = order;
+        }
+        
+        document.getElementById('sort-asc').classList.toggle('active', currentSortOrder === 'asc');
+        document.getElementById('sort-desc').classList.toggle('active', currentSortOrder === 'desc');
+        
+        // ดึงค่าว่าตัวกรองสต๊อกขั้นสูงเปิดอยู่หรือไม่ แล้วรีเฟรชการแสดงผล
+        const isAdvancedFilterActive = document.getElementById('advanced-panel').classList.contains('active');
+        renderProductsLocally(isAdvancedFilterActive);
+    };
+
     window.renderProductsLocally = function(isStockFilterActive = false) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const styleFilter = document.getElementById('filter-style').value;
+        const sizeFilter = document.getElementById('filter-size').value; // นำช่องค้นหาไซส์กลับมาใช้งาน
         const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
-        const filtered = productsData.filter(p => {
-            if (!p) return false;
+        // คำนวณยอดรวมสต๊อกของแต่ละสินค้า พร้อมกรองข้อมูล
+        let mappedProducts = productsData.map(p => {
+            if (!p) return null;
             const hay = [(p['ชื่อลาย'] || ''), (p['สี'] || ''), (p['SKU'] || '')].join(' ').toLowerCase();
             const matchKeyword = !keyword || hay.includes(keyword);
 
             let targetTotal = 0;
             STYLES.forEach(style => {
                 if (styleFilter && style !== styleFilter) return;
-                SIZES.forEach(size => { targetTotal += parseInt(p[`${style} ${size}`]) || 0; });
+                SIZES.forEach(size => { 
+                    if (sizeFilter && size !== sizeFilter) return;
+                    targetTotal += parseInt(p[`${style} ${size}`]) || 0; 
+                });
             });
 
             let matchStock = true;
-            if (isStockFilterActive) matchStock = currentOperator === '<' ? (targetTotal < limitVal) : (targetTotal > limitVal);
-            else if (styleFilter && targetTotal <= 0) matchStock = false;
+            if (isStockFilterActive) {
+                matchStock = currentOperator === '<' ? (targetTotal < limitVal) : (targetTotal > limitVal);
+            } else if ((styleFilter || sizeFilter) && targetTotal <= 0) {
+                matchStock = false; // ถ้าค้นหาเจาะจงไซส์/รูปแบบ แล้วยอดเป็น 0 ไม่ต้องแสดง
+            }
             
-            return matchKeyword && matchStock;
-        });
+            if (matchKeyword && matchStock) {
+                return { data: p, totalStock: targetTotal };
+            }
+            return null;
+        }).filter(item => item !== null);
+
+        // ✨ นำข้อมูลที่ผ่านการกรองมาจัดเรียง
+        if (currentSortOrder === 'asc') {
+            mappedProducts.sort((a, b) => a.totalStock - b.totalStock); // น้อยไปมาก
+        } else if (currentSortOrder === 'desc') {
+            mappedProducts.sort((a, b) => b.totalStock - a.totalStock); // มากไปน้อย
+        }
 
         const grid = document.getElementById('product-grid');
         grid.innerHTML = "";
-        if (filtered.length === 0) {
+        
+        if (mappedProducts.length === 0) {
             grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#9ca3af;"><div style="font-size:3rem; margin-bottom:10px;">🍃</div><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`;
             return;
         }
 
-        filtered.forEach((p, index) => {
+        mappedProducts.forEach((item, index) => {
+            const p = item.data;
+            const total = item.totalStock;
             const name = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] || '-'));
-            let total = 0;
-            STYLES.forEach(st => SIZES.forEach(sz => total += parseInt(p[`${st} ${sz}`]) || 0));
             
-            let badge = total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : ((isStockFilterActive || styleFilter) ? `<div class="low-stock-badge">รวม ${total}</div>` : "");
+            // แสดงป้ายบอกจำนวนรวมเสมอตามในรูป
+            let badge = total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${total} ชุด</div>`;
             let img = p['รูปภาพสินค้า'] ? `<img src="${p['รูปภาพสินค้า']}" loading="lazy">` : `📸 รูปภาพ`;
             
-            // Staggered animation delay for premium feel
             grid.innerHTML += `
                 <div class="product-card" style="animation-delay: ${index * 0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g, "\\'")}')">
                     <div class="product-img-container">${badge}${img}</div>
@@ -530,7 +585,7 @@
             await updateDoc(doc(db, "products", String(activeSku)), updateData);
             showToast("บันทึกสต๊อกเรียบร้อย!");
             closeModal();
-            fetchProductsFromFirebase(); // Refresh data silently
+            fetchProductsFromFirebase(); 
         } catch (error) { showToast("ไม่สามารถบันทึกได้", "error"); }
     };
 
@@ -572,7 +627,6 @@
         } catch (error) { showToast("บันทึกไม่สำเร็จ", "error"); }
     };
 
-    // โหลดข้อมูลครั้งแรกทันทีที่เปิดเว็บ
     window.onload = () => fetchProductsFromFirebase();
 
 </script>
