@@ -658,6 +658,10 @@
     };
 
     window.saveStockChanges = async function() {
+        if (!confirm("⚠️ คุณต้องการบันทึกการเปลี่ยนแปลงจำนวนสต๊อกนี้ใช่หรือไม่?")) {
+            return;
+        }
+
         const inputs = document.querySelectorAll('.stock-input');
         let updateData = {};
 
@@ -666,7 +670,6 @@
             updateData[key] = parseInt(input.value) || 0;
         });
 
-        // สร้างวันที่และเวลาอัปเดตล่าสุดในรูปแบบไทย (เช่น 03/08/2026 23:00)
         const now = new Date();
         const dateStr = now.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
