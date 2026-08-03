@@ -89,21 +89,30 @@
         .toast.success { background-color: var(--accent-color); }
         .toast.error { background-color: #e11d48; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 16px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 600px; padding: 32px; border-radius: 28px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 600px; padding: 24px 16px; border-radius: 28px; position: relative; max-height: 92vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .close-btn { position: absolute; top: 20px; right: 24px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10; }
+        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10; }
         .close-btn:hover { background: #fce7f3; transform: rotate(90deg); }
 
-        .modal-img-container { position: relative; display: inline-block; border-radius: 20px; overflow: hidden; background: #fdf2f8; max-height: 260px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); text-align: center; width: 100%; margin-bottom: 20px;}
-        .modal-img-container img { display: inline-block; max-height: 260px; width: auto; object-fit: contain; }
+        .modal-img-container { position: relative; display: inline-block; border-radius: 20px; overflow: hidden; background: #fdf2f8; max-height: 220px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); text-align: center; width: 100%; margin-bottom: 16px;}
+        .modal-img-container img { display: inline-block; max-height: 220px; width: auto; object-fit: contain; }
 
-        .stock-table-wrapper { border-radius: 16px; overflow: hidden; border: 1.5px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        /* 🔥 แก้ไขจุดนี้: ปลดล็อก Scroll ให้เลื่อนตารางแนวนอนได้บนมือถือ */
+        .stock-table-wrapper { 
+            border-radius: 16px; 
+            border: 1.5px solid var(--border-color); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            width: 100%; 
+            overflow-x: auto !important; 
+            -webkit-overflow-scrolling: touch; 
+            margin-bottom: 8px;
+        }
         .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
-        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 12px; text-align: center; font-size: 0.95rem; }
-        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 400 !important; }
-        .stock-table td:first-child { text-align: left; color: #831843; background: #fffbfc; }
-        .stock-input { width: 100%; padding: 8px; border: 2px solid transparent; border-radius: 10px; text-align: center; font-size: 1rem; background: transparent; color: #44403c; outline: none; transition: 0.3s; }
+        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 10px 6px; text-align: center; font-size: 0.9rem; }
+        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 400 !important; white-space: nowrap; }
+        .stock-table td:first-child { text-align: left; color: #831843; background: #fffbfc; white-space: nowrap; padding-left: 10px; }
+        .stock-input { width: 65px; padding: 6px; border: 2px solid transparent; border-radius: 10px; text-align: center; font-size: 0.95rem; background: transparent; color: #44403c; outline: none; transition: 0.3s; margin: 0 auto; display: block; }
         .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.15); }
 
         .mode-section { display: none; animation: fadeIn 0.4s ease; }
@@ -126,13 +135,14 @@
         .delete-action-btn:hover { background: #fff1f2; border-color: #ef4444; }
 
         @media screen and (max-width: 600px) {
-            .container { padding: 24px; border-radius: 24px; }
+            .container { padding: 20px 14px; border-radius: 24px; }
             .search-top-row { flex-direction: column; }
             .search-input, .filter-select, .search-btn { width: 100%; }
             .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .product-img-container { height: 140px; }
             .fabric-chip { padding: 10px 20px; }
             .sort-container { justify-content: flex-start; }
+            .modal-content { padding: 20px 12px; }
         }
     </style>
 </head>
@@ -158,7 +168,7 @@
         </div>
 
         <div class="search-top-row">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU (ค้นหาทันที)..." onkeyup="renderProductsLocally(false)">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeyup="renderProductsLocally(false)">
             
             <select id="filter-style" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกรูปแบบ</option>
@@ -168,7 +178,6 @@
                 <option value="กระโปรง">กระโปรง</option>
             </select>
             
-            <!-- เพิ่มช่องตัวกรองขนาดกลับมาให้แล้วครับ -->
             <select id="filter-size" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกขนาด</option>
                 <option value="43">ไซส์ 43</option>
@@ -202,9 +211,7 @@
             <button type="button" id="sort-desc" class="sort-btn" onclick="applySort('desc')">🔽 มากไปน้อย</button>
         </div>
 
-        <div class="product-grid" id="product-grid">
-            <!-- Products will be injected here -->
-        </div>
+        <div class="product-grid" id="product-grid"></div>
     </div>
 
     <!-- โหมดที่ 2: เพิ่มสินค้าใหม่ -->
@@ -284,18 +291,21 @@
             <span style="color: var(--accent-color); padding: 40px; display: inline-block;">ไม่มีรูปภาพ</span>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
             <div id="view-info-box" style="flex: 1;">
-                <h2 id="modal-title" style="font-size: 1.4rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 4px;">ชื่อลาย</h2>
-                <p id="modal-subtitle" style="font-size: 0.9rem; color: var(--primary-hover);"></p>
+                <h2 id="modal-title" style="font-size: 1.3rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 2px;">ชื่อลาย</h2>
+                <p id="modal-subtitle" style="font-size: 0.85rem; color: var(--primary-hover);"></p>
             </div>
             
             <div style="display: flex; gap: 8px;">
-                <button type="button" id="edit-mode-btn" class="search-btn" style="padding: 10px 16px; font-size: 0.9rem;" onclick="toggleStockEditMode()">
+                <button type="button" id="edit-mode-btn" class="search-btn" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleStockEditMode()">
                     ✏️ แก้จำนวนสต๊อก
                 </button>
             </div>
         </div>
+
+        <!-- 👈👉 เพิ่มข้อความแนะนำการสไลด์ตาราง -->
+        <p style="text-align: right; font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px;">👈 สไลด์ตารางซ้าย-ขวา เพื่อดูไซส์อื่นเพิ่มเติม 👉</p>
 
         <div class="stock-table-wrapper">
             <table class="stock-table">
@@ -312,15 +322,13 @@
             </table>
         </div>
 
-        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 24px;">💾 บันทึกสต๊อก</button>
+        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 18px;">💾 บันทึกสต๊อก</button>
         <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
     </div>
 </div>
 
-<!-- Toast Notification -->
 <div id="toast" class="toast">✔️ ทำรายการสำเร็จ</div>
 
-<!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
