@@ -74,8 +74,12 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
         .modal-content { background: white; width: 100%; max-width: 620px; padding: 24px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 2px solid #fce7f3; }
+        
         .close-btn { position: absolute; top: 15px; right: 18px; font-size: 1.4rem; cursor: pointer; border: none; background: none; color: #db2777; z-index: 10; }
         .close-btn:hover { color: #be185d; }
+
+        .delete-btn { position: absolute; top: 15px; right: 50px; font-size: 1.2rem; cursor: pointer; border: none; background: none; color: #ef4444; z-index: 10; transition: transform 0.2s; }
+        .delete-btn:hover { transform: scale(1.15); color: #dc2626; }
 
         .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 12px; }
         .modal-img-container { position: relative; display: inline-block; border-radius: 14px; overflow: hidden; background: #fff1f2; max-height: 250px; border: 2px solid #fce7f3; }
@@ -218,6 +222,8 @@
 <!-- Modal แสดงรายละเอียดสต๊อกและแก้ไขได้ทันที -->
 <div id="stockModal" class="modal">
     <div class="modal-content">
+        <!-- ปุ่มลบสินค้า (ถังขยะ) -->
+        <button class="delete-btn" onclick="confirmDeleteProduct()" title="ลบสินค้านี้">🗑️</button>
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
         <div class="modal-img-wrapper">
@@ -257,7 +263,7 @@
 <!-- Firebase SDK และระบบฐานข้อมูล -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao",
@@ -487,7 +493,6 @@
             let rowHTML = `<tr><td><b>${style}</b></td>`;
             SIZES.forEach(size => {
                 let keyName = `${style} ${size}`;
-                // ถ้าเป็นสินค้าเก่าที่ยังไม่มีฟิลด์ 60 ระบบจะกำหนดค่าเริ่มต้นเป็น 0 อัตโนมัติทันที
                 let qty = (product[keyName] !== undefined && product[keyName] !== "") ? product[keyName] : 0;
                 rowHTML += `<td><input type="number" class="stock-input" data-key="${keyName}" value="${qty}"></td>`;
             });
@@ -526,6 +531,21 @@
         } catch (error) {
             console.error("Error updating stock:", error);
             alert("❌ ไม่สามารถบันทึกข้อมูลได้");
+        }
+    };
+
+    // ฟังก์ชันยืนยันและลบสินค้า
+    window.confirmDeleteProduct = async function() {
+        if (confirm(`⚠️ คุณต้องการลบสินค้ารหัส SKU: ${activeSku} นี้ออกจากระบบใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+            try {
+                await deleteDoc(doc(db, "products", String(activeSku)));
+                alert("🗑️ ลบสินค้าออกจากระบบสำเร็จ!");
+                closeModal();
+                fetchProductsFromFirebase();
+            } catch (error) {
+                console.error("Error deleting product:", error);
+                alert("❌ เกิดข้อผิดพลาดในการลบสินค้า");
+            }
         }
     };
 
