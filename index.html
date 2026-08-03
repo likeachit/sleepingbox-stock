@@ -32,11 +32,22 @@
         .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
         .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); white-space: nowrap; }
         .search-btn:hover { background-color: var(--primary-hover); }
 
-        .alert-filter-group { display: flex; gap: 6px; align-items: center; background: #fff1f2; border: 2px solid #fda4af; padding: 6px 10px; border-radius: 12px; width: 100%; justify-content: space-between; }
+        .toggle-advanced-btn { width: 100%; background: #fff1f2; color: #db2777; border: 2px dashed #fda4af; padding: 10px; border-radius: 12px; font-size: 0.9rem; cursor: pointer; margin-bottom: 12px; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 400; }
+        .toggle-advanced-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
+
+        .advanced-filter-panel { display: none; background: #fff1f2; border: 2px solid #fda4af; padding: 12px; border-radius: 12px; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
+        .advanced-filter-panel.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-filter-group { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
         .alert-filter-group label { font-size: 0.85rem; color: #e11d48; margin: 0; white-space: nowrap; }
         
         .operator-group { display: flex; gap: 4px; background: #ffe4e6; padding: 3px; border-radius: 8px; }
@@ -117,7 +128,7 @@
             .container { padding: 16px; border-radius: 16px; }
             .search-filter-box { flex-direction: column; }
             .search-input, .filter-select, .search-top-row { width: 100%; }
-            .alert-filter-group { width: 100%; flex-wrap: wrap; justify-content: center; }
+            .alert-filter-group { flex-direction: column; align-items: stretch; }
             .modal-content { padding: 16px; max-width: 100%; }
         }
     </style>
@@ -143,7 +154,7 @@
             <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
-        <!-- แถวที่ 1: ค้นหาข้อความ + ขนาด + ค้นหาปกติ -->
+        <!-- แถวค้นหาหลัก -->
         <div class="search-top-row">
             <div class="search-filter-box" style="flex: 1; margin-bottom: 0;">
                 <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
@@ -160,13 +171,18 @@
             </button>
         </div>
 
-        <!-- แถวที่ 2: กรองสต๊อก น้อยกว่า / มากกว่า -->
-        <div class="search-top-row" style="margin-bottom: 16px;">
+        <!-- ปุ่มเปิด/ปิด ตัวกรองสต๊อกขั้นสูง -->
+        <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
+            <span id="toggle-icon">⚙️ เปิดตัวกรองสต๊อกขั้นสูง (น้อยกว่า / มากกว่า)</span>
+        </button>
+
+        <!-- แผงซ่อน: กรองสต๊อก น้อยกว่า / มากกว่า -->
+        <div id="advanced-panel" class="advanced-filter-panel">
             <div class="alert-filter-group">
-                <label>กรองสต๊อก:</label>
+                <label>เงื่อนไขสต๊อก:</label>
                 <div class="operator-group">
-                    <button type="button" id="op-lt" class="op-btn active" onclick="setOperator('<')">&lt;</button>
-                    <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt;</button>
+                    <button type="button" id="op-lt" class="op-btn active" onclick="setOperator('<')">&lt; น้อยกว่า</button>
+                    <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt; มากกว่า</button>
                 </div>
                 <input type="number" id="low-stock-limit" class="alert-input" value="50" min="0">
                 <button type="button" class="alert-filter-btn" onclick="fetchProductsFromFirebase(true)">
@@ -280,7 +296,7 @@
         </div>
 
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
-        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
+        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้ารี้ออกจากระบบ</button>
     </div>
 </div>
 
@@ -318,6 +334,17 @@
     let tempImageBase64 = "";
     let currentImgUrl = "";
     let currentOperator = "<";
+
+    window.toggleAdvancedFilter = function() {
+        const panel = document.getElementById('advanced-panel');
+        const iconSpan = document.getElementById('toggle-icon');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+            iconSpan.innerHTML = "❌ ปิดตัวกรองสต๊อกขั้นสูง";
+        } else {
+            iconSpan.innerHTML = "⚙️ เปิดตัวกรองสต๊อกขั้นสูง (น้อยกว่า / มากกว่า)";
+        }
+    };
 
     window.setOperator = function(op) {
         currentOperator = op;
