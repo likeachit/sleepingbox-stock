@@ -26,15 +26,21 @@
         .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; cursor: pointer; border-radius: 10px; transition: all 0.2s; color: #db2777; }
         .tab-btn.active { background: #ffffff; color: #be185d; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.15); }
 
-        .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        .search-filter-box { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
         .search-input { flex: 2; padding: 12px 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--primary-color); }
         .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 22px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
+        .search-btn-group { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+        .search-btn { flex: 1; min-width: 130px; background-color: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
         .search-btn:hover { background-color: var(--primary-hover); }
-        .search-btn:active { transform: scale(0.97); }
+        
+        .alert-filter-group { flex: 2; display: flex; gap: 6px; align-items: center; background: #fff1f2; border: 2px solid #fda4af; padding: 6px 10px; border-radius: 12px; }
+        .alert-filter-group label { font-size: 0.85rem; color: #e11d48; margin: 0; white-space: nowrap; }
+        .alert-input { width: 70px; padding: 6px; border: 2px solid #fda4af; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; color: #e11d48; font-weight: bold; outline: none; }
+        .alert-filter-btn { flex: 1; background-color: #e11d48; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+        .alert-filter-btn:hover { background-color: #be123c; }
 
         .form-group { margin-bottom: 16px; }
         label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #db2777; }
@@ -70,6 +76,7 @@
 
         .product-card.out-of-stock img { filter: grayscale(100%); opacity: 0.5; }
         .out-of-stock-badge { position: absolute; top: 8px; right: 8px; background: rgba(244, 63, 94, 0.9); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 6px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .low-stock-badge { position: absolute; top: 8px; left: 8px; background: rgba(234, 179, 8, 0.95); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 6px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight: bold; }
 
         .product-info { padding: 10px; }
         .product-name { font-size: 0.95rem; margin-bottom: 2px; color: #831843; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -104,7 +111,8 @@
             body { padding: 10px; }
             .container { padding: 16px; border-radius: 16px; }
             .search-filter-box { flex-direction: column; }
-            .search-input, .filter-select, .search-btn { width: 100%; }
+            .search-input, .filter-select, .search-btn-group { width: 100%; }
+            .alert-filter-group { width: 100%; }
             .modal-content { padding: 16px; max-width: 100%; }
         }
     </style>
@@ -139,13 +147,23 @@
                 <option value="52">ไซส์ 52</option>
                 <option value="60">ไซส์ 60</option>
             </select>
-            <button type="button" class="search-btn" onclick="fetchProductsFromFirebase()">
-                <span>🔍 ค้นหา</span>
+        </div>
+
+        <div class="search-btn-group">
+            <button type="button" class="search-btn" onclick="fetchProductsFromFirebase(false)">
+                <span>🔍 ค้นหาปกติ</span>
             </button>
+            <div class="alert-filter-group">
+                <label>เหลือน้อยกว่า:</label>
+                <input type="number" id="low-stock-limit" class="alert-input" value="50" min="1">
+                <button type="button" class="alert-filter-btn" onclick="fetchProductsFromFirebase(true)">
+                    <span>🔥 ค้นหา</span>
+                </button>
+            </div>
         </div>
 
         <div class="product-grid" id="product-grid">
-            <p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 กรุณาเลือกเนื้อผ้าและกดปุ่ม "ค้นหา" เพื่อแสดงรายการสินค้า</p>
+            <p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 กรุณาเลือกเนื้อผ้าและกดปุ่มค้นหาเพื่อแสดงรายการสินค้า</p>
         </div>
     </div>
 
@@ -249,7 +267,6 @@
         </div>
 
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
-        <!-- ปุ่มลบสินค้า (ถังขยะ) ย้ายมาไว้ด้านล่าง -->
         <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
     </div>
 </div>
@@ -330,11 +347,11 @@
             chip.classList.toggle('active', chip.innerText.includes(fabric));
         });
         document.getElementById('search-keyword').value = "";
-        document.getElementById('product-grid').innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 คุณเลือกผ้า "${fabric}" แล้ว — กรุณากดปุ่ม "ค้นหา" เพื่อดึงข้อมูล</p>`;
+        document.getElementById('product-grid').innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 คุณเลือกผ้า "${fabric}" แล้ว — กรุณากดปุ่มค้นหา</p>`;
         productsData = [];
     };
 
-    window.fetchProductsFromFirebase = async function() {
+    window.fetchProductsFromFirebase = async function(isLowStockAlert = false) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Firebase...</p>`;
 
@@ -349,7 +366,7 @@
                 }
             });
 
-            renderProductsLocally();
+            renderProductsLocally(isLowStockAlert);
         } catch (error) {
             console.error("Error fetching from Firebase:", error);
             grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</p>`;
@@ -391,13 +408,14 @@
 
     window.handleKeyPress = function(event) {
         if (event.key === 'Enter') {
-            fetchProductsFromFirebase();
+            fetchProductsFromFirebase(false);
         }
     };
 
-    function renderProductsLocally() {
+    function renderProductsLocally(isLowStockAlert) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const sizeFilter = document.getElementById('filter-size').value;
+        const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 50;
 
         const filtered = productsData.filter(p => {
             if (!p) return false;
@@ -412,10 +430,24 @@
             if (sizeFilter) {
                 matchSize = STYLES.some(style => (`${style} ${sizeFilter}`) in p);
             }
-            return matchKeyword && matchSize;
+
+            let matchLowStock = true;
+            if (isLowStockAlert) {
+                let targetTotal = 0;
+                STYLES.forEach(style => {
+                    SIZES.forEach(size => {
+                        if (sizeFilter && size !== sizeFilter) return;
+                        let v = parseInt(p[`${style} ${size}`]) || 0;
+                        targetTotal += v;
+                    });
+                });
+                matchLowStock = (targetTotal > 0 && targetTotal < limitVal);
+            }
+
+            return matchKeyword && matchSize && matchLowStock;
         });
 
-        renderProducts(filtered);
+        renderProducts(filtered, isLowStockAlert, sizeFilter);
     }
 
     function calcTotalStock(p, sizeFilter) {
@@ -430,12 +462,13 @@
         return total;
     }
 
-    function renderProducts(list) {
+    function renderProducts(list, isLowStockAlert, sizeFilter) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = "";
 
         if (list.length === 0) {
-            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">ไม่พบสินค้าที่ค้นหา</p>`;
+            let msg = isLowStockAlert ? `ยอดเยี่ยม! ไม่มีสินค้าที่ตรงตามเงื่อนไขจำนวนนี้นะคะ` : `ไม่พบสินค้าที่ค้นหา`;
+            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">${msg}</p>`;
             return;
         }
 
@@ -446,10 +479,16 @@
             let imgUrl = p['รูปภาพสินค้า'] || '';
             let imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${displayName}" onerror="this.onerror=null; this.parentNode.innerHTML='รูปภาพสินค้า';">` : `รูปภาพสินค้า`;
 
-            const sizeFilter = document.getElementById('filter-size').value;
-            let isOutOfStock = calcTotalStock(p, sizeFilter) <= 0;
+            let currentTotal = calcTotalStock(p, sizeFilter);
+            let isOutOfStock = currentTotal <= 0;
             let cardClass = isOutOfStock ? "product-card out-of-stock" : "product-card";
-            let badgeHTML = isOutOfStock ? `<div class="out-of-stock-badge">สินค้าหมด</div>` : "";
+            
+            let badgeHTML = "";
+            if (isOutOfStock) {
+                badgeHTML = `<div class="out-of-stock-badge">สินค้าหมด</div>`;
+            } else if (isLowStockAlert) {
+                badgeHTML = `<div class="low-stock-badge">เหลือ ${currentTotal} ชุด</div>`;
+            }
 
             grid.innerHTML += `
                 <div class="${cardClass}" onclick="openStockModal('${p['SKU']}', '${currentFabric}', '${String(displayName).replace(/'/g, "\\'")}')">
@@ -527,21 +566,20 @@
 
             alert("✨ อัปเดตจำนวนสต๊อกสำเร็จ!");
             closeModal();
-            fetchProductsFromFirebase();
+            fetchProductsFromFirebase(false);
         } catch (error) {
             console.error("Error updating stock:", error);
             alert("❌ ไม่สามารถบันทึกข้อมูลได้");
         }
     };
 
-    // ฟังก์ชันยืนยันและลบสินค้า
     window.confirmDeleteProduct = async function() {
         if (confirm(`⚠️ คุณต้องการลบสินค้ารหัส SKU: ${activeSku} นี้ออกจากระบบใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
             try {
                 await deleteDoc(doc(db, "products", String(activeSku)));
                 alert("🗑️ ลบสินค้าออกจากระบบสำเร็จ!");
                 closeModal();
-                fetchProductsFromFirebase();
+                fetchProductsFromFirebase(false);
             } catch (error) {
                 console.error("Error deleting product:", error);
                 alert("❌ เกิดข้อผิดพลาดในการลบสินค้า");
