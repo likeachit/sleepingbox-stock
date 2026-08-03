@@ -95,7 +95,6 @@
         .stock-input { width: 100%; padding: 6px; border: 2px solid #fce7f3; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; }
         .stock-input:focus { border-color: var(--primary-color); }
 
-        /* Responsive สำหรับมือถือ */
         @media screen and (max-width: 600px) {
             body { padding: 10px; }
             .container { padding: 16px; border-radius: 16px; }
@@ -135,7 +134,7 @@
                 <option value="48">ไซส์ 48</option>
                 <option value="52">ไซส์ 52</option>
             </select>
-            <button type="button" class="search-btn" onclick="fetchProductsFromSheet()">
+            <button type="button" class="search-btn" onclick="fetchProductsFromFirebase()">
                 <span>🔍 ค้นหา</span>
             </button>
         </div>
@@ -250,8 +249,23 @@
     <img id="lightbox-img" class="lightbox-content" src="" alt="Zoomed Image">
 </div>
 
-<script>
-    const N8N_WEBHOOK_URL = "https://likeachit.app.n8n.cloud/webhook/sleepingbox-stock";
+<!-- Firebase SDK และระบบฐานข้อมูล -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao",
+        authDomain: "sleepingbox-store.firebaseapp.com",
+        projectId: "sleepingbox-store",
+        storageBucket: "sleepingbox-store.firebasestorage.app",
+        messagingSenderId: "103888013687",
+        appId: "1:103888013687:web:b65485adec7acafdf2b972",
+        measurementId: "G-YWZK92XG7N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"];
     const SIZES = ["43", "48", "52"];
@@ -263,28 +277,7 @@
     let tempImageBase64 = "";
     let currentImgUrl = "";
 
-    function toDisplayableImageUrl(imgVal) {
-        if (!imgVal) return '';
-        let str = String(imgVal);
-        const m = str.match(/IMAGE\("([^"]+)"\)/i);
-        let rawUrl = m ? m[1] : str;
-
-        let fileId = '';
-        if (rawUrl.includes('uc?id=')) {
-            const parts = rawUrl.split('uc?id=');
-            if (parts[1]) fileId = parts[1].split('&')[0];
-        } else if (rawUrl.includes('/d/')) {
-            const parts = rawUrl.split('/d/');
-            if (parts[1]) fileId = parts[1].split('/')[0];
-        }
-
-        if (fileId) {
-            return `https://lh3.googleusercontent.com/d/${fileId}`;
-        }
-        return rawUrl;
-    }
-
-    function switchMode(mode) {
+    window.switchMode = function(mode) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.mode-section').forEach(sec => sec.classList.remove('active'));
 
@@ -296,20 +289,20 @@
             document.getElementById('update-mode').classList.add('active');
             generateSKU();
         }
-    }
+    };
 
-    function selectColor(colorName, btnElement) {
+    window.selectColor = function(colorName, btnElement) {
         document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
         document.getElementById('update-color').value = colorName;
-    }
+    };
 
     function generateSKU() {
         randomFourDigits = Math.floor(1000 + Math.random() * 9000);
         document.getElementById('generated-sku').value = randomFourDigits;
     }
 
-    function selectFabric(fabric) {
+    window.selectFabric = function(fabric) {
         currentFabric = fabric;
         document.querySelectorAll('.fabric-chip').forEach(chip => {
             chip.classList.toggle('active', chip.innerText.includes(fabric));
@@ -317,33 +310,32 @@
         document.getElementById('search-keyword').value = "";
         document.getElementById('product-grid').innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 คุณเลือกผ้า "${fabric}" แล้ว — กรุณากดปุ่ม "ค้นหา" เพื่อดึงข้อมูล</p>`;
         productsData = [];
-    }
+    };
 
-    async function fetchProductsFromSheet() {
+    // ดึงข้อมูลจาก Firebase Firestore
+    window.fetchProductsFromFirebase = async function() {
         const grid = document.getElementById('product-grid');
-        grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric}</p>`;
+        grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Firebase...</p>`;
 
         try {
-            let response = await fetch(N8N_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mode: "get_all_products", fabric: currentFabric })
+            const querySnapshot = await getDocs(collection(db, "products"));
+            productsData = [];
+            
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.fabric === currentFabric) {
+                    productsData.push(data);
+                }
             });
 
-            if (response.ok) {
-                let data = await response.json();
-                productsData = Array.isArray(data) ? data : (data ? [data] : []);
-                renderProductsLocally();
-            } else {
-                grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ ไม่พบข้อมูลสินค้าในชีทนี้</p>`;
-            }
+            renderProductsLocally();
         } catch (error) {
-            console.error("Error:", error);
-            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ n8n</p>`;
+            console.error("Error fetching from Firebase:", error);
+            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Firebase</p>`;
         }
-    }
+    };
 
-    function previewImage(event) {
+    window.previewImage = function(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -351,16 +343,16 @@
                 tempImageBase64 = e.target.result;
                 document.getElementById('img-preview').src = tempImageBase64;
                 document.getElementById('image-preview-box').style.display = 'block';
-            }
+            };
             reader.readAsDataURL(file);
         }
-    }
+    };
 
-    function handleKeyPress(event) {
+    window.handleKeyPress = function(event) {
         if (event.key === 'Enter') {
-            fetchProductsFromSheet();
+            fetchProductsFromFirebase();
         }
-    }
+    };
 
     function renderProductsLocally() {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
@@ -410,7 +402,7 @@
             const displayName = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] != null ? p['SKU'] : '-'));
             const color = p['สี'] || '-';
             
-            let imgUrl = toDisplayableImageUrl(p['รูปภาพสินค้า']);
+            let imgUrl = p['รูปภาพสินค้า'] || '';
             let imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${displayName}" onerror="this.onerror=null; this.parentNode.innerHTML='รูปภาพสินค้า';">` : `รูปภาพสินค้า`;
 
             const sizeFilter = document.getElementById('filter-size').value;
@@ -433,14 +425,14 @@
         });
     }
 
-    function openStockModal(sku, fabric, displayName) {
+    window.openStockModal = function(sku, fabric, displayName) {
         activeSku = sku;
 
         document.getElementById('modal-title').innerText = displayName || ('SKU ' + sku);
         document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${fabric} | SKU: ${sku}`;
 
         const product = productsData.find(p => p && String(p['SKU']) === String(sku)) || {};
-        currentImgUrl = toDisplayableImageUrl(product['รูปภาพสินค้า']);
+        currentImgUrl = product['รูปภาพสินค้า'] || '';
 
         const modalImgBox = document.getElementById('modal-img-box');
         if (currentImgUrl) {
@@ -466,77 +458,62 @@
             rowHTML += `</tr>`;
             tbody.innerHTML += rowHTML;
         });
-    }
+    };
 
-    function openLightbox(event) {
+    window.openLightbox = function(event) {
         if (event) event.stopPropagation();
         if (!currentImgUrl) return;
         document.getElementById('lightbox-img').src = currentImgUrl;
         document.getElementById('lightboxModal').style.display = 'flex';
-    }
+    };
 
-    function closeLightbox() {
+    window.closeLightbox = function() {
         document.getElementById('lightboxModal').style.display = 'none';
-    }
+    };
 
-    // ฟังก์ชันถามยืนยันก่อนบันทึกสต๊อก
-    function confirmSaveStockChanges() {
+    window.confirmSaveStockChanges = function() {
         if (confirm("❓ คุณต้องการยืนยันการบันทึกการแก้ไขจำนวนสต๊อกนี้ใช่หรือไม่?")) {
             saveStockChanges();
         }
-    }
+    };
 
     async function saveStockChanges() {
         const inputs = document.querySelectorAll('.stock-input');
-        let updatedStock = {};
+        let updateData = {};
 
         inputs.forEach(input => {
             let key = input.getAttribute('data-key');
-            updatedStock[key] = parseInt(input.value) || 0;
+            updateData[key] = parseInt(input.value) || 0;
         });
 
-        const payload = {
-            mode: "batch_update",
-            sku: activeSku,
-            fabric: currentFabric,
-            stockData: updatedStock
-        };
-
         try {
-            let response = await fetch(N8N_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const docRef = doc(db, "products", String(activeSku));
+            await updateDoc(docRef, updateData);
 
-            if (response.ok) {
-                alert("✨ อัปเดตจำนวนสต๊อกสำเร็จ!");
-                closeModal();
-                fetchProductsFromSheet();
-            } else {
-                alert("❌ ไม่สามารถบันทึกข้อมูลได้");
-            }
+            alert("✨ อัปเดตจำนวนสต๊อกสำเร็จ!");
+            closeModal();
+            fetchProductsFromFirebase();
         } catch (error) {
-            console.error("Error:", error);
-            alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ n8n");
+            console.error("Error updating stock:", error);
+            alert("❌ ไม่สามารถบันทึกข้อมูลได้");
         }
     }
 
-    function closeModal() {
+    window.closeModal = function() {
         document.getElementById('stockModal').style.display = 'none';
-    }
+    };
 
-    async function submitUpdate() {
-        const pattern = document.getElementById('update-pattern').value;
-        const color = document.getElementById('update-color').value;
+    window.submitUpdate = async function() {
+        const pattern = document.getElementById('update-pattern').value.trim();
+        const color = document.getElementById('update-color').value.trim();
         const fabric = document.getElementById('fabric-select').value;
         const style = document.getElementById('update-style').value;
         const sku = document.getElementById('generated-sku').value;
         const size = document.getElementById('update-size').value;
-        const qty = document.getElementById('update-qty').value;
+        const qty = parseInt(document.getElementById('update-qty').value) || 0;
 
-        if(!pattern || !qty) {
-            alert("⚠️ กรุณากรอกชื่อลายและจำนวนให้ครบถ้วน");
+        if(!pattern) {
+            alert("⚠️ กรุณากรอกชื่อลายสินค้า");
             return;
         }
 
@@ -544,43 +521,43 @@
             return;
         }
 
-        const payload = {
-            mode: "full_update",
-            pattern,
-            color,
-            fabric,
-            style,
-            sku,
-            size,
-            quantity: qty,
-            image: tempImageBase64
+        let newProductData = {
+            'SKU': sku,
+            'ชื่อลาย': pattern,
+            'สี': color,
+            'fabric': fabric,
+            'รูปภาพสินค้า': tempImageBase64
         };
 
-        try {
-            let response = await fetch(N8N_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+        STYLES.forEach(s => {
+            SIZesList = ["43", "48", "52"];
+            SIZesList.forEach(sz => {
+                let keyName = `${s} ${sz}`;
+                if (s === style && sz === size) {
+                    newProductData[keyName] = qty;
+                } else {
+                    newProductData[keyName] = 0;
+                }
             });
+        });
 
-            if(response.ok) {
-                alert(`🎉 เพิ่มสินค้าสำเร็จ! รหัส SKU: ${sku}`);
-                document.getElementById('update-pattern').value = '';
-                document.getElementById('update-qty').value = '';
-                document.getElementById('update-image').value = '';
-                document.getElementById('image-preview-box').style.display = 'none';
-                tempImageBase64 = "";
+        try {
+            await setDoc(doc(db, "products", String(sku)), newProductData);
 
-                generateSKU();
-                switchMode('check');
-            } else {
-                alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์");
-            }
+            alert(`🎉 เพิ่มสินค้าสำเร็จ! รหัส SKU: ${sku}`);
+            document.getElementById('update-pattern').value = '';
+            document.getElementById('update-qty').value = '';
+            document.getElementById('update-image').value = '';
+            document.getElementById('image-preview-box').style.display = 'none';
+            tempImageBase64 = "";
+
+            generateSKU();
+            switchMode('check');
         } catch (error) {
-            console.error("Error:", error);
-            alert("❌ ไม่สามารถเชื่อมต่อกับ n8n ได้");
+            console.error("Error adding product:", error);
+            alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูลลง Firebase");
         }
-    }
+    };
 </script>
 
 </body>
