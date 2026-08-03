@@ -63,7 +63,7 @@
         select, input { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: #ffffff; }
         select:focus, input:focus { border-color: var(--primary-color); }
 
-        .color-palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+        .color-palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 8px; }
         .color-btn { padding: 10px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-align: center; background-color: #ffffff; }
         .color-btn:hover { opacity: 0.85; transform: scale(1.02); }
         .color-btn.active { border-color: #be185d; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3); transform: scale(1.05); }
@@ -236,7 +236,10 @@
                 <button type="button" class="color-btn" style="background-color: #98fb98; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
                 <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
                 <button type="button" class="color-btn" style="background-color: #d3d3d3; color: #000;" onclick="selectColor('เทา', this)">เทา</button>
-                <button type="button" class="color-btn" style="background-color: #ff6347; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
+                <button type="button" class="color-btn" style="background-color: #ef4444; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
+                <button type="button" class="color-btn" style="background-color: #ffa500; color: #fff;" onclick="selectColor('ส้ม', this)">ส้ม</button>
+                <button type="button" class="color-btn" style="background-color: #ffdab9; color: #000;" onclick="selectColor('โอรส', this)">โอรส</button>
+                <button type="button" class="color-btn" style="background-color: #000080; color: #fff;" onclick="selectColor('กรม', this)">กรม</button>
             </div>
             <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.9rem; padding: 8px;">
         </div>
