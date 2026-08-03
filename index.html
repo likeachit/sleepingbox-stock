@@ -58,19 +58,19 @@
         .fabric-chip { padding: 8px 18px; background: #fff1f2; border: 1px solid #fce7f3; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; color: #db2777; }
         .fabric-chip.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); }
 
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .product-card { background: #ffffff; border: 2px solid #fce7f3; border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
         .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(244, 114, 182, 0.2); border-color: var(--primary-color); }
 
-        .product-img-container { width: 100%; height: 160px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
+        .product-img-container { width: 100%; height: 130px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.85rem; position: relative; }
         .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
 
         .product-card.out-of-stock img { filter: grayscale(100%); opacity: 0.5; }
-        .out-of-stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(244, 63, 94, 0.9); color: white; padding: 4px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .out-of-stock-badge { position: absolute; top: 8px; right: 8px; background: rgba(244, 63, 94, 0.9); color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 6px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
 
-        .product-info { padding: 14px; }
-        .product-name { font-size: 1.05rem; margin-bottom: 4px; color: #831843; }
-        .product-fabric { font-size: 0.85rem; color: #db2777; }
+        .product-info { padding: 10px; }
+        .product-name { font-size: 0.95rem; margin-bottom: 2px; color: #831843; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-fabric { font-size: 0.8rem; color: #db2777; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
         .modal-content { background: white; width: 100%; max-width: 550px; padding: 24px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 2px solid #fce7f3; }
@@ -98,7 +98,6 @@
         @media screen and (max-width: 600px) {
             body { padding: 10px; }
             .container { padding: 16px; border-radius: 16px; }
-            .product-grid { grid-template-columns: 1fr; }
             .search-filter-box { flex-direction: column; }
             .search-input, .filter-select, .search-btn { width: 100%; }
             .modal-content { padding: 16px; max-width: 100%; }
@@ -167,10 +166,10 @@
                 <button type="button" class="color-btn" style="background-color: #000000; color: #fff;" onclick="selectColor('ดำ', this)">ดำ</button>
                 <button type="button" class="color-btn" style="background-color: #fdf5e6; color: #000;" onclick="selectColor('ครีม', this)">ครีม</button>
                 <button type="button" class="color-btn" style="background-color: #ffd700; color: #000;" onclick="selectColor('เหลือง', this)">เหลือง</button>
-                <button type="button" class="color-btn" style="background-color: #02ff02; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
+                <button type="button" class="color-btn" style="background-color: #98fb98; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
                 <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
                 <button type="button" class="color-btn" style="background-color: #d3d3d3; color: #000;" onclick="selectColor('เทา', this)">เทา</button>
-                <button type="button" class="color-btn" style="background-color: #f80707; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
+                <button type="button" class="color-btn" style="background-color: #ff6347; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
             </div>
             <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.9rem; padding: 8px;">
         </div>
@@ -188,8 +187,8 @@
             <label>รูปแบบแขน-ขา:</label>
             <select id="update-style">
                 <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
-                <option value="แขนสั้นขายาว">แขนสั้นขายาว</option>
-                <option value="แขนยาวขายาว">แขนยาวขายาว</option>
+                <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
+                <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
                 <option value="กระโปรง">กระโปรง</option>
             </select>
         </div>
@@ -267,7 +266,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายาว", "แขนยาวขายาว", "กระโปรง"];
+    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"];
     const SIZES = ["43", "48", "52"];
 
     let productsData = [];
@@ -297,7 +296,6 @@
         document.getElementById('update-color').value = colorName;
     };
 
-    // ฟังก์ชันสร้าง SKU ตามเนื้อผ้าที่คุณเลือก
     window.updateSKUPrefix = function() {
         const fabric = document.getElementById('fabric-select').value;
         let prefix = "Satin";
@@ -346,7 +344,6 @@
         }
     };
 
-    // บีบอัดภาพให้อัตโนมัติ ป้องกันไฟล์เกิน 1MB
     window.previewImage = function(event) {
         const file = event.target.files[0];
         if (!file) return;
