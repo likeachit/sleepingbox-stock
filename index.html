@@ -239,7 +239,7 @@
             <tbody id="modal-stock-data"></tbody>
         </table>
 
-        <button class="action-btn" onclick="confirmSaveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
+        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
     </div>
 </div>
 
@@ -334,17 +334,40 @@
         }
     };
 
+    // ฟังก์ชันย่อขนาดรูปภาพอัตโนมัติก่อนเก็บลง Firebase (แก้ปัญหาไฟล์ใหญ่เกิน 1MB)
     window.previewImage = function(event) {
         const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                tempImageBase64 = e.target.result;
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                
+                // กำหนดความกว้างสูงสุดไม่เกิน 600px เพื่อให้ขนาดไฟล์เล็กจิ๋วและปลอดภัยต่อ Firebase
+                const maxWidth = 600;
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // บีบอัดคุณภาพลงเหลือ 75% (.jpeg)
+                tempImageBase64 = canvas.toDataURL('image/jpeg', 0.75);
+                
                 document.getElementById('img-preview').src = tempImageBase64;
                 document.getElementById('image-preview-box').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            }
         }
+        reader.readAsDataURL(file);
     };
 
     window.handleKeyPress = function(event) {
@@ -470,13 +493,7 @@
         document.getElementById('lightboxModal').style.display = 'none';
     };
 
-    window.confirmSaveStockChanges = function() {
-        if (confirm("❓ คุณต้องการยืนยันการบันทึกการแก้ไขจำนวนสต๊อกนี้ใช่หรือไม่?")) {
-            saveStockChanges();
-        }
-    };
-
-    async function saveStockChanges() {
+    window.saveStockChanges = async function() {
         const inputs = document.querySelectorAll('.stock-input');
         let updateData = {};
 
@@ -496,7 +513,7 @@
             console.error("Error updating stock:", error);
             alert("❌ ไม่สามารถบันทึกข้อมูลได้");
         }
-    }
+    };
 
     window.closeModal = function() {
         document.getElementById('stockModal').style.display = 'none';
@@ -513,10 +530,6 @@
 
         if(!pattern) {
             alert("⚠️ กรุณากรอกชื่อลายสินค้า");
-            return;
-        }
-
-        if (!confirm(`❓ ต้องการบันทึกสินค้าใหม่ (SKU: ${sku}) นี้ใช่หรือไม่?`)) {
             return;
         }
 
