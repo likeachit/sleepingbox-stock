@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleepingbox - Stock System</title>
+    <!-- ดึงฟอนต์ Mitr มาใช้งาน -->
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f472b6; /* ชมพูน่ารักละมุน */
+            --primary-hover: #ec4899;
+            --bg-color: #fff1f2; /* พื้นหลังสีชมพูอ่อนพาสเทล */
+            --card-bg: #ffffff; /* การ์ดสีขาวสะอาดตา */
+            --text-color: #57534e;
+            --border-color: #fbcfe8; /* ขอบสีชมพูอ่อน */
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Mitr', sans-serif !important; font-weight: 300 !important; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 750px; background: var(--card-bg); padding: 24px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.15); border: 2px solid #ffffff; }
+
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { font-size: 1.6rem; color: #db2777; margin: 0; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #fff1f2; padding: 6px; border-radius: 14px; border: 1px solid #fce7f3; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; cursor: pointer; border-radius: 10px; transition: all 0.2s; color: #db2777; }
+        .tab-btn.active { background: #ffffff; color: #be185d; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.15); }
+
+        .search-filter-box { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+        .search-input { flex: 2; padding: 12px 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; transition: border-color 0.2s; }
+        .search-input:focus { border-color: var(--primary-color); }
+        .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
+        .filter-select:focus { border-color: var(--primary-color); }
+
+        .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 22px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); }
+        .search-btn:hover { background-color: var(--primary-hover); }
+        .search-btn:active { transform: scale(0.97); }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #db2777; }
+        select, input { width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; outline: none; background: #ffffff; }
+        select:focus, input:focus { border-color: var(--primary-color); }
+
+        .color-palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px; }
+        .color-btn { padding: 10px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-align: center; background-color: #ffffff; }
+        .color-btn:hover { opacity: 0.85; transform: scale(1.02); }
+        .color-btn.active { border-color: #be185d; box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.3); transform: scale(1.05); }
+
+        .sku-preview { background: #fff1f2; border: 2px dashed var(--primary-color); color: #db2777; text-align: center; letter-spacing: 2px; }
+
+        .action-btn { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); }
+        .action-btn:hover { background: var(--primary-hover); }
+
+        .mode-section { display: none; }
+        .mode-section.active { display: block; }
+
+        .fabric-categories { display: flex; gap: 10px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 5px; }
+        .fabric-chip { padding: 8px 18px; background: #fff1f2; border: 1px solid #fce7f3; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; color: #db2777; }
+        .fabric-chip.active { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); }
+
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .product-card { background: #ffffff; border: 2px solid #fce7f3; border-radius: 16px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(244, 114, 182, 0.2); border-color: var(--primary-color); }
+
+        .product-img-container { width: 100%; height: 160px; background: #fff1f2; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
+        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
+
+        .product-card.out-of-stock img { filter: grayscale(100%); opacity: 0.5; }
+        .out-of-stock-badge { position: absolute; top: 10px; right: 10px; background: rgba(244, 63, 94, 0.9); color: white; padding: 4px 10px; font-size: 0.75rem; border-radius: 8px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+
+        .product-info { padding: 14px; }
+        .product-name { font-size: 1.05rem; margin-bottom: 4px; color: #831843; }
+        .product-fabric { font-size: 0.85rem; color: #db2777; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 20px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 550px; padding: 24px; border-radius: 20px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 2px solid #fce7f3; }
+        .close-btn { position: absolute; top: 15px; right: 18px; font-size: 1.4rem; cursor: pointer; border: none; background: none; color: #db2777; z-index: 10; }
+        .close-btn:hover { color: #be185d; }
+
+        .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 12px; }
+        .modal-img-container { position: relative; display: inline-block; border-radius: 14px; overflow: hidden; background: #fff1f2; max-height: 250px; border: 2px solid #fce7f3; }
+        .modal-img-container img { display: block; max-height: 250px; width: auto; object-fit: contain; }
+        
+        .zoom-btn { position: absolute; bottom: 8px; right: 8px; background: rgba(244, 114, 182, 0.85); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .zoom-btn:hover { background: rgba(236, 72, 153, 1); }
+
+        .lightbox-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .lightbox-content { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 12px; }
+        .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 2.5rem; cursor: pointer; border: none; background: none; }
+
+        .stock-table { width: 100%; margin-top: 15px; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
+        .stock-table th, .stock-table td { border: 1px solid #fce7f3; padding: 10px; text-align: center; font-size: 0.9rem; }
+        .stock-table th { background: #fff1f2; color: #be185d; }
+        .stock-table td:first-child { text-align: left; color: #831843; }
+        .stock-input { width: 100%; padding: 6px; border: 2px solid #fce7f3; border-radius: 8px; text-align: center; font-size: 0.95rem; background: #ffffff; }
+        .stock-input:focus { border-color: var(--primary-color); }
+
+        /* Responsive สำหรับมือถือ */
+        @media screen and (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 16px; border-radius: 16px; }
+            .product-grid { grid-template-columns: 1fr; }
+            .search-filter-box { flex-direction: column; }
+            .search-input, .filter-select, .search-btn { width: 100%; }
+            .modal-content { padding: 16px; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-container">
+        <h1>🎀 Sleepingbox Stock</h1>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อกสินค้า</button>
+        <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้าใหม่</button>
+    </div>
+
+    <!-- โหมดที่ 1: เช็คและค้นหาสินค้า -->
+    <div id="check-mode" class="mode-section active">
+        <div class="fabric-categories">
+            <button class="fabric-chip active" onclick="selectFabric('ซาติน')">ผ้าซาติน</button>
+            <button class="fabric-chip" onclick="selectFabric('ไหม')">ผ้าไหม</button>
+            <button class="fabric-chip" onclick="selectFabric('คอตตอน')">ผ้าคอตตอน</button>
+            <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
+        </div>
+
+        <div class="search-filter-box">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
+            <select id="filter-size" class="filter-select">
+                <option value="">ทุกขนาด</option>
+                <option value="43">ไซส์ 43</option>
+                <option value="48">ไซส์ 48</option>
+                <option value="52">ไซส์ 52</option>
+            </select>
+            <button type="button" class="search-btn" onclick="fetchProductsFromSheet()">
+                <span>🔍 ค้นหา</span>
+            </button>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            <p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 กรุณาเลือกเนื้อผ้าและกดปุ่ม "ค้นหา" เพื่อแสดงรายการสินค้า</p>
+        </div>
+    </div>
+
+    <!-- โหมดที่ 2: เพิ่มสินค้าใหม่ -->
+    <div id="update-mode" class="mode-section">
+        <div class="form-group">
+            <label>อัปโหลดรูปภาพสินค้า:</label>
+            <input type="file" id="update-image" accept="image/*" onchange="previewImage(event)">
+        </div>
+        <div class="form-group" id="image-preview-box" style="display:none; text-align: center;">
+            <img id="img-preview" src="" alt="Preview" style="max-height: 120px; border-radius: 10px; border: 2px solid #fce7f3;">
+        </div>
+        <div class="form-group">
+            <label>ชื่อลายสินค้า:</label>
+            <input type="text" id="update-pattern" placeholder="เช่น ลายหมี, 8016">
+        </div>
+
+        <div class="form-group">
+            <label>สี:</label>
+            <div class="color-palette">
+                <button type="button" class="color-btn active" style="background-color: #ffc0cb; color: #000;" onclick="selectColor('ชมพู', this)">ชมพู</button>
+                <button type="button" class="color-btn" style="background-color: #87ceeb; color: #000;" onclick="selectColor('ฟ้า', this)">ฟ้า</button>
+                <button type="button" class="color-btn" style="background-color: #ffffff; color: #000;" onclick="selectColor('ขาว', this)">ขาว</button>
+                <button type="button" class="color-btn" style="background-color: #000000; color: #fff;" onclick="selectColor('ดำ', this)">ดำ</button>
+                <button type="button" class="color-btn" style="background-color: #fdf5e6; color: #000;" onclick="selectColor('ครีม', this)">ครีม</button>
+                <button type="button" class="color-btn" style="background-color: #ffd700; color: #000;" onclick="selectColor('เหลือง', this)">เหลือง</button>
+                <button type="button" class="color-btn" style="background-color: #98fb98; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
+                <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
+                <button type="button" class="color-btn" style="background-color: #d3d3d3; color: #000;" onclick="selectColor('เทา', this)">เทา</button>
+                <button type="button" class="color-btn" style="background-color: #ff6347; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
+            </div>
+            <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.9rem; padding: 8px;">
+        </div>
+
+        <div class="form-group">
+            <label>เนื้อผ้า:</label>
+            <select name="fabric" id="fabric-select">
+                <option value="ซาติน">ผ้าซาติน</option>
+                <option value="ไหม">ผ้าไหม</option>
+                <option value="คอตตอน">ผ้าคอตตอน</option>
+                <option value="ผ้าย่น">ผ้าย่น</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>รูปแบบแขน-ขา:</label>
+            <select id="update-style">
+                <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
+                <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
+                <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
+                <option value="กระโปรง">กระโปรง</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>รหัส SKU (สุ่มตัวเลข 4 หลัก):</label>
+            <input type="text" id="generated-sku" class="sku-preview" readonly value="0000">
+        </div>
+        <div class="form-group">
+            <label>ขนาด:</label>
+            <select id="update-size">
+                <option value="43">43</option>
+                <option value="48">48</option>
+                <option value="52">52</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>จำนวนเริ่มต้น:</label>
+            <input type="number" id="update-qty" placeholder="เช่น 10">
+        </div>
+        <button class="action-btn" onclick="submitUpdate()">🎀 บันทึกสินค้าใหม่</button>
+    </div>
+</div>
+
+<!-- Modal แสดงรายละเอียดสต๊อกและแก้ไขได้ทันที -->
+<div id="stockModal" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        
+        <div class="modal-img-wrapper">
+            <div class="modal-img-container" id="modal-img-box">
+                <span style="color: #db2777; padding: 20px;">ไม่มีรูปภาพ</span>
+            </div>
+        </div>
+
+        <h2 id="modal-title" style="font-size: 1.2rem; margin-bottom: 5px; color: #be185d;">รายละเอียดสต๊อก</h2>
+        <p id="modal-subtitle" style="font-size: 0.9rem; color: #db2777; margin-bottom: 10px;"></p>
+
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>รูปแบบแขน-ขา / ไซส์</th>
+                    <th>43</th>
+                    <th>48</th>
+                    <th>52</th>
+                </tr>
+            </thead>
+            <tbody id="modal-stock-data"></tbody>
+        </table>
+
+        <button class="action-btn" onclick="confirmSaveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
+    </div>
+</div>
+
+<!-- Lightbox สำหรับแสดงภาพขนาดใหญ่เต็มจอ -->
+<div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" class="lightbox-content" src="" alt="Zoomed Image">
+</div>
+
+<script>
+    const N8N_WEBHOOK_URL = "https://likeachit.app.n8n.cloud/webhook/sleepingbox-stock";
+
+    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"];
+    const SIZES = ["43", "48", "52"];
+
+    let productsData = [];
+    let currentFabric = "ซาติน";
+    let randomFourDigits = "";
+    let activeSku = "";
+    let tempImageBase64 = "";
+    let currentImgUrl = "";
+
+    function toDisplayableImageUrl(imgVal) {
+        if (!imgVal) return '';
+        let str = String(imgVal);
+        const m = str.match(/IMAGE\("([^"]+)"\)/i);
+        let rawUrl = m ? m[1] : str;
+
+        let fileId = '';
+        if (rawUrl.includes('uc?id=')) {
+            const parts = rawUrl.split('uc?id=');
+            if (parts[1]) fileId = parts[1].split('&')[0];
+        } else if (rawUrl.includes('/d/')) {
+            const parts = rawUrl.split('/d/');
+            if (parts[1]) fileId = parts[1].split('/')[0];
+        }
+
+        if (fileId) {
+            return `https://lh3.googleusercontent.com/d/${fileId}`;
+        }
+        return rawUrl;
+    }
+
+    function switchMode(mode) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.mode-section').forEach(sec => sec.classList.remove('active'));
+
+        if(mode === 'check') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('check-mode').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('update-mode').classList.add('active');
+            generateSKU();
+        }
+    }
+
+    function selectColor(colorName, btnElement) {
+        document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        document.getElementById('update-color').value = colorName;
+    }
+
+    function generateSKU() {
+        randomFourDigits = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('generated-sku').value = randomFourDigits;
+    }
+
+    function selectFabric(fabric) {
+        currentFabric = fabric;
+        document.querySelectorAll('.fabric-chip').forEach(chip => {
+            chip.classList.toggle('active', chip.innerText.includes(fabric));
+        });
+        document.getElementById('search-keyword').value = "";
+        document.getElementById('product-grid').innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 30px;">🌸 คุณเลือกผ้า "${fabric}" แล้ว — กรุณากดปุ่ม "ค้นหา" เพื่อดึงข้อมูล</p>`;
+        productsData = [];
+    }
+
+    async function fetchProductsFromSheet() {
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">⏳ กำลังดึงข้อมูลผ้า ${currentFabric} จาก Google Sheets...</p>`;
+
+        try {
+            let response = await fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode: "get_all_products", fabric: currentFabric })
+            });
+
+            if (response.ok) {
+                let data = await response.json();
+                productsData = Array.isArray(data) ? data : (data ? [data] : []);
+                renderProductsLocally();
+            } else {
+                grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ ไม่พบข้อมูลสินค้าในชีทนี้</p>`;
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:red; padding: 20px;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อ n8n</p>`;
+        }
+    }
+
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tempImageBase64 = e.target.result;
+                document.getElementById('img-preview').src = tempImageBase64;
+                document.getElementById('image-preview-box').style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            fetchProductsFromSheet();
+        }
+    }
+
+    function renderProductsLocally() {
+        const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const sizeFilter = document.getElementById('filter-size').value;
+
+        const filtered = productsData.filter(p => {
+            if (!p) return false;
+            const hay = [
+                (p['ชื่อลาย'] || ''),
+                (p['สี'] || ''),
+                (p['SKU'] != null ? String(p['SKU']) : '')
+            ].join(' ').toLowerCase();
+            const matchKeyword = !keyword || hay.includes(keyword);
+
+            let matchSize = true;
+            if (sizeFilter) {
+                matchSize = STYLES.some(style => (`${style} ${sizeFilter}`) in p);
+            }
+            return matchKeyword && matchSize;
+        });
+
+        renderProducts(filtered);
+    }
+
+    function calcTotalStock(p, sizeFilter) {
+        let total = 0;
+        STYLES.forEach(style => {
+            SIZES.forEach(size => {
+                if (sizeFilter && size !== sizeFilter) return;
+                let v = parseInt(p[`${style} ${size}`]);
+                if (!isNaN(v)) total += v;
+            });
+        });
+        return total;
+    }
+
+    function renderProducts(list) {
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = "";
+
+        if (list.length === 0) {
+            grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">ไม่พบสินค้าที่ค้นหา</p>`;
+            return;
+        }
+
+        list.forEach(p => {
+            const displayName = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] != null ? p['SKU'] : '-'));
+            const color = p['สี'] || '-';
+            
+            let imgUrl = toDisplayableImageUrl(p['รูปภาพสินค้า']);
+            let imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${displayName}" onerror="this.onerror=null; this.parentNode.innerHTML='รูปภาพสินค้า';">` : `รูปภาพสินค้า`;
+
+            const sizeFilter = document.getElementById('filter-size').value;
+            let isOutOfStock = calcTotalStock(p, sizeFilter) <= 0;
+            let cardClass = isOutOfStock ? "product-card out-of-stock" : "product-card";
+            let badgeHTML = isOutOfStock ? `<div class="out-of-stock-badge">สินค้าหมด</div>` : "";
+
+            grid.innerHTML += `
+                <div class="${cardClass}" onclick="openStockModal('${p['SKU']}', '${currentFabric}', '${String(displayName).replace(/'/g, "\\'")}')">
+                    <div class="product-img-container">
+                        ${badgeHTML}
+                        ${imgHTML}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${displayName}</div>
+                        <div class="product-fabric">ผ้า${currentFabric} | สี${color}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function openStockModal(sku, fabric, displayName) {
+        activeSku = sku;
+
+        document.getElementById('modal-title').innerText = displayName || ('SKU ' + sku);
+        document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${fabric} | SKU: ${sku}`;
+
+        const product = productsData.find(p => p && String(p['SKU']) === String(sku)) || {};
+        currentImgUrl = toDisplayableImageUrl(product['รูปภาพสินค้า']);
+
+        const modalImgBox = document.getElementById('modal-img-box');
+        if (currentImgUrl) {
+            modalImgBox.innerHTML = `
+                <img src="${currentImgUrl}" alt="Product Image" onerror="this.onerror=null; this.parentNode.innerHTML='<span>ไม่มีรูปภาพ</span>';">
+                <button type="button" class="zoom-btn" onclick="openLightbox(event)" title="ดูภาพใหญ่">🔍</button>
+            `;
+        } else {
+            modalImgBox.innerHTML = `<span style="color: #db2777; padding: 20px;">ไม่มีรูปภาพ</span>`;
+        }
+
+        const tbody = document.getElementById('modal-stock-data');
+        tbody.innerHTML = "";
+        document.getElementById('stockModal').style.display = 'flex';
+
+        STYLES.forEach(style => {
+            let rowHTML = `<tr><td><b>${style}</b></td>`;
+            SIZES.forEach(size => {
+                let keyName = `${style} ${size}`;
+                let qty = (product[keyName] !== undefined && product[keyName] !== "") ? product[keyName] : 0;
+                rowHTML += `<td><input type="number" class="stock-input" data-key="${keyName}" value="${qty}"></td>`;
+            });
+            rowHTML += `</tr>`;
+            tbody.innerHTML += rowHTML;
+        });
+    }
+
+    function openLightbox(event) {
+        if (event) event.stopPropagation();
+        if (!currentImgUrl) return;
+        document.getElementById('lightbox-img').src = currentImgUrl;
+        document.getElementById('lightboxModal').style.display = 'flex';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightboxModal').style.display = 'none';
+    }
+
+    // ฟังก์ชันถามยืนยันก่อนบันทึกสต๊อก
+    function confirmSaveStockChanges() {
+        if (confirm("❓ คุณต้องการยืนยันการบันทึกการแก้ไขจำนวนสต๊อกนี้ใช่หรือไม่?")) {
+            saveStockChanges();
+        }
+    }
+
+    async function saveStockChanges() {
+        const inputs = document.querySelectorAll('.stock-input');
+        let updatedStock = {};
+
+        inputs.forEach(input => {
+            let key = input.getAttribute('data-key');
+            updatedStock[key] = parseInt(input.value) || 0;
+        });
+
+        const payload = {
+            mode: "batch_update",
+            sku: activeSku,
+            fabric: currentFabric,
+            stockData: updatedStock
+        };
+
+        try {
+            let response = await fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert("✨ อัปเดตจำนวนสต๊อกสำเร็จ!");
+                closeModal();
+                fetchProductsFromSheet();
+            } else {
+                alert("❌ ไม่สามารถบันทึกข้อมูลได้");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("❌ เกิดข้อผิดพลาดในการเชื่อมต่อ n8n");
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('stockModal').style.display = 'none';
+    }
+
+    async function submitUpdate() {
+        const pattern = document.getElementById('update-pattern').value;
+        const color = document.getElementById('update-color').value;
+        const fabric = document.getElementById('fabric-select').value;
+        const style = document.getElementById('update-style').value;
+        const sku = document.getElementById('generated-sku').value;
+        const size = document.getElementById('update-size').value;
+        const qty = document.getElementById('update-qty').value;
+
+        if(!pattern || !qty) {
+            alert("⚠️ กรุณากรอกชื่อลายและจำนวนให้ครบถ้วน");
+            return;
+        }
+
+        if (!confirm(`❓ ต้องการบันทึกสินค้าใหม่ (SKU: ${sku}) นี้ใช่หรือไม่?`)) {
+            return;
+        }
+
+        const payload = {
+            mode: "full_update",
+            pattern,
+            color,
+            fabric,
+            style,
+            sku,
+            size,
+            quantity: qty,
+            image: tempImageBase64
+        };
+
+        try {
+            let response = await fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(response.ok) {
+                alert(`🎉 เพิ่มสินค้าสำเร็จ! รหัส SKU: ${sku}`);
+                document.getElementById('update-pattern').value = '';
+                document.getElementById('update-qty').value = '';
+                document.getElementById('update-image').value = '';
+                document.getElementById('image-preview-box').style.display = 'none';
+                tempImageBase64 = "";
+
+                generateSKU();
+                switchMode('check');
+            } else {
+                alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("❌ ไม่สามารถเชื่อมต่อกับ n8n ได้");
+        }
+    }
+</script>
+
+</body>
+</html>
