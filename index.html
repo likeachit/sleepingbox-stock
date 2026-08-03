@@ -27,12 +27,12 @@
         .tab-btn.active { background: #ffffff; color: #be185d; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.15); }
 
         .search-filter-box { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-        .search-input { flex: 2; padding: 12px 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; transition: border-color 0.2s; }
+        .search-input { flex: 2; min-width: 150px; padding: 12px 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--primary-color); }
         .filter-select { flex: 1; padding: 12px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 0.95rem; outline: none; background: #ffffff; cursor: pointer; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
         .search-btn { background-color: var(--primary-color); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(244, 114, 182, 0.25); white-space: nowrap; }
         .search-btn:hover { background-color: var(--primary-hover); }
 
@@ -154,10 +154,17 @@
             <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
-        <!-- แถวค้นหาหลัก -->
+        <!-- แถวค้นหาหลัก เพิ่มตัวเลือกรูปแบบแขน-ขา -->
         <div class="search-top-row">
             <div class="search-filter-box" style="flex: 1; margin-bottom: 0;">
                 <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeypress="handleKeyPress(event)">
+                <select id="filter-style" class="filter-select">
+                    <option value="">ทุกรูปแบบ</option>
+                    <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
+                    <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
+                    <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
+                    <option value="กระโปรง">กระโปรง</option>
+                </select>
                 <select id="filter-size" class="filter-select">
                     <option value="">ทุกขนาด</option>
                     <option value="43">ไซส์ 43</option>
@@ -222,7 +229,7 @@
                 <button type="button" class="color-btn" style="background-color: #98fb98; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
                 <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
                 <button type="button" class="color-btn" style="background-color: #d3d3d3; color: #000;" onclick="selectColor('เทา', this)">เทา</button>
-                <button type="button" class="color-btn" style="background-color: #ff0000; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
+                <button type="button" class="color-btn" style="background-color: #ff6347; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
             </div>
             <input type="text" id="update-color" value="ชมพู" placeholder="หรือพิมพ์ระบุสีเอง..." style="margin-top: 6px; font-size: 0.9rem; padding: 8px;">
         </div>
@@ -296,7 +303,7 @@
         </div>
 
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
-        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้ารี้ออกจากระบบ</button>
+        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
     </div>
 </div>
 
@@ -461,6 +468,7 @@
 
     function renderProductsLocally(isStockFilterActive) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const styleFilter = document.getElementById('filter-style').value;
         const sizeFilter = document.getElementById('filter-size').value;
         const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
@@ -473,33 +481,45 @@
             ].join(' ').toLowerCase();
             const matchKeyword = !keyword || hay.includes(keyword);
 
+            // เงื่อนไขกรองตามรูปแบบและขนาดที่เลือก
+            let targetTotal = 0;
+            let matchCount = 0;
+
+            STYLES.forEach(style => {
+                if (styleFilter && style !== styleFilter) return;
+                SIZES.forEach(size => {
+                    if (sizeFilter && size !== sizeFilter) return;
+                    let v = parseInt(p[`${style} ${size}`]) || 0;
+                    targetTotal += v;
+                    matchCount++;
+                });
+            });
+
+            // ตรวจสอบว่ามีสต๊อกตามเงื่อนไขที่เลือกหรือไม่
             let matchStockCondition = true;
             if (isStockFilterActive) {
-                let targetTotal = 0;
-                STYLES.forEach(style => {
-                    SIZES.forEach(size => {
-                        if (sizeFilter && size !== sizeFilter) return;
-                        let v = parseInt(p[`${style} ${size}`]) || 0;
-                        targetTotal += v;
-                    });
-                });
-
                 if (currentOperator === '<') {
                     matchStockCondition = (targetTotal < limitVal);
                 } else if (currentOperator === '>') {
                     matchStockCondition = (targetTotal > limitVal);
+                }
+            } else {
+                // สำหรับค้นหาปกติ ถ้าเลือกฟิลเตอร์รูปแบบ/ไซส์แล้ว ต้องมีสต๊อกมากกว่า 0 ในช่องนั้นๆ ถึงจะแสดง
+                if ((styleFilter || sizeFilter) && targetTotal <= 0) {
+                    matchStockCondition = false;
                 }
             }
 
             return matchKeyword && matchStockCondition;
         });
 
-        renderProducts(filtered, isStockFilterActive, sizeFilter);
+        renderProducts(filtered, isStockFilterActive, styleFilter, sizeFilter);
     }
 
-    function calcTotalStock(p, sizeFilter) {
+    function calcTotalStock(p, styleFilter, sizeFilter) {
         let total = 0;
         STYLES.forEach(style => {
+            if (styleFilter && style !== styleFilter) return;
             SIZES.forEach(size => {
                 if (sizeFilter && size !== sizeFilter) return;
                 let v = parseInt(p[`${style} ${size}`]);
@@ -509,12 +529,12 @@
         return total;
     }
 
-    function renderProducts(list, isStockFilterActive, sizeFilter) {
+    function renderProducts(list, isStockFilterActive, styleFilter, sizeFilter) {
         const grid = document.getElementById('product-grid');
         grid.innerHTML = "";
 
         if (list.length === 0) {
-            let msg = isStockFilterActive ? `ไม่พบสินค้าที่ตรงตามเงื่อนไขสต๊อกนี้ค่ะ` : `ไม่พบสินค้าที่ค้นหา`;
+            let msg = isStockFilterActive ? `ไม่พบสินค้าที่ตรงตามเงื่อนไขสต๊อกนี้ค่ะ` : `ไม่พบสินค้าที่ค้นหาตามรูปแบบ/ขนาดที่เลือก`;
             grid.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#db2777; padding: 20px;">${msg}</p>`;
             return;
         }
@@ -526,14 +546,14 @@
             let imgUrl = p['รูปภาพสินค้า'] || '';
             let imgHTML = imgUrl ? `<img src="${imgUrl}" alt="${displayName}" onerror="this.onerror=null; this.parentNode.innerHTML='รูปภาพสินค้า';">` : `รูปภาพสินค้า`;
 
-            let currentTotal = calcTotalStock(p, sizeFilter);
+            let currentTotal = calcTotalStock(p, styleFilter, sizeFilter);
             let isOutOfStock = currentTotal <= 0;
             let cardClass = isOutOfStock ? "product-card out-of-stock" : "product-card";
             
             let badgeHTML = "";
             if (isOutOfStock) {
                 badgeHTML = `<div class="out-of-stock-badge">สินค้าหมด</div>`;
-            } else if (isStockFilterActive) {
+            } else if (isStockFilterActive || styleFilter || sizeFilter) {
                 badgeHTML = `<div class="low-stock-badge">รวม ${currentTotal} ชุด</div>`;
             }
 
