@@ -131,6 +131,10 @@
         .edit-toggle-btn:hover { background: #ffe4e6; border-color: #f43f5e; }
         .edit-toggle-btn.active { background: #f43f5e; color: white; border-color: #f43f5e; }
 
+        .edit-info-container { background: #fff1f2; border: 2px solid #fbcfe8; padding: 12px; border-radius: 12px; margin-bottom: 12px; }
+        .edit-info-container input { margin-bottom: 8px; padding: 8px; font-size: 0.9rem; }
+        .edit-info-container input:last-child { margin-bottom: 0; }
+
         @media screen and (max-width: 600px) {
             body { padding: 10px; }
             .container { padding: 16px; border-radius: 16px; }
@@ -297,11 +301,22 @@
 
         <div class="modal-header-action">
             <div>
-                <h2 id="modal-title" style="font-size: 1.2rem; margin-bottom: 2px; color: #be185d;">รายละเอียดสต๊อก</h2>
-                <p id="modal-subtitle" style="font-size: 0.85rem; color: #db2777;"></p>
+                <!-- โหมดแสดงผลปกติ -->
+                <div id="view-info-box">
+                    <h2 id="modal-title" style="font-size: 1.2rem; margin-bottom: 2px; color: #be185d;">ชื่อลาย</h2>
+                    <p id="modal-subtitle" style="font-size: 0.85rem; color: #db2777;"></p>
+                </div>
+                <!-- โหมดแก้ไขชื่อและสี -->
+                <div id="edit-info-box" class="edit-info-container" style="display: none;">
+                    <label style="font-size: 0.8rem; color: #db2777; margin-bottom: 2px;">แก้ไขชื่อลาย:</label>
+                    <input type="text" id="edit-pattern-input" class="search-input" style="width: 100%; margin-bottom: 6px;">
+                    <label style="font-size: 0.8rem; color: #db2777; margin-bottom: 2px;">แก้ไขสี:</label>
+                    <input type="text" id="edit-color-input" class="search-input" style="width: 100%;">
+                    <button type="button" class="action-btn" style="margin-top: 8px; padding: 8px; font-size: 0.9rem;" onclick="saveInfoChanges()">💾 บันทึกชื่อและสี</button>
+                </div>
             </div>
             <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">
-                <span>✏️ แก้ไข</span>
+                <span>✏️ แก้ไขจำนวน</span>
             </button>
         </div>
 
@@ -580,7 +595,7 @@
                     </div>
                     <div class="product-info">
                         <div class="product-name">${displayName}</div>
-                        <div class="product-fabric">ผ้า${currentFabric} | SKU: ${p['SKU'] || '-'}</div>
+                        <div class="product-fabric">ผ้า${currentFabric} | สี: ${color}</div>
                         ${updatedAtText}
                     </div>
                 </div>
@@ -592,12 +607,22 @@
         activeSku = sku;
         isStockEditable = false;
         document.getElementById('edit-mode-btn').classList.remove('active');
-        document.getElementById('edit-mode-btn').innerHTML = "<span>✏️ แก้ไข</span>";
-
-        document.getElementById('modal-title').innerText = displayName || ('SKU ' + sku);
-        document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${fabric} | SKU: ${sku}`;
+        document.getElementById('edit-mode-btn').innerHTML = "<span>✏️ แก้ไขจำนวน</span>";
+        
+        // ซ่อนกล่องแก้ไขชื่อ ซ่อน แล้วแสดงชื่อปกติ
+        document.getElementById('edit-info-box').style.display = 'none';
+        document.getElementById('view-info-box').style.display = 'block';
 
         const product = productsData.find(p => p && String(p['SKU']) === String(sku)) || {};
+        const patternName = product['ชื่อลาย'] || displayName || '';
+        const colorName = product['สี'] || '';
+
+        document.getElementById('modal-title').innerText = patternName;
+        document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${fabric} | สี: ${colorName} | SKU: ${sku}`;
+        
+        document.getElementById('edit-pattern-input').value = patternName;
+        document.getElementById('edit-color-input').value = colorName;
+
         currentImgUrl = product['รูปภาพสินค้า'] || '';
 
         const modalImgBox = document.getElementById('modal-img-box');
@@ -633,18 +658,65 @@
 
         if (isStockEditable) {
             btn.classList.add('active');
-            btn.innerHTML = "<span>🔒 ล็อกการแก้ไข</span>";
+            btn.innerHTML = "<span>🔒 ล็อกการแก้ไขจำนวน</span>";
             inputs.forEach(input => {
                 input.classList.add('editable');
                 input.removeAttribute('readonly');
             });
         } else {
             btn.classList.remove('active');
-            btn.innerHTML = "<span>✏️ แก้ไข</span>";
+            btn.innerHTML = "<span>✏️ แก้ไขจำนวน</span>";
             inputs.forEach(input => {
                 input.classList.remove('editable');
                 input.setAttribute('readonly', 'true');
             });
+        }
+    };
+
+    // ฟังก์ชันสลับเปิด/ปิดช่องแก้ไขชื่อและสี
+    window.toggleInfoEdit = function() {
+        const viewDiv = document.getElementById('view-info-box');
+        const editDiv = document.getElementById('edit-info-box');
+        if (editDiv.style.display === 'none') {
+            editDiv.style.display = 'block';
+            viewDiv.style.display = 'none';
+        } else {
+            editDiv.style.display = 'none';
+            viewDiv.style.display = 'block';
+        }
+    };
+
+    window.saveInfoChanges = async function() {
+        const newPattern = document.getElementById('edit-pattern-input').value.trim();
+        const newColor = document.getElementById('edit-color-input').value.trim();
+
+        if (!newPattern) {
+            alert("⚠️ กรุณากรอกชื่อลายสินค้า");
+            return;
+        }
+
+        if (!confirm("⚠️ คุณต้องการบันทึกการเปลี่ยนแปลงชื่อและสีนี้ใช่หรือไม่?")) {
+            return;
+        }
+
+        try {
+            const docRef = doc(db, "products", String(activeSku));
+            await updateDoc(docRef, {
+                'ชื่อลาย': newPattern,
+                'สี': newColor
+            });
+
+            alert("✨ อัปเดตชื่อและสีสำเร็จ!");
+            document.getElementById('modal-title').innerText = newPattern;
+            document.getElementById('modal-subtitle').innerText = `เนื้อผ้า: ${currentFabric} | สี: ${newColor} | SKU: ${activeSku}`;
+            
+            document.getElementById('edit-info-box').style.display = 'none';
+            document.getElementById('view-info-box').style.display = 'block';
+            
+            fetchProductsFromFirebase(false);
+        } catch (error) {
+            console.error("Error updating info:", error);
+            alert("❌ ไม่สามารถบันทึกข้อมูลได้");
         }
     };
 
