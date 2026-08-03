@@ -246,7 +246,7 @@
 
         <div class="form-group">
             <label>เนื้อผ้า:</label>
-            <select name="fabric" id="fabric-select" onchange="updateSKUPrefix()">
+            <select name="fabric" id="fabric-select" onchange="generateSKU()">
                 <option value="ซาติน">ผ้าซาติน</option>
                 <option value="ไหม">ผ้าไหม</option>
                 <option value="คอตตอน">ผ้าคอตตอน</option>
@@ -348,7 +348,7 @@
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao",
@@ -368,7 +368,6 @@
 
     let productsData = [];
     let currentFabric = "ซาติน";
-    let randomFourDigits = "";
     let activeSku = "";
     let tempImageBase64 = "";
     let currentImgUrl = "";
@@ -408,7 +407,7 @@
         document.getElementById('update-color').value = colorName;
     };
 
-    window.updateSKUPrefix = function() {
+    window.generateSKU = async function() {
         const fabric = document.getElementById('fabric-select').value;
         let prefix = "Satin";
         if (fabric === "คอตตอน") prefix = "CT";
@@ -416,11 +415,24 @@
         else if (fabric === "ซาติน") prefix = "Satin";
         else if (fabric === "ผ้าย่น") prefix = "AA";
 
-        randomFourDigits = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('generated-sku').value = `${prefix}-${randomFourDigits}`;
-    };
+        let unique = false;
+        let finalSku = "";
+        
+        // วนลูปเช็คจนกว่าจะได้ SKU ที่ไม่ซ้ำในระบบ Firebase
+        while (!unique) {
+            let randomFourDigits = Math.floor(1000 + Math.random() * 9000);
+            finalSku = `${prefix}-${randomFourDigits}`;
+            
+            const docRef = doc(db, "products", finalSku);
+            const docSnap = await getDoc(docRef);
+            
+            if (!docSnap.exists()) {
+                unique = true;
+            }
+        }
 
-    function generateSKU() { updateSKUPrefix(); }
+        document.getElementById('generated-sku').value = finalSku;
+    };
 
     window.selectFabric = function(fabric) {
         currentFabric = fabric;
