@@ -57,7 +57,6 @@
         .fabric-chip { padding: 12px 26px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 24px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .fabric-chip.active { background: var(--accent-color); color: white; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.3); border-color: var(--accent-color); font-weight: 400 !important; transform: scale(1.05); }
 
-        /* ✨ ปุ่มเรียงลำดับ */
         .sort-container { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
         .sort-btn { background: #fff; border: 1.5px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
         .sort-btn:hover { background: #fff1f2; border-color: var(--primary-color); }
@@ -159,7 +158,7 @@
         </div>
 
         <div class="search-top-row">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeyup="renderProductsLocally(false)">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU (ค้นหาทันที)..." onkeyup="renderProductsLocally(false)">
             
             <select id="filter-style" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกรูปแบบ</option>
@@ -169,6 +168,7 @@
                 <option value="กระโปรง">กระโปรง</option>
             </select>
             
+            <!-- เพิ่มช่องตัวกรองขนาดกลับมาให้แล้วครับ -->
             <select id="filter-size" class="filter-select" onchange="renderProductsLocally(false)">
                 <option value="">ทุกขนาด</option>
                 <option value="43">ไซส์ 43</option>
@@ -176,10 +176,6 @@
                 <option value="52">ไซส์ 52</option>
                 <option value="60">ไซส์ 60</option>
             </select>
-
-            <button type="button" class="search-btn" onclick="renderProductsLocally(false)">
-                🔍 ค้นหา
-            </button>
         </div>
 
         <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
@@ -200,7 +196,6 @@
             </div>
         </div>
 
-        <!-- ✨ ส่วนปุ่มเรียงลำดับสต๊อก -->
         <div class="sort-container">
             <span style="font-size: 0.95rem; color: var(--accent-color);">เรียงจำนวนสต๊อก:</span>
             <button type="button" id="sort-asc" class="sort-btn" onclick="applySort('asc')">🔼 น้อยไปมาก</button>
@@ -214,7 +209,6 @@
 
     <!-- โหมดที่ 2: เพิ่มสินค้าใหม่ -->
     <div id="update-mode" class="mode-section">
-        <!-- ฟอร์มเพิ่มสินค้ายังคงเหมือนเดิม -->
         <div class="form-group">
             <label>อัปโหลดรูปภาพสินค้า:</label>
             <input type="file" id="update-image" accept="image/*" onchange="previewImage(event)">
@@ -352,7 +346,7 @@
     let tempImageBase64 = "";
     let currentOperator = "<";
     let isStockEditable = false;
-    let currentSortOrder = 'default'; // เก็บสถานะการเรียงลำดับ
+    let currentSortOrder = 'default';
 
     window.showToast = function(message, type="success") {
         const toast = document.getElementById("toast");
@@ -451,10 +445,9 @@
         reader.readAsDataURL(file);
     };
 
-    // ✨ ฟังก์ชันจัดการปุ่มเรียงลำดับ
     window.applySort = function(order) {
         if (currentSortOrder === order) {
-            currentSortOrder = 'default'; // กดซ้ำเพื่อยกเลิกการเรียง
+            currentSortOrder = 'default';
         } else {
             currentSortOrder = order;
         }
@@ -462,7 +455,6 @@
         document.getElementById('sort-asc').classList.toggle('active', currentSortOrder === 'asc');
         document.getElementById('sort-desc').classList.toggle('active', currentSortOrder === 'desc');
         
-        // ดึงค่าว่าตัวกรองสต๊อกขั้นสูงเปิดอยู่หรือไม่ แล้วรีเฟรชการแสดงผล
         const isAdvancedFilterActive = document.getElementById('advanced-panel').classList.contains('active');
         renderProductsLocally(isAdvancedFilterActive);
     };
@@ -470,10 +462,9 @@
     window.renderProductsLocally = function(isStockFilterActive = false) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const styleFilter = document.getElementById('filter-style').value;
-        const sizeFilter = document.getElementById('filter-size').value; // นำช่องค้นหาไซส์กลับมาใช้งาน
+        const sizeFilter = document.getElementById('filter-size').value;
         const limitVal = parseInt(document.getElementById('low-stock-limit').value) || 0;
 
-        // คำนวณยอดรวมสต๊อกของแต่ละสินค้า พร้อมกรองข้อมูล
         let mappedProducts = productsData.map(p => {
             if (!p) return null;
             const hay = [(p['ชื่อลาย'] || ''), (p['สี'] || ''), (p['SKU'] || '')].join(' ').toLowerCase();
@@ -492,7 +483,7 @@
             if (isStockFilterActive) {
                 matchStock = currentOperator === '<' ? (targetTotal < limitVal) : (targetTotal > limitVal);
             } else if ((styleFilter || sizeFilter) && targetTotal <= 0) {
-                matchStock = false; // ถ้าค้นหาเจาะจงไซส์/รูปแบบ แล้วยอดเป็น 0 ไม่ต้องแสดง
+                matchStock = false;
             }
             
             if (matchKeyword && matchStock) {
@@ -501,11 +492,10 @@
             return null;
         }).filter(item => item !== null);
 
-        // ✨ นำข้อมูลที่ผ่านการกรองมาจัดเรียง
         if (currentSortOrder === 'asc') {
-            mappedProducts.sort((a, b) => a.totalStock - b.totalStock); // น้อยไปมาก
+            mappedProducts.sort((a, b) => a.totalStock - b.totalStock);
         } else if (currentSortOrder === 'desc') {
-            mappedProducts.sort((a, b) => b.totalStock - a.totalStock); // มากไปน้อย
+            mappedProducts.sort((a, b) => b.totalStock - a.totalStock);
         }
 
         const grid = document.getElementById('product-grid');
@@ -521,7 +511,6 @@
             const total = item.totalStock;
             const name = p['ชื่อลาย'] || ('SKU ' + (p['SKU'] || '-'));
             
-            // แสดงป้ายบอกจำนวนรวมเสมอตามในรูป
             let badge = total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${total} ชุด</div>`;
             let img = p['รูปภาพสินค้า'] ? `<img src="${p['รูปภาพสินค้า']}" loading="lazy">` : `📸 รูปภาพ`;
             
