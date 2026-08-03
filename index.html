@@ -51,6 +51,9 @@
         .action-btn { width: 100%; padding: 14px; background: var(--primary-color); color: white; border: none; border-radius: 12px; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(244, 114, 182, 0.3); }
         .action-btn:hover { background: var(--primary-hover); }
 
+        .delete-action-btn { width: 100%; padding: 12px; background: #fff1f2; color: #ef4444; border: 2px solid #fecdd3; border-radius: 12px; font-size: 0.95rem; cursor: pointer; margin-top: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .delete-action-btn:hover { background: #fee2e2; border-color: #f87171; }
+
         .mode-section { display: none; }
         .mode-section.active { display: block; }
 
@@ -77,9 +80,6 @@
         
         .close-btn { position: absolute; top: 15px; right: 18px; font-size: 1.4rem; cursor: pointer; border: none; background: none; color: #db2777; z-index: 10; }
         .close-btn:hover { color: #be185d; }
-
-        .delete-btn { position: absolute; top: 15px; right: 50px; font-size: 1.2rem; cursor: pointer; border: none; background: none; color: #ef4444; z-index: 10; transition: transform 0.2s; }
-        .delete-btn:hover { transform: scale(1.15); color: #dc2626; }
 
         .modal-img-wrapper { display: flex; justify-content: center; margin-bottom: 12px; }
         .modal-img-container { position: relative; display: inline-block; border-radius: 14px; overflow: hidden; background: #fff1f2; max-height: 250px; border: 2px solid #fce7f3; }
@@ -222,8 +222,6 @@
 <!-- Modal แสดงรายละเอียดสต๊อกและแก้ไขได้ทันที -->
 <div id="stockModal" class="modal">
     <div class="modal-content">
-        <!-- ปุ่มลบสินค้า (ถังขยะ) -->
-        <button class="delete-btn" onclick="confirmDeleteProduct()" title="ลบสินค้านี้">🗑️</button>
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
         <div class="modal-img-wrapper">
@@ -251,6 +249,8 @@
         </div>
 
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 15px;">💾 บันทึกการแก้ไขจำนวน</button>
+        <!-- ปุ่มลบสินค้า (ถังขยะ) ย้ายมาไว้ด้านล่าง -->
+        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้ออกจากระบบ</button>
     </div>
 </div>
 
