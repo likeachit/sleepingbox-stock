@@ -122,7 +122,6 @@
         select, input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: 0.3s; }
         select:focus, input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.15); }
 
-        /* ✨ จานสีแบบขยายปุ่มให้พอดียอดเยี่ยม */
         .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 10px; margin-bottom: 10px; }
         .color-btn { padding: 12px 6px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-align: center; font-weight: 400 !important; }
         .color-btn:hover { transform: translateY(-2px); }
@@ -133,6 +132,10 @@
         
         .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 16px; font-size: 1rem; cursor: pointer; margin-top: 12px; transition: 0.3s; }
         .delete-action-btn:hover { background: #fff1f2; border-color: #ef4444; }
+
+        /* ✨ ปุ่มแก้ไขแบบแยกหมวด */
+        .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 1px solid #fbcfe8; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
 
         @media screen and (max-width: 600px) {
             .container { padding: 20px 14px; border-radius: 24px; }
@@ -239,7 +242,6 @@
                 <button type="button" class="color-btn" style="background-color: #dda0dd; color: #000;" onclick="selectColor('ม่วง', this)">ม่วง</button>
                 <button type="button" class="color-btn" style="background-color: #ef4444; color: #fff;" onclick="selectColor('แดง', this)">แดง</button>
                 <button type="button" class="color-btn" style="background-color: #000080; color: #fff;" onclick="selectColor('กรม', this)">กรม</button>
-                <!-- ✨ เพิ่มสี โอรส น้ำตาล เขียว -->
                 <button type="button" class="color-btn" style="background-color: #ffabe1; color: #000;" onclick="selectColor('โอรส', this)">โอรส</button>
                 <button type="button" class="color-btn" style="background-color: #a52a2a; color: #fff;" onclick="selectColor('น้ำตาล', this)">น้ำตาล</button>
                 <button type="button" class="color-btn" style="background-color: #86efac; color: #000;" onclick="selectColor('เขียว', this)">เขียว</button>
@@ -296,15 +298,25 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
-            <div id="view-info-box" style="flex: 1;">
-                <h2 id="modal-title" style="font-size: 1.3rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 2px;">ชื่อลาย</h2>
-                <p id="modal-subtitle" style="font-size: 0.85rem; color: var(--primary-hover);"></p>
+            <div style="flex: 1;">
+                <div id="view-info-box">
+                    <h2 id="modal-title" style="font-size: 1.3rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 2px;">ชื่อลาย</h2>
+                    <p id="modal-subtitle" style="font-size: 0.85rem; color: var(--primary-hover);"></p>
+                </div>
+                <!-- ✨ ฟอร์มแก้ไขชื่อและสี -->
+                <div id="edit-info-box" style="display: none; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 12px; border-radius: 14px; margin-bottom: 10px;">
+                    <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">ชื่อลาย:</label>
+                    <input type="text" id="edit-pattern-input" class="search-input" style="width: 100%; margin-bottom: 6px; padding: 8px 12px; font-size: 0.9rem;">
+                    <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">สี:</label>
+                    <input type="text" id="edit-color-input" class="search-input" style="width: 100%; margin-bottom: 8px; padding: 8px 12px; font-size: 0.9rem;">
+                    <button type="button" class="search-btn" style="padding: 8px; font-size: 0.85rem; width: 100%;" onclick="saveInfoChanges()">💾 บันทึกชื่อและสี</button>
+                </div>
             </div>
             
-            <div style="display: flex; gap: 8px;">
-                <button type="button" id="edit-mode-btn" class="search-btn" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleStockEditMode()">
-                    ✏️ แก้จำนวนสต๊อก
-                </button>
+            <!-- ✨ ปุ่มสลับแก้ไขชื่อและจำนวน -->
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">✏️ แก้ชื่อ/สี</button>
+                <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">✏️ แก้สต๊อก</button>
             </div>
         </div>
 
@@ -357,6 +369,7 @@
     let tempImageBase64 = "";
     let currentOperator = "<";
     let isStockEditable = false;
+    let isInfoEditable = false;
     let currentSortOrder = 'default';
 
     window.showToast = function(message, type="success") {
@@ -539,14 +552,24 @@
     window.openStockModal = function(sku, displayName) {
         activeSku = sku;
         isStockEditable = false;
-        const btn = document.getElementById('edit-mode-btn');
-        btn.classList.remove('active');
-        btn.innerHTML = "✏️ แก้จำนวนสต๊อก";
+        isInfoEditable = false;
         
+        document.getElementById('edit-mode-btn').classList.remove('active');
+        document.getElementById('edit-mode-btn').innerText = "✏️ แก้สต๊อก";
+        document.getElementById('edit-info-btn').classList.remove('active');
+        document.getElementById('edit-info-btn').innerText = "✏️ แก้ชื่อ/สี";
+        document.getElementById('edit-info-box').style.display = 'none';
+        document.getElementById('view-info-box').style.display = 'block';
+
         const product = productsData.find(p => p && String(p['SKU']) === String(sku)) || {};
-        document.getElementById('modal-title').innerText = product['ชื่อลาย'] || displayName;
-        document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${product['สี']} | SKU: ${sku}`;
-        
+        const patternName = product['ชื่อลาย'] || displayName || '';
+        const colorName = product['สี'] || '';
+
+        document.getElementById('modal-title').innerText = patternName;
+        document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${colorName} | SKU: ${sku}`;
+        document.getElementById('edit-pattern-input').value = patternName;
+        document.getElementById('edit-color-input').value = colorName;
+
         const imgBox = document.getElementById('modal-img-box');
         imgBox.innerHTML = product['รูปภาพสินค้า'] ? `<img src="${product['รูปภาพสินค้า']}">` : `<span style="color: var(--accent-color); padding: 40px; display: inline-block;">ไม่มีรูปภาพ</span>`;
 
@@ -567,11 +590,35 @@
         isStockEditable = !isStockEditable;
         const btn = document.getElementById('edit-mode-btn');
         btn.classList.toggle('active', isStockEditable);
-        btn.innerHTML = isStockEditable ? "🔒 ล็อกการแก้ไข" : "✏️ แก้จำนวนสต๊อก";
+        btn.innerText = isStockEditable ? "🔒 ล็อกสต๊อก" : "✏️ แก้สต๊อก";
         document.querySelectorAll('.stock-input').forEach(input => {
             input.classList.toggle('editable', isStockEditable);
             if (isStockEditable) input.removeAttribute('readonly'); else input.setAttribute('readonly', 'true');
         });
+    };
+
+    window.toggleInfoEditMode = function() {
+        isInfoEditable = !isInfoEditable;
+        const btn = document.getElementById('edit-info-btn');
+        btn.classList.toggle('active', isInfoEditable);
+        btn.innerText = isInfoEditable ? "🔒 ปิดการแก้" : "✏️ แก้ชื่อ/สี";
+        document.getElementById('edit-info-box').style.display = isInfoEditable ? 'block' : 'none';
+        document.getElementById('view-info-box').style.display = isInfoEditable ? 'none' : 'block';
+    };
+
+    window.saveInfoChanges = async function() {
+        const newPattern = document.getElementById('edit-pattern-input').value.trim();
+        const newColor = document.getElementById('edit-color-input').value.trim();
+        if (!newPattern) { showToast("กรุณากรอกชื่อลาย", "error"); return; }
+
+        try {
+            await updateDoc(doc(db, "products", String(activeSku)), { 'ชื่อลาย': newPattern, 'สี': newColor });
+            showToast("อัปเดตชื่อและสีสำเร็จ!");
+            document.getElementById('modal-title').innerText = newPattern;
+            document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${newColor} | SKU: ${activeSku}`;
+            toggleInfoEditMode();
+            fetchProductsFromFirebase();
+        } catch (error) { showToast("ไม่สามารถบันทึกได้", "error"); }
     };
 
     window.saveStockChanges = async function() {
