@@ -188,8 +188,8 @@
             <label>รูปแบบแขน-ขา:</label>
             <select id="update-style">
                 <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
-                <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
-                <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
+                <option value="แขนสั้นขายาว">แขนสั้นขายาว</option>
+                <option value="แขนยาวขายาว">แขนยาวขายาว</option>
                 <option value="กระโปรง">กระโปรง</option>
             </select>
         </div>
@@ -267,7 +267,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"];
+    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายาว", "แขนยาวขายาว", "กระโปรง"];
     const SIZES = ["43", "48", "52"];
 
     let productsData = [];
