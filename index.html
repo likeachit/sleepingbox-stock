@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - Premium Stock</title>
-    <!-- เปลี่ยนฟอนต์เป็น Noto Sans Thai -->
+    <!-- นำเข้าฟอนต์ Noto Sans Thai -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* ธีมสีชมพู-ขาว น่ารักๆ */
+        /* ธีมสีชมพู-ขาว น่ารักๆ สบายตา */
         :root { 
             --primary-color: #f9a8d4; 
             --primary-hover: #f472b6; 
@@ -22,10 +22,10 @@
             margin: 0; 
             padding: 0; 
             font-family: 'Noto Sans Thai', sans-serif !important; 
-            font-weight: 300 !important; /* น้ำหนักบาง สบายตา */
+            font-weight: 300 !important; 
         }
         h1, h2, h3, b, strong, .font-bold {
-            font-weight: 500 !important; /* หัวข้อหนาขึ้นนิดหน่อยแต่ไม่ทึบ */
+            font-weight: 500 !important; 
         }
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; backdrop-filter: blur(10px); }
@@ -113,7 +113,6 @@
         .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 2px solid #fbcfe8; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; }
         .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
         
-        /* Inputs in update mode */
         .form-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: var(--accent-color); font-weight: 400 !important; }
         select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { width: 100%; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; color: var(--text-color); transition: 0.3s;}
@@ -398,18 +397,51 @@
         return imgs || null;
     }
 
+    // ✨ ฟังก์ชันบีบอัดและย่อขนาดรูปภาพอัตโนมัติก่อนอัปโหลด
+    function compressImage(file, maxWidth = 1200, quality = 0.8) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+                            resolve(compressedFile);
+                        } else { reject(new Error('Canvas blob is empty')); }
+                    }, 'image/jpeg', quality);
+                };
+                img.onerror = (error) => reject(error);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
     window.previewImages = async function(event) {
         const files = event.target.files;
         if (!files || files.length === 0) return;
-        showToast("กำลังอัปโหลดรูปภาพขึ้น Cloud...", "success");
+        showToast("กำลังย่อและอัปโหลดรูปภาพ...", "success");
         tempImageUrlsArray = [];
         const previewBox = document.getElementById('image-preview-box');
         previewBox.innerHTML = ''; previewBox.style.display = 'flex';
         try {
             for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const storageRef = ref(storage, `products/${Date.now()}_${i}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
+                const compressedFile = await compressImage(files[i], 1200, 0.8);
+                const storageRef = ref(storage, `products/${Date.now()}_${i}_${files[i].name}`);
+                const snapshot = await uploadBytes(storageRef, compressedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 tempImageUrlsArray.push(downloadURL);
                 previewBox.innerHTML += `<img src="${downloadURL}" style="height: 100px; width: 100px; object-fit: cover; border-radius: 16px; border: 2px solid var(--border-color);">`;
@@ -423,15 +455,15 @@
     window.previewEditImages = async function(event) {
         const files = event.target.files;
         if (!files || files.length === 0) return;
-        showToast("กำลังอัปโหลดรูปภาพใหม่...", "success");
+        showToast("กำลังย่อและอัปโหลดรูปใหม่...", "success");
         editTempImageUrlsArray = [];
         const previewBox = document.getElementById('edit-image-preview-box');
         previewBox.innerHTML = ''; previewBox.style.display = 'flex';
         try {
             for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const storageRef = ref(storage, `products/edit_${Date.now()}_${i}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
+                const compressedFile = await compressImage(files[i], 1200, 0.8);
+                const storageRef = ref(storage, `products/edit_${Date.now()}_${i}_${files[i].name}`);
+                const snapshot = await uploadBytes(storageRef, compressedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 editTempImageUrlsArray.push(downloadURL);
                 previewBox.innerHTML += `<img src="${downloadURL}" style="height: 60px; width: 60px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
