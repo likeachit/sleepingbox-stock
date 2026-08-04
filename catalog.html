@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - สินค้าพร้อมส่ง</title>
-    <!-- เปลี่ยนฟอนต์เป็น Noto Sans Thai ให้เหมือนกัน -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ใช้ธีมสีเดียวกันกับหน้า Admin 100% */
         :root { 
             --primary-color: #f9a8d4; 
             --primary-hover: #f472b6; 
@@ -41,7 +39,6 @@
         .search-btn { background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; padding: 12px 24px; border-radius: 24px; font-size: 0.95rem; cursor: pointer; white-space: nowrap; transition: 0.3s; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); font-weight: 400 !important; }
         .search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
         
-        /* การ์ดสินค้า */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
         .product-card { background: #ffffff; border: 2px solid var(--border-color); border-radius: 24px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(249, 168, 212, 0.4); border-color: var(--primary-hover); }
@@ -57,7 +54,6 @@
         .product-name { font-size: 1.05rem; margin-bottom: 2px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500 !important; }
         .product-details { font-size: 0.85rem; color: #9d174d; }
 
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
         .modal-content { background: white; width: 100%; max-width: 520px; padding: 26px 16px; border-radius: 36px; position: relative; max-height: 90vh; overflow-y: auto; border: 2px solid var(--border-color); box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); }
         .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;}
@@ -85,7 +81,6 @@
         .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 10px 4px; text-align: center; font-size: 0.9rem; }
         .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
         
-        /* สไตล์แถวรูปแบบในตารางให้กดคลิกได้ง่ายขึ้น */
         .stock-table tr.style-row { cursor: pointer; transition: 0.2s; }
         .stock-table tr.style-row:hover { background-color: #fff1f2; }
         .stock-table tr.style-row.active-style { background-color: #ffe4e6; font-weight: 500; }
@@ -93,7 +88,6 @@
         .qty-has { color: #10b981; font-weight: 500 !important; }
         .qty-none { color: #d1d5db; }
         
-        /* ปุ่ม LINE ซื้อสินค้า */
         .line-buy-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #00c300, #009900); color: white; border: none; border-radius: 24px; font-size: 1.05rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 400 !important; box-shadow: 0 6px 15px rgba(0, 195, 0, 0.3); transition: 0.3s; }
         .line-buy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 195, 0, 0.4); }
         
@@ -121,8 +115,20 @@
 
     <div class="search-top-row">
         <input type="text" id="search-keyword" class="search-input" placeholder="🔍 พิมพ์ค้นหาชื่อลาย หรือ สี..." onkeydown="handleSearchKeyPress(event)">
-        <select id="filter-style" class="filter-select"><option value="">ทุกรูปแบบ</option><option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option><option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option><option value="แขนยาวขายยาว">แขนยาวขายยาว</option><option value="กระโปรง">กระโปรง</option></select>
-        <select id="filter-size" class="filter-select"><option value="">ทุกไซส์</option><option value="43">ไซส์ 43</option><option value="48">ไซส์ 48</option><option value="52">ไซส์ 52</option><option value="60">ไซส์ 60</option></select>
+        <select id="filter-style" class="filter-select">
+            <option value="">ทุกรูปแบบ</option>
+            <option value="แขนสั้นขาสั้น">SS (แขนสั้นขาสั้น)</option>
+            <option value="แขนสั้นขายยาว">SL (แขนสั้นขายยาว)</option>
+            <option value="แขนยาวขายยาว">LL (แขนยาวขายยาว)</option>
+            <option value="กระโปรง">SK (กระโปรง)</option>
+        </select>
+        <select id="filter-size" class="filter-select">
+            <option value="">ทุกไซส์</option>
+            <option value="43">ไซส์ 43</option>
+            <option value="48">ไซส์ 48</option>
+            <option value="52">ไซส์ 52</option>
+            <option value="60">ไซส์ 60</option>
+        </select>
         <button type="button" class="search-btn" onclick="triggerSearch()">🔍 ค้นหา</button>
     </div>
 
@@ -144,7 +150,7 @@
         <p style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">💡 คลิกที่แถวรูปแบบด้านล่างเพื่อดูรูปภาพของรูปแบบนั้นๆ:</p>
         <div class="stock-table-wrapper">
             <table class="stock-table">
-                <thead><tr><th>รูปแบบ/ไซส์</th><th>43</th><th>48</th><th>52</th><th>60</th></tr></thead>
+                <thead><tr><th>Style / Size</th><th>43</th><th>48</th><th>52</th><th>60</th></tr></thead>
                 <tbody id="modal-stock-data"></tbody>
             </table>
         </div>
@@ -166,18 +172,29 @@
 
     const firebaseConfig = { apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao", authDomain: "sleepingbox-store.firebaseapp.com", projectId: "sleepingbox-store", storageBucket: "sleepingbox-store.firebasestorage.app", messagingSenderId: "103888013687", appId: "1:103888013687:web:b65485adec7acafdf2b972" };
     const app = initializeApp(firebaseConfig); const db = getFirestore(app);
-    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"]; const SIZES = ["43", "48", "52", "60"];
+    const STYLES = ["แขนสั้นขาสั้น", "แขนสั้นขายยาว", "แขนยาวขายยาว", "กระโปรง"]; 
+    const SIZES = ["43", "48", "52", "60"];
     const LINE_OA_URL = "https://line.me/R/ti/p/@sleepingbox"; 
 
+    // ฟังก์ชันแปลงชื่อเต็มเป็นตัวย่อสำหรับแสดงผล
+    function getStyleAbbr(styleName) {
+        const map = {
+            "แขนสั้นขาสั้น": "SS",
+            "แขนสั้นขายยาว": "SL",
+            "แขนยาวขายยาว": "LL",
+            "กระโปรง": "SK"
+        };
+        return map[styleName] || styleName;
+    }
+
     let productsData = []; let currentFabric = "ซาติน"; let currentActiveImgSrc = "";
-    let activeModalProduct = null; // เก็บข้อมูลสินค้าตัวที่กำลังเปิด Modal อยู่
+    let activeModalProduct = null;
 
     window.selectFabric = function(f) { currentFabric = f; document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); document.getElementById('search-keyword').value = ""; fetchProductsFromFirebase(); };
     window.fetchProductsFromFirebase = async function() { const grid = document.getElementById('product-grid'); grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`; try { const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); const qs = await getDocs(q); productsData = []; qs.forEach(d => productsData.push(d.data())); renderProductsLocally(); } catch(e) { grid.innerHTML = `<p style="text-align:center;color:red;grid-column:1/-1;">❌ โหลดข้อมูลไม่สำเร็จ</p>`; } };
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
     window.triggerSearch = function() { renderProductsLocally(); };
 
-    // ฟังก์ชันดึงรูปภาพสำรองอัตโนมัติ (หากรูปแบบนั้นๆ ไม่มีรูป ให้หาจากรูปแบบอื่นที่มี)
     function getDisplayCoverImage(pData, selectedStyle = "") {
         if (!pData) return null;
         let styleImgs = pData['styleImages'] || {};
@@ -219,7 +236,7 @@
 
     window.openStockModal = function(sku) {
         const p = productsData.find(x => x && String(x['SKU'])===String(sku)) || {}; 
-        activeModalProduct = p; // บันทึกข้อมูลสินค้าปัจจุบันไว้ใช้อ้างอิงตอนคลิกเปลี่ยนรูปแบบ
+        activeModalProduct = p; 
         const name = p['ชื่อลาย']||'สินค้า';
         document.getElementById('modal-title').innerText = name; 
         document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${p['สี']||'-'} (รหัส: ${sku})`;
@@ -227,7 +244,6 @@
         let initialCover = getDisplayCoverImage(p);
         updateModalMainImage(initialCover);
 
-        // สร้างรายการ Thumbnail ด้านล่างรวมทุกรูปที่มี
         let allImages = [];
         let styleImgsObj = p['styleImages'] || {};
         STYLES.forEach(s => {
@@ -254,10 +270,11 @@
             thumbBox.style.display = 'none'; thumbBox.innerHTML = '';
         }
 
-        // สร้างตารางสต๊อก พร้อมใส่ event onclick ให้คลิกที่แถวรูปแบบเพื่อเปลี่ยนรูปได้
+        // สร้างตารางแสดงตัวย่อ SS, SL, LL, SK แต่ใช้ค่าจริง s ส่งเข้าฟังก์ชัน
         const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
         STYLES.forEach(s => { 
-            let r = `<tr class="style-row" onclick="selectStyleRow('${s}', this)"><td><b>${s}</b></td>`; 
+            let abbr = getStyleAbbr(s);
+            let r = `<tr class="style-row" onclick="selectStyleRow('${s}', this)"><td><b>${abbr}</b></td>`; 
             SIZES.forEach(z => { 
                 let qty = parseInt(p[`${s} ${z}`])||0; 
                 r += `<td class="${qty>0?'qty-has':'qty-none'}">${qty>0?qty:'-'}</td>`; 
@@ -269,14 +286,11 @@
         document.getElementById('stockModal').style.display = 'flex';
     };
 
-    // ฟังก์ชันเมื่อคลิกเลือกแถวรูปแบบในตารางสต๊อก
     window.selectStyleRow = function(styleName, rowEl) {
         document.querySelectorAll('.style-row').forEach(tr => tr.classList.remove('active-style'));
         rowEl.classList.add('active-style');
 
         if (!activeModalProduct) return;
-
-        // ดึงรูปของรูปแบบนั้นๆ (ถ้ามี) ถ้าไม่มีจะ fallback ไปรูปรวมหรือรูปแบบอื่นให้อัตโนมัติ
         let targetImg = getDisplayCoverImage(activeModalProduct, styleName);
         if (targetImg) {
             updateModalMainImage(targetImg);
@@ -289,7 +303,6 @@
         const imgBox = document.getElementById('modal-img-box');
         imgBox.innerHTML = `<img id="main-modal-img" src="${src}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
         
-        // อัปเดตสถานะ Active ที่ Thumbnail ด้านล่างตาม (ถ้ามี)
         document.querySelectorAll('.thumbnail-img').forEach(img => {
             if (img.src === src) {
                 img.classList.add('active');
