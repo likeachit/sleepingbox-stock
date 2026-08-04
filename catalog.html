@@ -39,12 +39,10 @@
         .modal-content { background: white; width: 100%; max-width: 520px; padding: 24px 16px; border-radius: 24px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.4rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
         
-        /* Modal หลัก */
         .modal-img-container { width: 100%; max-height: 280px; border-radius: 16px; overflow: hidden; background: #fdf2f8; text-align: center; margin-bottom: 8px; position: relative; cursor: zoom-in; }
         .modal-img-container img { max-height: 280px; width: auto; object-fit: contain; }
         .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.65); color: #ffffff; padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; display: flex; gap: 4px; backdrop-filter: blur(4px); }
         
-        /* ✨ CSS สำหรับกล่องรวมรูป Thumbnails ลูกค้ากดดูมุมต่างๆ */
         .thumbnail-container { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
         .thumbnail-container::-webkit-scrollbar { display: none; }
         .thumbnail-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; cursor: pointer; transition: 0.2s; opacity: 0.6; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
@@ -52,8 +50,12 @@
         .thumbnail-img.active { border-color: var(--accent-color); opacity: 1; box-shadow: 0 4px 10px rgba(190,24,93,0.3); transform: translateY(-2px); }
 
         .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.92); z-index: 2000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(8px); }
-        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 16px; image-rendering: high-quality; }
-        .lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; background: rgba(255, 255, 255, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 16px; image-rendering: high-quality; image-rendering: -webkit-optimize-contrast; }
+        
+        .lightbox-actions { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2010; }
+        .lightbox-btn { color: #fff; font-size: 1.2rem; cursor: pointer; background: rgba(255, 255, 255, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s; border: none; backdrop-filter: blur(4px); }
+        .lightbox-btn:hover { background: rgba(244, 114, 182, 0.9); transform: scale(1.05); }
+
         .stock-table-wrapper { border-radius: 14px; border: 1.5px solid var(--border-color); width: 100%; overflow-x: auto; margin: 12px 0; }
         .stock-table { width: 100%; border-collapse: collapse; min-width: 440px; }
         .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 8px 4px; text-align: center; font-size: 0.85rem; }
@@ -97,7 +99,6 @@
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
         <div class="modal-img-container" id="modal-img-box" onclick="openLightbox()"></div>
-        <!-- ✨ กล่องใส่รูปตัวอย่างขนาดเล็กเรียงต่อกัน -->
         <div id="modal-thumbnail-box" class="thumbnail-container"></div>
 
         <div style="text-align: center; margin-bottom: 12px;">
@@ -116,8 +117,12 @@
     </div>
 </div>
 
+<!-- ✨ เปลี่ยนปุ่มดาวน์โหลดให้เป็นลิงก์เปิดแท็บรูปต้นฉบับ เพื่อให้กด Save image ได้ 100% -->
 <div id="imageLightbox" class="image-lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <div class="lightbox-actions">
+        <a id="lightbox-download-btn" href="#" target="_blank" class="lightbox-btn" title="ดาวน์โหลด/บันทึกรูปภาพ" onclick="event.stopPropagation()">📥</a>
+        <button class="lightbox-btn" onclick="closeLightbox()" title="ปิด">&times;</button>
+    </div>
     <img id="lightbox-img" src="" onclick="event.stopPropagation()">
 </div>
 
@@ -137,7 +142,6 @@
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
     window.triggerSearch = function() { renderProductsLocally(); };
 
-    // ✨ ฟังก์ชันจัดการภาพดึงภาพแรกออกมาเสมอสำหรับโชว์บนการ์ด
     function getFirstImage(picData) { if (Array.isArray(picData)) return picData.length > 0 ? picData[0] : null; return picData || null; }
 
     window.renderProductsLocally = function() {
@@ -162,7 +166,6 @@
         const p = productsData.find(x => x && String(x['SKU'])===String(sku)) || {}; const name = p['ชื่อลาย']||'สินค้า';
         document.getElementById('modal-title').innerText = name; document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${p['สี']||'-'} (รหัส: ${sku})`;
 
-        // ✨ ระบบดึงรูปทั้งหมดมาสร้าง Gallery/Thumbnails
         let picData = p['รูปภาพสินค้า'];
         let imgList = [];
         if (Array.isArray(picData)) { imgList = picData; } 
@@ -175,7 +178,6 @@
             currentActiveImgSrc = imgList[0];
             imgBox.innerHTML = `<img id="main-modal-img" src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
             
-            // ถ้ามีหลายรูป ให้เรียงเป็น Thumbnail ด้านล่าง
             if (imgList.length > 1) {
                 let tHtml = '';
                 imgList.forEach((src, idx) => {
@@ -193,11 +195,10 @@
 
         const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
         STYLES.forEach(s => { let r = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => { let qty = parseInt(p[`${s} ${z}`])||0; r += `<td class="${qty>0?'qty-has':'qty-none'}">${qty>0?qty:'-'}</td>`; }); tbody.innerHTML += r+`</tr>`; });
-        document.getElementById('line-order-link').href = `${LINE_OA_URL}?text=${encodeURIComponent('สนใจสอบถามสินค้า: '+name+' (สี '+p['สี']+' / รหัส '+sku+')')}`;
+        document.getElementById('line-order-link', href => {}).href = `${LINE_OA_URL}?text=${encodeURIComponent('สนใจสอบถามสินค้า: '+name+' (สี '+p['สี']+' / รหัส '+sku+')')}`;
         document.getElementById('stockModal').style.display = 'flex';
     };
 
-    /* ✨ ฟังก์ชันกดเปลี่ยนรูปภาพหลักเมื่อจิ้มที่ Thumbnail */
     window.changeMainImage = function(src, el) {
         currentActiveImgSrc = src;
         document.getElementById('main-modal-img').src = src;
@@ -205,7 +206,14 @@
         el.classList.add('active');
     };
 
-    window.openLightbox = function() { if(!currentActiveImgSrc) return; document.getElementById('lightbox-img').src = currentActiveImgSrc; document.getElementById('imageLightbox').style.display = 'flex'; };
+    /* ✨ อัปเดตให้ปุ่มดาวน์โหลดลิงก์ตรงไปยังรูปภาพต้นฉบับ ป้องกันบราวเซอร์บล็อก */
+    window.openLightbox = function() { 
+        if(!currentActiveImgSrc) return;
+        document.getElementById('lightbox-img').src = currentActiveImgSrc;
+        document.getElementById('lightbox-download-btn').href = currentActiveImgSrc;
+        document.getElementById('imageLightbox').style.display = 'flex';
+    };
+
     window.closeLightbox = function() { document.getElementById('imageLightbox').style.display = 'none'; };
     window.closeModal = function() { document.getElementById('stockModal').style.display = 'none'; };
     window.onload = () => fetchProductsFromFirebase();
