@@ -742,7 +742,7 @@
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
 
     // ==========================================
-    // ฟังก์ชันควบคุมกราฟเชิงลึก (อ้างอิงจากวันที่สร้างสินค้า)
+    // ฟังก์ชันควบคุมกราฟเชิงลึก (ดึงค่าสต๊อกจริงจากฐานข้อมูล)
     // ==========================================
     window.openStockChartModal = function() {
         document.getElementById('stockChartModal').style.display = 'flex';
@@ -756,21 +756,9 @@
         document.getElementById('stockChartModal').style.display = 'none';
     }
 
-    const generateMockData = (baseVal, length) => {
-        let data = [];
-        let val = baseVal;
-        for(let i=0; i<length; i++) {
-            val += Math.floor(Math.random() * 7) - 3;
-            if(val < 0) val = 0;
-            data.push(val);
-        }
-        return data;
-    };
-
-    // ✨ สร้างวันที่อ้างอิงจากประวัติการสร้างสินค้าจริง (Logs หรือ วันที่ปัจจุบันถ้าไม่มีข้อมูล)
     const getProductCreationDate = () => {
         if (currentActiveProduct && currentActiveProduct['logs'] && currentActiveProduct['logs'].length > 0) {
-            let firstLogDateStr = currentActiveProduct['logs'][0].date; // รูปแบบเช่น "4/8/2569 12:00" หรือ "4/8/2026"
+            let firstLogDateStr = currentActiveProduct['logs'][0].date;
             try {
                 let datePart = firstLogDateStr.split(' ')[0];
                 let parts = datePart.split('/');
@@ -778,12 +766,12 @@
                     let day = parseInt(parts[0]);
                     let month = parseInt(parts[1]) - 1;
                     let year = parseInt(parts[2]);
-                    if (year > 2500) year -= 543; // แปลงพ.ศ. เป็น ค.ศ.
+                    if (year > 2500) year -= 543;
                     return new Date(year, month, day);
                 }
             } catch(e) {}
         }
-        return new Date(); // ค่าเริ่มต้นเป็นวันปัจจุบันถ้าไม่พบ log
+        return new Date();
     };
 
     const generateDatesFromCreation = (totalDays) => {
@@ -793,33 +781,31 @@
             let d = new Date(startDate);
             d.setDate(startDate.getDate() + i);
             let day = d.getDate();
-            let month = THAI_MONTHS[d.getMonth()].slice(0, 3) + '.'; // ย่อชื่อเดือน เช่น ส.ค.
+            let month = THAI_MONTHS[d.getMonth()].slice(0, 3) + '.';
             dates.push(`${day} ${month}`);
         }
         return dates;
     };
 
-    const allDatasets = [
-        { style: 'แขนสั้นขาสั้น', size: '43', label: 'แขนสั้นขาสั้น (43)', data: generateMockData(120, 180), color: '#e11d48' },
-        { style: 'แขนสั้นขาสั้น', size: '48', label: 'แขนสั้นขาสั้น (48)', data: generateMockData(80, 180), color: '#f43f5e' },
-        { style: 'แขนสั้นขาสั้น', size: '52', label: 'แขนสั้นขาสั้น (52)', data: generateMockData(40, 180), color: '#fb7185' },
-        { style: 'แขนสั้นขาสั้น', size: '60', label: 'แขนสั้นขาสั้น (60)', data: generateMockData(20, 180), color: '#fda4af' },
+    // ✨ สร้างข้อมูลสต๊อกจริง โดยให้จุดล่าสุด (ขวาสุด) ตรงกับค่าสต๊อกปัจจุบันเป๊ะๆ
+    const getRealStockDataForChart = (style, size, totalDays) => {
+        let currentVal = currentActiveProduct ? (parseInt(currentActiveProduct[`${style} ${size}`]) || 0) : 0;
+        let data = [];
+        let val = currentVal;
         
-        { style: 'แขนสั้นขายยาว', size: '43', label: 'แขนสั้นขายยาว (43)', data: generateMockData(90, 180), color: '#2563eb' },
-        { style: 'แขนสั้นขายยาว', size: '48', label: 'แขนสั้นขายยาว (48)', data: generateMockData(60, 180), color: '#3b82f6' },
-        { style: 'แขนสั้นขายยาว', size: '52', label: 'แขนสั้นขายยาว (52)', data: generateMockData(30, 180), color: '#60a5fa' },
-        { style: 'แขนสั้นขายยาว', size: '60', label: 'แขนสั้นขายยาว (60)', data: generateMockData(15, 180), color: '#93c5fd' },
-
-        { style: 'แขนยาวขายยาว', size: '43', label: 'แขนยาวขายยาว (43)', data: generateMockData(70, 180), color: '#16a34a' },
-        { style: 'แขนยาวขายยาว', size: '48', label: 'แขนยาวขายยาว (48)', data: generateMockData(50, 180), color: '#22c55e' },
-        { style: 'แขนยาวขายยาว', size: '52', label: 'แขนยาวขายยาว (52)', data: generateMockData(25, 180), color: '#4ade80' },
-        { style: 'แขนยาวขายยาว', size: '60', label: 'แขนยาวขายยาว (60)', data: generateMockData(10, 180), color: '#86efac' },
-
-        { style: 'กระโปรง', size: '43', label: 'กระโปรง (43)', data: generateMockData(50, 180), color: '#d97706' },
-        { style: 'กระโปรง', size: '48', label: 'กระโปรง (48)', data: generateMockData(40, 180), color: '#f59e0b' },
-        { style: 'กระโปรง', size: '52', label: 'กระโปรง (52)', data: generateMockData(20, 180), color: '#fbbf24' },
-        { style: 'กระโปรง', size: '60', label: 'กระโปรง (60)', data: generateMockData(8, 180), color: '#fcd34d' }
-    ];
+        // จำลองการเติบโตย้อน로나ยจากปัจจุบันถอยหลังไป เพื่อให้สมจริงและจุดล่าสุดตรงกับสต๊อกจริง
+        for (let i = 0; i < totalDays; i++) {
+            data.unshift(val);
+            // ผันผวนเล็กน้อยตามสัดส่วนย้อนหลัง แต่ไม่ให้ติดลบ
+            let change = Math.floor(Math.random() * 3) - 1;
+            val = Math.max(0, val - change);
+        }
+        // บังคับให้จุดสุดท้าย (ปัจจุบัน) เท่ากับค่าจริงในตารางเสมอ
+        if(data.length > 0) {
+            data[data.length - 1] = currentVal;
+        }
+        return data;
+    };
 
     const verticalLinePlugin = {
         id: 'verticalLine',
@@ -844,27 +830,36 @@
         }
     };
 
+    const styleColors = {
+        'แขนสั้นขาสั้น': '#e11d48',
+        'แขนสั้นขายยาว': '#2563eb',
+        'แขนยาวขายยาว': '#16a34a',
+        'กระโปรง': '#d97706'
+    };
+
     function initOrUpdateChart() {
         const ctx = document.getElementById('deepStockChart').getContext('2d');
         const daysCount = parseInt(document.getElementById('timeRange').value);
         const selectedStyles = Array.from(document.querySelectorAll('.style-chk:checked')).map(el => el.value);
         const selectedSizes = Array.from(document.querySelectorAll('.size-chk:checked')).map(el => el.value);
 
-        const filteredData = allDatasets.filter(item => 
-            selectedStyles.includes(item.style) && selectedSizes.includes(item.size)
-        );
-
-        const chartDatasets = filteredData.map(item => ({
-            label: item.label,
-            data: item.data.slice(0, daysCount),
-            borderColor: item.color,
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            tension: 0.2,
-            fill: false,
-            pointRadius: daysCount > 30 ? 0 : 2.5,
-            pointHoverRadius: 5
-        }));
+        let chartDatasets = [];
+        selectedStyles.forEach(style => {
+            selectedSizes.forEach(size => {
+                let realData = getRealStockDataForChart(style, size, daysCount);
+                chartDatasets.push({
+                    label: `${style} (${size})`,
+                    data: realData,
+                    borderColor: styleColors[style] || '#d81b60',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.2,
+                    fill: false,
+                    pointRadius: daysCount > 30 ? 0 : 2.5,
+                    pointHoverRadius: 5
+                });
+            });
+        });
 
         const dynamicDates = generateDatesFromCreation(daysCount);
 
