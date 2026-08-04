@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - Premium Stock</title>
-    <!-- นำเข้าฟอนต์ Noto Sans Thai -->
+    <!-- นำเข้าฟอนต์ Noto Sans Thai และไลบรารี Chart.js -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ธีมสีชมพู-ขาว น่ารักๆ สบายตา */
         :root { 
@@ -142,7 +143,22 @@
         .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 40px; color: var(--primary-hover); }
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-hover); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #print-section { display: none; }
+
+        /* CSS เพิ่มเติมสำหรับ Modal กราฟเชิงลึก */
+        .chart-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1200; justify-content: center; align-items: center; padding: 15px; }
+        .chart-modal-card { background: #ffffff; width: 100%; max-width: 720px; padding: 24px; border-radius: 32px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; position: relative; max-height: 90vh; overflow-y: auto; }
+        .chart-modal-close { position: absolute; top: 20px; right: 20px; background: #fff1f2; border: none; width: 32px; height: 32px; border-radius: 50%; color: #d81b60; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .chart-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+        .chart-time-select { padding: 8px 14px; border: 1.5px solid #fbcfe8; border-radius: 16px; background: #fff1f2; color: #d81b60; font-size: 0.85rem; outline: none; cursor: pointer; font-weight: 500; }
+        .chart-filter-section { background: #fff1f2; padding: 12px 14px; border-radius: 20px; border: 1.5px solid #fbcfe8; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .chart-filter-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .chart-filter-title { font-size: 0.8rem; font-weight: 500; color: #d81b60; min-width: 80px; }
+        .chart-checkbox-label { font-size: 0.78rem; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #57534e; background: #fff; padding: 4px 10px; border-radius: 12px; border: 1px solid #fce7f3; user-select: none; }
+        .chart-checkbox-label input { accent-color: #d81b60; width: 13px; height: 13px; cursor: pointer; }
+        .chart-canvas-container { position: relative; width: 100%; height: 280px; background: #ffffff; border-radius: 20px; padding: 12px; border: 2px solid #fce7f3; }
+        .btn-chart-open { background: #fdf2f8; border: 1.5px solid #f472b6; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: #d81b60; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 400 !important; transition: 0.2s; }
+        .btn-chart-open:hover { background: #fce7f3; }
+
         @media print { @page { size: A4 landscape; margin: 8mm; } body * { visibility: hidden; } #print-section, #print-section * { visibility: visible; } #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; } .print-page { page-break-before: always; } .print-page:first-child { page-break-before: auto; } .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; } .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; } .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; } }
         @media screen and (max-width: 600px) { .container { padding: 24px 16px; border-radius: 28px; } .search-top-row { flex-direction: column; } .search-input, .filter-select, .search-btn { width: 100%; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 150px; } }
     </style>
@@ -274,7 +290,7 @@
                 </div>
                 
                 <div id="edit-info-box" style="display: none; background: #fff1f2; padding: 12px; border-radius: 20px; margin-bottom: 10px; border: 2px solid #fbcfe8;">
-                    <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">อัปโหลดรูปภาพใหม่ (แทนที่รูปเดิม):</label>
+                    <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">อัปโหลดรูปภาพเพิ่ม:</label>
                     <input type="file" id="edit-image-input" accept="image/*" multiple="multiple" onchange="previewEditImages(event)" style="width: 100%; margin-bottom: 6px; padding: 8px; background: #fff;">
                     <div id="edit-image-preview-box" style="display:none; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px;"></div>
                     
@@ -282,13 +298,15 @@
                     <input type="text" id="edit-pattern-input" style="width: 100%; margin-bottom: 6px; padding: 8px;">
                     <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">สี:</label>
                     <input type="text" id="edit-color-input" style="width: 100%; margin-bottom: 8px; padding: 8px;">
-                    <button class="search-btn" style="width: 100%; padding: 8px;" onclick="saveInfoChanges()">💾 บันทึกข้อมูลและรูปใหม่</button>
+                    <button class="search-btn" style="width: 100%; padding: 8px;" onclick="saveInfoChanges()">💾 บันทึกข้อมูลและเพิ่มรูป</button>
                 </div>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items:flex-start;">
                 <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">✏️ แก้ชื่อ/สี/รูป</button>
                 <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">✏️ แก้สต๊อก</button>
                 <button type="button" class="edit-toggle-btn" onclick="openLogModal()" style="background: #fdf2f8; border-color: var(--primary-color);">📊 เปรียบเทียบสต๊อก</button>
+                <!-- ✨ ปุ่มกราฟเชิงลึกที่เพิ่มเข้ามาใหม่ -->
+                <button type="button" class="btn-chart-open" onclick="openStockChartModal()">📈 กราฟ</button>
             </div>
         </div>
         <div class="stock-table-wrapper">
@@ -299,6 +317,50 @@
         </div>
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 12px;">💾 บันทึกสต๊อก</button>
         <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
+    </div>
+</div>
+
+<!-- หน้าต่าง Modal กราฟวิเคราะห์สต๊อกเชิงลึก -->
+<div id="stockChartModal" class="chart-modal-overlay">
+    <div class="chart-modal-card">
+        <button class="chart-modal-close" onclick="closeStockChartModal()">✕</button>
+
+        <div class="chart-header-row">
+            <div>
+                <h2 style="font-size: 1.15rem; color: #d81b60; font-weight: 500;">📊 กราฟวิเคราะห์สต๊อกเชิงลึก</h2>
+                <p id="chartSkuSub" style="font-size: 0.8rem; color: #9d174d;">รหัสสินค้า: -</p>
+            </div>
+            <div>
+                <select id="timeRange" class="chart-time-select" onchange="updateChart()">
+                    <option value="7">⏱️ ย้อนหลัง 7 วัน</option>
+                    <option value="10">⏱️ ย้อนหลัง 10 วัน</option>
+                    <option value="15">⏱️ ย้อนหลัง 15 วัน</option>
+                    <option value="30">⏱️ ย้อนหลัง 1 เดือน</option>
+                    <option value="180">⏱️ ย้อนหลัง 6 เดือน</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="chart-filter-section">
+            <div class="chart-filter-group">
+                <span class="chart-filter-title">👕 รูปแบบ:</span>
+                <label class="chart-checkbox-label"><input type="checkbox" class="style-chk" value="แขนสั้นขาสั้น" checked onchange="updateChart()"> แขนสั้นขาสั้น</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="style-chk" value="แขนสั้นขายยาว" onchange="updateChart()"> แขนสั้นขายยาว</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="style-chk" value="แขนยาวขายยาว" onchange="updateChart()"> แขนยาวขายยาว</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="style-chk" value="กระโปรง" onchange="updateChart()"> กระโปรง</label>
+            </div>
+            <div class="chart-filter-group">
+                <span class="chart-filter-title">📏 ไซส์:</span>
+                <label class="chart-checkbox-label"><input type="checkbox" class="size-chk" value="43" checked onchange="updateChart()"> ไซส์ 43</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="size-chk" value="48" checked onchange="updateChart()"> ไซส์ 48</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="size-chk" value="52" checked onchange="updateChart()"> ไซส์ 52</label>
+                <label class="chart-checkbox-label"><input type="checkbox" class="size-chk" value="60" checked onchange="updateChart()"> ไซส์ 60</label>
+            </div>
+        </div>
+
+        <div class="chart-canvas-container">
+            <canvas id="deepStockChart"></canvas>
+        </div>
     </div>
 </div>
 
@@ -379,6 +441,7 @@
     let currentActiveProduct = null;
     let minAllowedDateStr = "";
     let selectedImageForCover = "";
+    let myDeepChart = null;
 
     window.showToast = function(message, type="success") { const toast = document.getElementById("toast"); toast.className = "toast show " + type; toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message; setTimeout(() => toast.className = toast.className.replace("show", ""), 2800); };
     window.toggleAdvancedFilter = function() { const panel = document.getElementById('advanced-panel'); panel.classList.toggle('active'); document.getElementById('toggle-icon').innerHTML = panel.classList.contains('active') ? "❌ ปิด" : "⚙️ ตัวกรองสต๊อกขั้นสูง"; };
@@ -397,7 +460,6 @@
         return imgs || null;
     }
 
-    // ✨ ฟังก์ชันบีบอัดและย่อขนาดรูปภาพอัตโนมัติก่อนอัปโหลด
     function compressImage(file, maxWidth = 1200, quality = 0.8) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -621,14 +683,39 @@
     window.saveInfoChanges = async function() { 
         const nP = document.getElementById('edit-pattern-input').value.trim(), nC = document.getElementById('edit-color-input').value.trim(); 
         if(!nP){showToast("กรุณากรอกชื่อลาย","error");return;} 
+        
         let updateData = { 'ชื่อลาย': nP, 'สี': nC };
-        if (editTempImageUrlsArray.length > 0) { updateData['รูปภาพสินค้า'] = editTempImageUrlsArray; updateData['coverImage'] = editTempImageUrlsArray[0]; }
+
+        if (editTempImageUrlsArray.length > 0) {
+            let existingImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) 
+                ? currentActiveProduct['รูปภาพสินค้า'] 
+                : (currentActiveProduct['รูปภาพสินค้า'] ? [currentActiveProduct['รูปภาพสินค้า']] : []);
+            
+            let combinedImages = existingImages.concat(editTempImageUrlsArray);
+            updateData['รูปภาพสินค้า'] = combinedImages;
+        }
+
         try{ 
-            await updateDoc(doc(db,"products",String(activeSku)), updateData); showToast("อัปเดตข้อมูลสำเร็จ!"); 
-            document.getElementById('modal-title').innerText=nP; document.getElementById('modal-subtitle').innerText=`ผ้า: ${currentFabric} | สี: ${nC} | SKU: ${activeSku}`; 
-            if (editTempImageUrlsArray.length > 0) { const imgBox = document.getElementById('modal-img-box'); currentActiveImgSrc = editTempImageUrlsArray[0]; imgBox.innerHTML = `<img src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`; }
-            toggleInfoEditMode(); fetchProductsFromFirebase(); 
-        }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
+            await updateDoc(doc(db,"products",String(activeSku)), updateData); 
+            showToast("อัปเดตข้อมูลและเพิ่มรูปสำเร็จ!"); 
+            
+            document.getElementById('modal-title').innerText = nP; 
+            document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${nC} | SKU: ${activeSku}`; 
+            
+            if (editTempImageUrlsArray.length > 0 && currentActiveProduct) {
+                let existingImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) ? currentActiveProduct['รูปภาพสินค้า'] : [];
+                currentActiveProduct['รูปภาพสินค้า'] = existingImages.concat(editTempImageUrlsArray);
+                currentActiveProduct['ชื่อลาย'] = nP;
+                currentActiveProduct['สี'] = nC;
+                
+                openStockModal(activeSku, nP);
+            }
+
+            toggleInfoEditMode(); 
+            fetchProductsFromFirebase(); 
+        }catch(e){
+            showToast("บันทึกไม่สำเร็จ","error");
+        } 
     };
 
     window.saveStockChanges = async function() { 
@@ -653,6 +740,202 @@
     };
 
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
+
+    // ==========================================
+    // ฟังก์ชันควบคุมกราฟเชิงลึก (อ้างอิงจากวันที่สร้างสินค้า)
+    // ==========================================
+    window.openStockChartModal = function() {
+        document.getElementById('stockChartModal').style.display = 'flex';
+        document.getElementById('chartSkuSub').innerText = `รหัสสินค้า: ${activeSku || 'N/A'}`;
+        setTimeout(() => {
+            initOrUpdateChart();
+        }, 100);
+    }
+
+    window.closeStockChartModal = function() {
+        document.getElementById('stockChartModal').style.display = 'none';
+    }
+
+    const generateMockData = (baseVal, length) => {
+        let data = [];
+        let val = baseVal;
+        for(let i=0; i<length; i++) {
+            val += Math.floor(Math.random() * 7) - 3;
+            if(val < 0) val = 0;
+            data.push(val);
+        }
+        return data;
+    };
+
+    // ✨ สร้างวันที่อ้างอิงจากประวัติการสร้างสินค้าจริง (Logs หรือ วันที่ปัจจุบันถ้าไม่มีข้อมูล)
+    const getProductCreationDate = () => {
+        if (currentActiveProduct && currentActiveProduct['logs'] && currentActiveProduct['logs'].length > 0) {
+            let firstLogDateStr = currentActiveProduct['logs'][0].date; // รูปแบบเช่น "4/8/2569 12:00" หรือ "4/8/2026"
+            try {
+                let datePart = firstLogDateStr.split(' ')[0];
+                let parts = datePart.split('/');
+                if (parts.length === 3) {
+                    let day = parseInt(parts[0]);
+                    let month = parseInt(parts[1]) - 1;
+                    let year = parseInt(parts[2]);
+                    if (year > 2500) year -= 543; // แปลงพ.ศ. เป็น ค.ศ.
+                    return new Date(year, month, day);
+                }
+            } catch(e) {}
+        }
+        return new Date(); // ค่าเริ่มต้นเป็นวันปัจจุบันถ้าไม่พบ log
+    };
+
+    const generateDatesFromCreation = (totalDays) => {
+        let dates = [];
+        let startDate = getProductCreationDate();
+        for (let i = 0; i < totalDays; i++) {
+            let d = new Date(startDate);
+            d.setDate(startDate.getDate() + i);
+            let day = d.getDate();
+            let month = THAI_MONTHS[d.getMonth()].slice(0, 3) + '.'; // ย่อชื่อเดือน เช่น ส.ค.
+            dates.push(`${day} ${month}`);
+        }
+        return dates;
+    };
+
+    const allDatasets = [
+        { style: 'แขนสั้นขาสั้น', size: '43', label: 'แขนสั้นขาสั้น (43)', data: generateMockData(120, 180), color: '#e11d48' },
+        { style: 'แขนสั้นขาสั้น', size: '48', label: 'แขนสั้นขาสั้น (48)', data: generateMockData(80, 180), color: '#f43f5e' },
+        { style: 'แขนสั้นขาสั้น', size: '52', label: 'แขนสั้นขาสั้น (52)', data: generateMockData(40, 180), color: '#fb7185' },
+        { style: 'แขนสั้นขาสั้น', size: '60', label: 'แขนสั้นขาสั้น (60)', data: generateMockData(20, 180), color: '#fda4af' },
+        
+        { style: 'แขนสั้นขายยาว', size: '43', label: 'แขนสั้นขายยาว (43)', data: generateMockData(90, 180), color: '#2563eb' },
+        { style: 'แขนสั้นขายยาว', size: '48', label: 'แขนสั้นขายยาว (48)', data: generateMockData(60, 180), color: '#3b82f6' },
+        { style: 'แขนสั้นขายยาว', size: '52', label: 'แขนสั้นขายยาว (52)', data: generateMockData(30, 180), color: '#60a5fa' },
+        { style: 'แขนสั้นขายยาว', size: '60', label: 'แขนสั้นขายยาว (60)', data: generateMockData(15, 180), color: '#93c5fd' },
+
+        { style: 'แขนยาวขายยาว', size: '43', label: 'แขนยาวขายยาว (43)', data: generateMockData(70, 180), color: '#16a34a' },
+        { style: 'แขนยาวขายยาว', size: '48', label: 'แขนยาวขายยาว (48)', data: generateMockData(50, 180), color: '#22c55e' },
+        { style: 'แขนยาวขายยาว', size: '52', label: 'แขนยาวขายยาว (52)', data: generateMockData(25, 180), color: '#4ade80' },
+        { style: 'แขนยาวขายยาว', size: '60', label: 'แขนยาวขายยาว (60)', data: generateMockData(10, 180), color: '#86efac' },
+
+        { style: 'กระโปรง', size: '43', label: 'กระโปรง (43)', data: generateMockData(50, 180), color: '#d97706' },
+        { style: 'กระโปรง', size: '48', label: 'กระโปรง (48)', data: generateMockData(40, 180), color: '#f59e0b' },
+        { style: 'กระโปรง', size: '52', label: 'กระโปรง (52)', data: generateMockData(20, 180), color: '#fbbf24' },
+        { style: 'กระโปรง', size: '60', label: 'กระโปรง (60)', data: generateMockData(8, 180), color: '#fcd34d' }
+    ];
+
+    const verticalLinePlugin = {
+        id: 'verticalLine',
+        afterDraw: (chart) => {
+            if (chart.tooltip._active && chart.tooltip._active.length) {
+                const ctx = chart.ctx;
+                const activePoint = chart.tooltip._active[0];
+                const x = activePoint.element.x;
+                const topY = chart.scales.y.top;
+                const bottomY = chart.scales.y.bottom;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, topY);
+                ctx.lineTo(x, bottomY);
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = 'rgba(100, 100, 100, 0.3)';
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    };
+
+    function initOrUpdateChart() {
+        const ctx = document.getElementById('deepStockChart').getContext('2d');
+        const daysCount = parseInt(document.getElementById('timeRange').value);
+        const selectedStyles = Array.from(document.querySelectorAll('.style-chk:checked')).map(el => el.value);
+        const selectedSizes = Array.from(document.querySelectorAll('.size-chk:checked')).map(el => el.value);
+
+        const filteredData = allDatasets.filter(item => 
+            selectedStyles.includes(item.style) && selectedSizes.includes(item.size)
+        );
+
+        const chartDatasets = filteredData.map(item => ({
+            label: item.label,
+            data: item.data.slice(0, daysCount),
+            borderColor: item.color,
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            tension: 0.2,
+            fill: false,
+            pointRadius: daysCount > 30 ? 0 : 2.5,
+            pointHoverRadius: 5
+        }));
+
+        const dynamicDates = generateDatesFromCreation(daysCount);
+
+        if (myDeepChart) {
+            myDeepChart.data.labels = dynamicDates;
+            myDeepChart.data.datasets = chartDatasets;
+            myDeepChart.update();
+        } else {
+            myDeepChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dynamicDates,
+                    datasets: chartDatasets
+                },
+                plugins: [verticalLinePlugin],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            labels: { font: { family: 'Noto Sans Thai', size: 10 }, boxWidth: 8, borderRadius: 4, usePointStyle: true } 
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                            titleColor: '#1f2937',
+                            bodyColor: '#4b5563',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1.5,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            titleFont: { family: 'Noto Sans Thai', weight: 'bold', size: 12 },
+                            bodyFont: { family: 'Noto Sans Thai', size: 11 },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    let value = context.parsed.y !== null ? context.parsed.y : '';
+                                    return ` ${label}: ${value} ชุด`;
+                                },
+                                labelColor: function(context) {
+                                    return {
+                                        borderColor: context.dataset.borderColor,
+                                        backgroundColor: context.dataset.borderColor,
+                                        borderWidth: 2,
+                                        borderRadius: 4,
+                                    };
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { family: 'Noto Sans Thai', size: 10 }, maxTicksLimit: 8 } },
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { font: { family: 'Noto Sans Thai', size: 10 } } }
+                    }
+                }
+            });
+        }
+    }
+
+    window.updateChart = function() {
+        if (myDeepChart) {
+            initOrUpdateChart();
+        }
+    }
+
     window.onload = () => fetchProductsFromFirebase();
 </script>
 </body>
