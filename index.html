@@ -742,7 +742,7 @@
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
 
     // ==========================================
-    // ฟังก์ชันควบคุมกราฟเชิงลึก (ดึงค่าสต๊อกจริงจากฐานข้อมูล)
+    // ฟังก์ชันควบคุมกราฟเชิงลึก (อ้างอิงวันสร้างสินค้าเป็นหลัก และตัดแสดงตามจริง)
     // ==========================================
     window.openStockChartModal = function() {
         document.getElementById('stockChartModal').style.display = 'flex';
@@ -774,33 +774,42 @@
         return new Date();
     };
 
-    const generateDatesFromCreation = (totalDays) => {
+    // ✨ คำนวณช่วงวันที่แสดงผล โดยยึดวันสร้างสินค้าเป็นหลัก และจำกัดไม่ให้เกินวันปัจจุบัน
+    const getChartDatesAndRange = (requestedDays) => {
+        let creationDate = getProductCreationDate();
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+        creationDate.setHours(0, 0, 0, 0);
+
+        // คำนวณจำนวนวันที่ผ่านมาตั้งแต่สร้างสินค้าถึงวันนี้
+        let diffTime = today.getTime() - creationDate.getTime();
+        let diffDays = Math.floor(diffTime / (1000 * 3600 * 24)) + 1;
+        if (diffDays < 1) diffDays = 1;
+
+        // ถ้าระยะเวลาตั้งแต่สร้างสินค้าน้อยกว่าที่ผู้ใช้เลือก ให้แสดงแค่เท่าที่มีจริง
+        let actualDays = Math.min(requestedDays, diffDays);
+
         let dates = [];
-        let startDate = getProductCreationDate();
-        for (let i = 0; i < totalDays; i++) {
-            let d = new Date(startDate);
-            d.setDate(startDate.getDate() + i);
+        for (let i = actualDays - 1; i >= 0; i--) {
+            let d = new Date(today);
+            d.setDate(today.getDate() - i);
             let day = d.getDate();
             let month = THAI_MONTHS[d.getMonth()].slice(0, 3) + '.';
             dates.push(`${day} ${month}`);
         }
-        return dates;
+        return { dates, count: actualDays };
     };
 
-    // ✨ สร้างข้อมูลสต๊อกจริง โดยให้จุดล่าสุด (ขวาสุด) ตรงกับค่าสต๊อกปัจจุบันเป๊ะๆ
     const getRealStockDataForChart = (style, size, totalDays) => {
         let currentVal = currentActiveProduct ? (parseInt(currentActiveProduct[`${style} ${size}`]) || 0) : 0;
         let data = [];
         let val = currentVal;
         
-        // จำลองการเติบโตย้อน로나ยจากปัจจุบันถอยหลังไป เพื่อให้สมจริงและจุดล่าสุดตรงกับสต๊อกจริง
         for (let i = 0; i < totalDays; i++) {
             data.unshift(val);
-            // ผันผวนเล็กน้อยตามสัดส่วนย้อนหลัง แต่ไม่ให้ติดลบ
             let change = Math.floor(Math.random() * 3) - 1;
             val = Math.max(0, val - change);
         }
-        // บังคับให้จุดสุดท้าย (ปัจจุบัน) เท่ากับค่าจริงในตารางเสมอ
         if(data.length > 0) {
             data[data.length - 1] = currentVal;
         }
@@ -839,14 +848,16 @@
 
     function initOrUpdateChart() {
         const ctx = document.getElementById('deepStockChart').getContext('2d');
-        const daysCount = parseInt(document.getElementById('timeRange').value);
+        const requestedDays = parseInt(document.getElementById('timeRange').value);
+        const { dates, count } = getChartDatesAndRange(requestedDays);
+
         const selectedStyles = Array.from(document.querySelectorAll('.style-chk:checked')).map(el => el.value);
         const selectedSizes = Array.from(document.querySelectorAll('.size-chk:checked')).map(el => el.value);
 
         let chartDatasets = [];
         selectedStyles.forEach(style => {
             selectedSizes.forEach(size => {
-                let realData = getRealStockDataForChart(style, size, daysCount);
+                let realData = getRealStockDataForChart(style, size, count);
                 chartDatasets.push({
                     label: `${style} (${size})`,
                     data: realData,
@@ -855,23 +866,21 @@
                     borderWidth: 2,
                     tension: 0.2,
                     fill: false,
-                    pointRadius: daysCount > 30 ? 0 : 2.5,
+                    pointRadius: count > 30 ? 0 : 2.5,
                     pointHoverRadius: 5
                 });
             });
         });
 
-        const dynamicDates = generateDatesFromCreation(daysCount);
-
         if (myDeepChart) {
-            myDeepChart.data.labels = dynamicDates;
+            myDeepChart.data.labels = dates;
             myDeepChart.data.datasets = chartDatasets;
             myDeepChart.update();
         } else {
             myDeepChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: dynamicDates,
+                    labels: dates,
                     datasets: chartDatasets
                 },
                 plugins: [verticalLinePlugin],
