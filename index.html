@@ -29,15 +29,28 @@
             font-weight: 500 !important; 
         }
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; backdrop-filter: blur(10px); }
+        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; backdrop-filter: blur(10px); position: relative; }
+        
+        /* แถบแสดงผู้ใช้งานปัจจุบัน (มุมขวาบน) */
+        .current-user-bar { position: absolute; top: 24px; right: 28px; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: var(--accent-color); display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
+        .current-user-bar:hover { background: #ffe4e6; }
+
         .header-container { text-align: center; margin-bottom: 28px; }
         h1 { font-size: 2rem; color: var(--accent-color); letter-spacing: 0.5px; }
         
+        /* หน้าต่าง Modal เลือกผู้ใช้งานตอนเข้าเว็บ */
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 240, 245, 0.95); backdrop-filter: blur(10px); z-index: 3000; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .login-card { background: #ffffff; width: 100%; max-width: 420px; padding: 36px 28px; border-radius: 36px; text-align: center; box-shadow: 0 20px 50px rgba(249, 168, 212, 0.4); border: 2px solid #fff; }
+        
         /* แท็บสลับโหมด */
-        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 30px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; cursor: pointer; border-radius: 24px; transition: 0.3s; color: var(--accent-color); font-size: 1.05rem; font-weight: 400 !important; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 30px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; cursor: pointer; border-radius: 24px; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; font-weight: 400 !important; position: relative; text-align: center; white-space: nowrap; }
         .tab-btn.active { background: #ffffff; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.4); transform: translateY(-2px); color: var(--accent-color); font-weight: 500 !important; }
         
+        /* จุดแดงแจ้งเตือนสไตล์ iOS */
+        .notification-badge { position: absolute; top: 6px; right: 10px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 500 !important; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4); display: none; }
+        .notification-badge.show { display: flex; }
+
         /* ช่องค้นหา & ปุ่ม */
         .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
         .search-input, .filter-select { padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; transition: 0.3s; color: var(--text-color); }
@@ -92,7 +105,6 @@
         .modal-img-container { position: relative; display: inline-block; border-radius: 24px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 8px; border: 2px solid var(--border-color); }
         .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; cursor: zoom-in; }
         
-        /* ✨ ปุ่มซ้อนบนมุมขวาล่างของรูป (แว่นขยาย & ลบรูป) */
         .image-action-buttons { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 6px; }
         .zoom-badge { background: rgba(216, 27, 96, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; cursor: pointer; transition: 0.2s; }
         .zoom-badge:hover { background: rgba(216, 27, 96, 1); }
@@ -110,8 +122,10 @@
         .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 12px 6px; text-align: center; font-size: 0.9rem; }
         .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
         .stock-table td:first-child { text-align: left; color: var(--accent-color); background: #fffbfc; padding-left: 12px; font-weight: 500 !important; }
+        
         .stock-input { width: 65px; padding: 8px; border: 2px solid transparent; border-radius: 12px; text-align: center; font-size: 0.95rem; background: transparent; color: var(--text-color); outline: none; transition: 0.3s; margin: 0 auto; display: block; font-family: 'Noto Sans Thai', sans-serif;}
         .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(249,168,212,0.2); }
+        .stock-input.editable::placeholder { color: #d1d5db; opacity: 1; font-weight: 300; }
         
         .action-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; border-radius: 24px; font-size: 1rem; cursor: pointer; margin-top: 16px; transition: 0.3s; font-weight: 400 !important; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); }
         .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
@@ -150,7 +164,34 @@
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-hover); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* CSS เพิ่มเติมสำหรับ Modal กราฟเชิงลึก */
+        /* การ์ดคำขอเติมสต๊อก (เพิ่มสไตล์ปุ่มแว่นขยายบนรูป) */
+        .order-card { background: #ffffff; border: 2px solid var(--border-color); border-radius: 24px; padding: 18px; margin-bottom: 16px; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.15); display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; transition: 0.2s; }
+        .order-card:hover { border-color: var(--primary-hover); box-shadow: 0 10px 25px rgba(249, 168, 212, 0.3); }
+        
+        .order-img-wrapper { position: relative; width: 95px; height: 95px; flex-shrink: 0; cursor: pointer; border-radius: 20px; overflow: hidden; border: 2px solid var(--border-color); background: #fdf2f8; }
+        .order-img-thumb { width: 100%; height: 100%; object-fit: cover; }
+        .order-zoom-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(216, 27, 96, 0.85); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; backdrop-filter: blur(2px); transition: 0.2s; }
+        .order-img-wrapper:hover .order-zoom-badge { background: rgba(216, 27, 96, 1); transform: scale(1.1); }
+
+        .order-info { flex: 1; min-width: 240px; }
+        .order-title { font-size: 1.1rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 3px; }
+        .order-detail { font-size: 0.85rem; color: #6b7280; }
+        .order-status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500 !important; margin-bottom: 6px; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-completed { background: #d1fae5; color: #059669; }
+        .status-cancelled { background: #fee2e2; color: #ef4444; }
+        
+        .order-items-box { background: #fff1f2; border: 1.5px solid #fbcfe8; border-radius: 16px; padding: 10px 14px; margin: 8px 0; display: flex; flex-direction: column; gap: 4px; }
+        .order-item-row { font-size: 0.88rem; color: var(--accent-color); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #fce7f3; padding-bottom: 3px; }
+        .order-item-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .order-action-container { display: flex; gap: 8px; justify-content: flex-end; width: 100%; margin-top: 4px; flex-wrap: wrap; }
+        .btn-fulfill { background: #10b981; color: white; border: none; padding: 10px 22px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+        .btn-fulfill:hover { background: #059669; transform: translateY(-2px); }
+        .btn-cancel { background: transparent; color: #ef4444; border: 1.5px solid #fecdd3; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; }
+        .btn-cancel:hover { background: #fee2e2; }
+
+        /* กราฟเชิงลึก */
         .chart-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1200; justify-content: center; align-items: center; padding: 15px; }
         .chart-modal-card { background: #ffffff; width: 100%; max-width: 720px; padding: 24px; border-radius: 32px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; position: relative; max-height: 90vh; overflow-y: auto; }
         .chart-modal-close { position: absolute; top: 20px; right: 20px; background: #fff1f2; border: none; width: 32px; height: 32px; border-radius: 50%; color: #d81b60; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
@@ -173,14 +214,51 @@
 </head>
 <body>
 
+<!-- หน้าต่างเลือกผู้ใช้งาน -->
+<div id="loginModal" class="login-overlay">
+    <div class="login-card">
+        <h2 style="font-size: 1.5rem; color: var(--accent-color); margin-bottom: 8px;">✨ Sleepingbox Stock</h2>
+        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 24px;">กรุณาเลือกชื่อผู้ใช้งานของคุณเพื่อเข้าสู่ระบบ</p>
+        
+        <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+            <label style="font-size: 0.9rem; color: var(--accent-color); margin-bottom: 6px;">👤 ผู้ใช้งาน:</label>
+            <select id="login-user-select" style="padding: 12px 16px; border-radius: 20px; border: 2px solid var(--border-color); background: #fafaf9; font-size: 0.95rem; outline: none;">
+                <option value="ชิต">ชิต</option>
+                <option value="มิ้น">มิ้น</option>
+                <option value="ปาม">ปาม</option>
+                <option value="ทา">ทา</option>
+                <option value="หยอง">หยอง</option>
+                <option value="เทาะ">เทาะ</option>
+                <option value="นี">นี</option>
+                <option value="วัว">วัว</option>
+                <option value="บุญ">บุญ</option>
+                <option value="ทัน">ทัน</option>
+                <option value="โมเน่">โมเน่</option>
+            </select>
+        </div>
+
+        <button class="action-btn" onclick="confirmLogin()" style="margin-top: 0; width: 100%;">🚀 เข้าสู่ระบบสต๊อก</button>
+    </div>
+</div>
+
 <div class="container">
+    <!-- แถบแสดงชื่อผู้ใช้งานปัจจุบัน (มุมขวาบน) สามารถคลิกเพื่อเปลี่ยนชื่อได้ -->
+    <div class="current-user-bar" onclick="openLoginModal()" title="คลิกเพื่อเปลี่ยนผู้ใช้งาน">
+        👤 <span id="display-current-user">ชิต</span> ✏️
+    </div>
+
     <div class="header-container">
         <h1>✨ Sleepingbox Stock</h1>
     </div>
 
+    <!-- แท็บสลับโหมด 3 เมนู (พร้อมจุดแดงแจ้งเตือน iOS) -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อก</button>
         <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้า</button>
+        <button class="tab-btn" onclick="switchMode('orders')">
+            🛒 เติมสต๊อก
+            <span id="order-badge" class="notification-badge">0</span>
+        </button>
     </div>
 
     <div id="check-mode" class="mode-section active">
@@ -276,6 +354,14 @@
         <div class="form-group"><label>จำนวนเริ่มต้น:</label><input type="number" id="update-qty" placeholder="เช่น 10"></div>
         <button class="action-btn" onclick="submitUpdate()">✨ บันทึกสินค้าใหม่</button>
     </div>
+
+    <!-- โหมดรายการเติมสต๊อก (ฝั่งโกดังจัดการคำขอ) -->
+    <div id="orders-mode" class="mode-section">
+        <h2 style="font-size: 1.2rem; color: var(--accent-color); margin-bottom: 16px;">📦 รายการคำขอเติมสต๊อกจากหน้าร้าน</h2>
+        <div id="orders-list-container">
+            <div class="loader-container"><div class="spinner"></div><p>กำลังโหลดรายการ...</p></div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal รายละเอียด -->
@@ -283,10 +369,8 @@
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
-        <!-- กล่องรูปหลักใหญ่ พร้อมปุ่มแว่นขยายและปุ่มลบรูป -->
         <div class="modal-img-container" id="modal-img-box"></div>
         
-        <!-- แถบปุ่มตั้งเป็นภาพหลัก และอัลบั้มรูปภาพย่อย -->
         <button id="set-cover-btn" class="set-cover-btn" onclick="saveSelectedCoverImage()">📌 ตั้งเป็นภาพหลัก (โชว์หน้าปก)</button>
         <div id="modal-thumb-gallery" class="thumb-gallery"></div>
 
@@ -316,6 +400,7 @@
                 <button type="button" class="btn-chart-open" onclick="openStockChartModal()">📈 กราฟ</button>
             </div>
         </div>
+
         <div class="stock-table-wrapper">
             <table class="stock-table">
                 <thead><tr><th>รูปแบบ/ไซส์</th><th>43</th><th>48</th><th>52</th><th>60</th></tr></thead>
@@ -323,6 +408,7 @@
             </table>
         </div>
         <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 12px;">💾 บันทึกสต๊อก</button>
+        <button class="action-btn" onclick="submitRestockOrder()" style="margin-top: 8px; background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);">🛒 ส่งคำขอเติมสต๊อก (ให้โกดังจัดของ)</button>
         <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
     </div>
 </div>
@@ -420,7 +506,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where, addDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao", authDomain: "sleepingbox-store.firebaseapp.com", projectId: "sleepingbox-store", storageBucket: "sleepingbox-store.firebasestorage.app", messagingSenderId: "103888013687", appId: "1:103888013687:web:b65485adec7acafdf2b972" };
@@ -434,6 +520,7 @@
     const FABRICS = ["ซาติน", "ไหม", "คอตตอน", "ผ้าย่น"];
     const THAI_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
 
+    let currentUsername = "ชิต"; 
     let productsData = []; 
     let currentFabric = "ซาติน"; 
     let loadedFabric = ""; 
@@ -454,7 +541,41 @@
     window.showToast = function(message, type="success") { const toast = document.getElementById("toast"); toast.className = "toast show " + type; toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message; setTimeout(() => toast.className = toast.className.replace("show", ""), 2800); };
     window.toggleAdvancedFilter = function() { const panel = document.getElementById('advanced-panel'); panel.classList.toggle('active'); document.getElementById('toggle-icon').innerHTML = panel.classList.contains('active') ? "❌ ปิด" : "⚙️ ตัวกรองสต๊อกขั้นสูง"; };
     window.setOperator = function(op) { currentOperator = op; document.getElementById('op-lt').classList.toggle('active', op === '<'); document.getElementById('op-gt').classList.toggle('active', op === '>'); };
-    window.switchMode = function(mode) { document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.querySelectorAll('.mode-section').forEach(sec => sec.classList.remove('active')); if(mode === 'check') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('check-mode').classList.add('active'); } else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('update-mode').classList.add('active'); generateSKU(); } };
+    
+    window.openLoginModal = function() {
+        document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    window.confirmLogin = function() {
+        const selectedUser = document.getElementById('login-user-select').value;
+        if (!selectedUser) {
+            showToast("กรุณาเลือกชื่อผู้ใช้งาน", "error");
+            return;
+        }
+        currentUsername = selectedUser;
+        document.getElementById('display-current-user').innerText = currentUsername;
+        document.getElementById('loginModal').style.display = 'none';
+        showToast(`ยินดีต้อนรับคุณ ${currentUsername} เข้าสู่ระบบ!`);
+    }
+
+    window.switchMode = function(mode) { 
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); 
+        document.querySelectorAll('.mode-section').forEach(sec => sec.classList.remove('active')); 
+        
+        if(mode === 'check') { 
+            document.querySelectorAll('.tab-btn')[0].classList.add('active'); 
+            document.getElementById('check-mode').classList.add('active'); 
+        } else if(mode === 'update') { 
+            document.querySelectorAll('.tab-btn')[1].classList.add('active'); 
+            document.getElementById('update-mode').classList.add('active'); 
+            generateSKU(); 
+        } else if(mode === 'orders') {
+            document.querySelectorAll('.tab-btn')[2].classList.add('active'); 
+            document.getElementById('orders-mode').classList.add('active');
+            fetchWarehouseOrders();
+        }
+    };
+
     window.selectColor = function(c, btn) { document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById('update-color').value = c; };
     window.generateSKU = async function() { const f = document.getElementById('fabric-select').value; let prefix = f === "คอตตอน" ? "CT" : f === "ไหม" ? "SILK" : f === "ผ้าย่น" ? "AA" : "Satin"; let unique = false, finalSku = ""; while (!unique) { finalSku = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`; const snap = await getDoc(doc(db, "products", finalSku)); if (!snap.exists()) unique = true; } document.getElementById('generated-sku').value = finalSku; };
     
@@ -666,7 +787,14 @@
 
         const tbody = document.getElementById('modal-stock-data');
         let stockTableHtml = "";
-        STYLES.forEach(s => { let row = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => row += `<td><input type="number" class="stock-input" data-key="${s} ${z}" value="${currentActiveProduct[`${s} ${z}`]||0}" readonly></td>`); stockTableHtml += row+`</tr>`; });
+        STYLES.forEach(s => { 
+            let row = `<tr><td><b>${s}</b></td>`; 
+            SIZES.forEach(z => {
+                let val = currentActiveProduct[`${s} ${z}`] || 0;
+                row += `<td><input type="number" class="stock-input" data-key="${s} ${z}" data-original="${val}" value="${val}" readonly></td>`;
+            }); 
+            stockTableHtml += row + `</tr>`; 
+        });
         tbody.innerHTML = stockTableHtml;
         document.getElementById('stockModal').style.display = 'flex';
     };
@@ -686,9 +814,6 @@
         document.getElementById('set-cover-btn').style.display = 'block';
     };
 
-    // ==========================================
-    // 💡 [เพิ่มใหม่] ฟังก์ชันลบรูปภาพปัจจุบันที่เลือกอยู่
-    // ==========================================
     window.confirmDeleteCurrentImage = async function() {
         if (!currentActiveProduct || !currentActiveImgSrc) return;
         
@@ -703,11 +828,9 @@
 
         if (!confirm("คุณต้องการลบรูปภาพนี้ออกจากสินค้าใช่หรือไม่?")) return;
 
-        // กรองรูปที่ต้องการลบออก
         let updatedImages = allImages.filter(img => img !== currentActiveImgSrc);
         let newCover = currentActiveProduct['coverImage'];
 
-        // ถ้าลบรูปที่เป็น Cover อยู่ ให้สลับไปใช้รูปแรกที่เหลือแทน
         if (newCover === currentActiveImgSrc) {
             newCover = updatedImages.length > 0 ? updatedImages[0] : "";
         }
@@ -718,13 +841,10 @@
                 'coverImage': newCover
             });
 
-            // อัปเดตข้อมูลในตัวแปรหน้าร้าน
             currentActiveProduct['รูปภาพสินค้า'] = updatedImages;
             currentActiveProduct['coverImage'] = newCover;
 
             showToast("ลบรูปภาพสำเร็จ!");
-            
-            // รีเฟรช Modal และหน้าจอหลัก
             openStockModal(activeSku, currentActiveProduct['ชื่อลาย']);
             triggerSearch();
         } catch (e) {
@@ -744,6 +864,237 @@
             triggerSearch();
         } catch(e) {
             showToast("ไม่สามารถเปลี่ยนภาพหลักได้", "error");
+        }
+    };
+
+    // ==========================================
+    // 🛒 ส่งคำขอเติมสต๊อก 
+    // ==========================================
+    window.submitRestockOrder = async function() {
+        if (!confirm(`[ผู้ขอ: ${currentUsername}] ยืนยันส่งคำขอเติมสต๊อกตามจำนวนที่กรอกใช่หรือไม่? ระบบจะตัดสต๊อกทันที`)) return;
+        
+        let stockInputs = document.querySelectorAll('.stock-input');
+        let updates = {};
+        let orderItems = [];
+
+        stockInputs.forEach(input => {
+            let key = input.getAttribute('data-key');
+            let originalVal = parseInt(input.getAttribute('data-original')) || 0;
+            let requestedQty = input.value === "" ? 0 : parseInt(input.value);
+            let currentQty = parseInt(currentActiveProduct[key]) || 0;
+
+            if (requestedQty > 0) {
+                if (requestedQty > currentQty) {
+                    showToast(`จำนวน ${key} เกินกว่าสต๊อกที่มี (${currentQty})`, "error");
+                    throw new Error("Stock exceeded");
+                }
+                updates[key] = currentQty - requestedQty;
+                orderItems.push({ item: key, qty: requestedQty });
+            }
+        });
+
+        if (orderItems.length === 0) {
+            showToast("กรุณาระบุจำนวนสินค้าที่ต้องการเติมอย่างน้อย 1 รายการ", "error");
+            return;
+        }
+
+        try {
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            
+            let logs = currentActiveProduct['logs'] || [];
+            logs.push({ date: dateStr, type: 'หน้าร้านเบิก', note: `ผู้ขอ (${currentUsername}) ส่งคำขอเติมสต๊อก` });
+            updates['logs'] = logs;
+
+            await updateDoc(doc(db, "products", String(activeSku)), updates);
+
+            let coverImg = getDisplayCoverImage(currentActiveProduct) || "";
+
+            await addDoc(collection(db, "store_orders"), {
+                sku: activeSku,
+                patternName: currentActiveProduct['ชื่อลาย'] || '',
+                fabric: currentFabric,
+                color: currentActiveProduct['สี'] || '',
+                coverImage: coverImg,
+                requester: currentUsername,
+                items: orderItems,
+                status: 'รอดำเนินการ',
+                timestamp: Date.now(),
+                dateFormatted: dateStr
+            });
+
+            showToast("ส่งคำขอและตัดสต๊อกสำเร็จ!");
+            closeModal();
+            triggerSearch();
+        } catch (e) {
+            if(e.message !== "Stock exceeded") showToast("ส่งคำขอไม่สำเร็จ", "error");
+        }
+    };
+
+    // ==========================================
+    // 📦 โหลดรายการออเดอร์ (เพิ่มปุ่มแว่นขยายที่รูปภาพ)
+    // ==========================================
+    window.fetchWarehouseOrders = async function() {
+        const container = document.getElementById('orders-list-container');
+        container.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`;
+
+        let allProductsMap = {};
+        try {
+            const prodSnap = await getDocs(collection(db, "products"));
+            prodSnap.forEach(d => {
+                let p = d.data();
+                allProductsMap[p['SKU']] = p;
+            });
+        } catch(e) {}
+
+        const q = query(collection(db, "store_orders"), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            let orders = [];
+            let pendingCount = 0;
+
+            snapshot.forEach(docSnap => {
+                let data = docSnap.data();
+                data.id = docSnap.id;
+                orders.push(data);
+                if (data.status === 'รอดำเนินการ') {
+                    pendingCount++;
+                }
+            });
+
+            const badge = document.getElementById('order-badge');
+            if (pendingCount > 0) {
+                badge.innerText = pendingCount;
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+
+            if (orders.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:#6b7280;"><p>ยังไม่มีคำขอเติมสต๊อกในขณะนี้</p></div>`;
+                return;
+            }
+
+            let html = "";
+            orders.forEach(order => {
+                let itemsRowsHtml = order.items.map(i => `
+                    <div class="order-item-row">
+                        <span>👕 ${i.item}</span>
+                        <span><b>${i.qty}</b> ชุด</span>
+                    </div>
+                `).join('');
+
+                let isPending = order.status === 'รอดำเนินการ';
+                let isCancelled = order.status === 'ยกเลิก';
+
+                let statusBadge = isPending ? `<span class="order-status-badge status-pending">⏳ รอดำเนินการ</span>` : (isCancelled ? `<span class="order-status-badge status-cancelled">❌ ยกเลิกคำขอแล้ว</span>` : `<span class="order-status-badge status-completed">✅ จัดของเรียบร้อยแล้ว</span>`);
+                
+                let actionBtnHtml = "";
+                if (isPending) {
+                    actionBtnHtml = `
+                        <button class="btn-cancel" onclick="cancelOrder('${order.id}', '${order.sku}', '${encodeURIComponent(JSON.stringify(order.items))}')">❌ ยกเลิกคำขอ</button>
+                        <button class="btn-fulfill" onclick="markOrderCompleted('${order.id}')">✅ จัดของเรียบร้อย</button>
+                    `;
+                } else if (isCancelled) {
+                    actionBtnHtml = `<span style="font-size:0.85rem; color:#ef4444; font-weight:500;">ยกเลิกแล้ว</span>`;
+                } else {
+                    actionBtnHtml = `<span style="font-size:0.85rem; color:#059669; font-weight:500;">เสร็จสิ้น</span>`;
+                }
+
+                let pData = allProductsMap[order.sku];
+                let itemImg = order.coverImage || (pData ? getDisplayCoverImage(pData) : "");
+                
+                // โครงสร้างรูปภาพพร้อมปุ่มแว่นขยาย (Zoom Badge)
+                let imgThumbHtml = itemImg ? `
+                    <div class="order-img-wrapper" onclick="openOrderImageLightbox('${itemImg}')" title="คลิกเพื่อดูรูปใหญ่">
+                        <img src="${itemImg}" class="order-img-thumb">
+                        <div class="order-zoom-badge">🔍</div>
+                    </div>
+                ` : `
+                    <div class="order-img-wrapper" style="display:flex; align-items:center; justify-content:center; font-size:1.5rem;">📸</div>
+                `;
+
+                let requesterDisplay = order.requester ? `👤 ผู้สั่งขอ: <b style="color:var(--accent-color);">${order.requester}</b>` : `👤 ผู้สั่งขอ: ไม่ระบุ`;
+
+                html += `
+                    <div class="order-card" style="${isCancelled ? 'opacity: 0.7; background: #fafaf9;' : ''}">
+                        ${imgThumbHtml}
+                        <div class="order-info">
+                            ${statusBadge}
+                            <div class="order-title">ลาย: ${order.patternName} (SKU: ${order.sku})</div>
+                            <div class="order-detail">${requesterDisplay} | ผ้า: ${order.fabric} | สี: ${order.color}</div>
+                            
+                            <div class="order-items-box">
+                                ${itemsRowsHtml}
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <div class="order-detail" style="font-size: 0.78rem;">📅 เวลา: ${order.dateFormatted}</div>
+                                <div class="order-action-container">${actionBtnHtml}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        });
+    };
+
+    // ฟังก์ชันเปิดดูรูปใหญ่จากหน้าออเดอร์
+    window.openOrderImageLightbox = function(imgSrc) {
+        document.getElementById('lightbox-img').src = imgSrc;
+        document.getElementById('imageLightbox').style.display = 'flex';
+    };
+
+    window.markOrderCompleted = async function(orderId) {
+        if (!confirm("ยืนยันว่าจัดของตามออเดอร์นี้เรียบร้อยแล้วใช่หรือไม่?")) return;
+        try {
+            await updateDoc(doc(db, "store_orders", orderId), {
+                status: 'เรียบร้อย'
+            });
+            showToast("อัปเดตสถานะว่าจัดของเรียบร้อยแล้ว!");
+        } catch(e) {
+            showToast("อัปเดตสถานะไม่สำเร็จ", "error");
+        }
+    };
+
+    window.cancelOrder = async function(orderId, sku, itemsEncoded) {
+        if (!confirm("⚠️ คุณต้องการยกเลิกคำขอนี้ใช่หรือไม่?\nระบบจะทำการคืนจำนวนสินค้ากลับเข้าคลังให้อัตโนมัติ")) return;
+        
+        try {
+            let items = JSON.parse(decodeURIComponent(itemsEncoded));
+            
+            let prodRef = doc(db, "products", String(sku));
+            let prodSnap = await getDoc(prodRef);
+
+            if (!prodSnap.exists()) {
+                showToast("ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบแล้ว", "error");
+                return;
+            }
+
+            let prodData = prodSnap.data();
+            let updates = {};
+
+            items.forEach(i => {
+                let currentQty = parseInt(prodData[i.item]) || 0;
+                updates[i.item] = currentQty + i.qty;
+            });
+
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            
+            let logs = prodData['logs'] || [];
+            logs.push({ date: dateStr, type: 'ยกเลิกออเดอร์', note: `ผู้ใช้ (${currentUsername}) ยกเลิกคำขอเติมสต๊อก (คืนสต๊อกอัตโนมัติ)` });
+            updates['logs'] = logs;
+
+            await updateDoc(prodRef, updates);
+
+            await updateDoc(doc(db, "store_orders", orderId), {
+                status: 'ยกเลิก'
+            });
+
+            showToast("ยกเลิกคำขอและคืนสต๊อกเข้าคลังเรียบร้อยแล้ว!");
+        } catch(e) {
+            showToast("ยกเลิกคำขอไม่สำเร็จ", "error");
         }
     };
 
@@ -785,7 +1136,28 @@
     window.openLightbox = function() { if(!currentActiveImgSrc) return; document.getElementById('lightbox-img').src = currentActiveImgSrc; document.getElementById('imageLightbox').style.display = 'flex'; };
     window.closeLightbox = function() { document.getElementById('imageLightbox').style.display = 'none'; };
     window.closeModal = function() { document.getElementById('stockModal').style.display = 'none'; };
-    window.toggleStockEditMode = function() { isStockEditable = !isStockEditable; const b = document.getElementById('edit-mode-btn'); b.classList.toggle('active', isStockEditable); b.innerText = isStockEditable ? "🔒 ล็อกสต๊อก" : "✏️ แก้สต๊อก"; document.querySelectorAll('.stock-input').forEach(i => { i.classList.toggle('editable', isStockEditable); isStockEditable ? i.removeAttribute('readonly') : i.setAttribute('readonly','true'); }); };
+
+    window.toggleStockEditMode = function() { 
+        isStockEditable = !isStockEditable; 
+        const b = document.getElementById('edit-mode-btn'); 
+        b.classList.toggle('active', isStockEditable); 
+        b.innerText = isStockEditable ? "🔒 ล็อกสต๊อก" : "✏️ แก้สต๊อก"; 
+        
+        document.querySelectorAll('.stock-input').forEach(i => { 
+            i.classList.toggle('editable', isStockEditable); 
+            let origVal = i.getAttribute('data-original') || "0";
+            if (isStockEditable) {
+                i.removeAttribute('readonly');
+                i.setAttribute('placeholder', origVal); 
+                i.value = ""; 
+            } else {
+                i.setAttribute('readonly', 'true');
+                i.removeAttribute('placeholder');
+                i.value = origVal; 
+            }
+        }); 
+    };
+
     window.toggleInfoEditMode = function() { isInfoEditable = !isInfoEditable; const b = document.getElementById('edit-info-btn'); b.classList.toggle('active', isInfoEditable); b.innerText = isInfoEditable ? "🔒 ปิดการแก้" : "✏️ แก้ชื่อ/สี/รูป"; document.getElementById('edit-info-box').style.display = isInfoEditable?'block':'none'; document.getElementById('view-info-box').style.display = isInfoEditable?'none':'block'; };
     
     window.saveInfoChanges = async function() { 
@@ -804,6 +1176,11 @@
         }
 
         try{ 
+            const now = new Date();
+            const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            activeProductLogs.push({ date: dateStr, type: 'อัปเดตข้อมูล', note: `ผู้ใช้ (${currentUsername}) แก้ไขชื่อ/สี/รูป` });
+            updateData['logs'] = activeProductLogs;
+
             await updateDoc(doc(db,"products",String(activeSku)), updateData); 
             showToast("อัปเดตข้อมูลและเพิ่มรูปสำเร็จ!"); 
             
@@ -827,20 +1204,37 @@
     };
 
     window.saveStockChanges = async function() { 
-        if(!confirm("บันทึกจำนวนสต๊อกใช่หรือไม่?")) return; 
-        let ud = {}; document.querySelectorAll('.stock-input').forEach(i => ud[i.getAttribute('data-key')] = parseInt(i.value)||0); 
-        const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        activeProductLogs.push({ date: dateStr, type: 'อัปเดต', note: 'แก้ไขจำนวนสต๊อกผ่านตาราง' }); ud['logs'] = activeProductLogs;
-        try{ await updateDoc(doc(db,"products",String(activeSku)), ud); showToast("บันทึกสต๊อกเรียบร้อย!"); closeModal(); triggerSearch(); }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
+        if(!confirm(`[ผู้แก้ไข: ${currentUsername}] บันทึกจำนวนสต๊อกใช่หรือไม่?`)) return; 
+        let ud = {}; 
+        document.querySelectorAll('.stock-input').forEach(i => {
+            let key = i.getAttribute('data-key');
+            let orig = parseInt(i.getAttribute('data-original')) || 0;
+            let val = i.value === "" ? orig : parseInt(i.value);
+            ud[key] = val;
+        }); 
+        
+        const now = new Date(); 
+        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        activeProductLogs.push({ date: dateStr, type: 'อัปเดตสต๊อก', note: `ผู้แก้ไข (${currentUsername}) แก้ไขจำนวนสต๊อกผ่านตาราง` }); 
+        ud['logs'] = activeProductLogs;
+
+        try{ 
+            await updateDoc(doc(db,"products",String(activeSku)), ud); 
+            showToast("บันทึกสต๊อกเรียบร้อย!"); 
+            closeModal(); 
+            triggerSearch(); 
+        }catch(e){
+            showToast("บันทึกไม่สำเร็จ","error");
+        } 
     };
 
-    window.confirmDeleteProduct = async function() { if(confirm(`ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); triggerSearch(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
+    window.confirmDeleteProduct = async function() { if(confirm(`[ผู้ลบ: ${currentUsername}] ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); triggerSearch(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
     
     window.submitUpdate = async function() {
         const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, s = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
         if(!p) {showToast("กรุณากรอกชื่อลาย","error");return;}
         const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: 'สร้างสินค้าเริ่มต้น' }];
+        let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: `ผู้สร้าง (${currentUsername}) สร้างสินค้าเริ่มต้น` }];
         let initialCover = tempImageUrlsArray.length > 0 ? tempImageUrlsArray[0] : "";
         let newProd = { 'SKU': sku, 'ชื่อลาย': p, 'สี': c, 'fabric': f, 'รูปภาพสินค้า': tempImageUrlsArray, 'coverImage': initialCover, 'logs': initialLogs };
         STYLES.forEach(st => SIZES.forEach(sz => newProd[`${st} ${sz}`] = (st===s && sz===document.getElementById('update-size').value) ? qty : 0));
@@ -850,7 +1244,7 @@
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
 
     // ==========================================
-    // ฟังก์ชันควบคุมกราฟเชิงลึก
+    // กราฟเชิงลึก
     // ==========================================
     window.openStockChartModal = function() {
         document.getElementById('stockChartModal').style.display = 'flex';
@@ -1052,6 +1446,7 @@
                 <p style="font-size:1rem; color: #6b7280; font-weight: 400 !important;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อเริ่มต้นดึงข้อมูลสต๊อก</p>
             </div>
         `;
+        fetchWarehouseOrders();
     };
 </script>
 </body>
