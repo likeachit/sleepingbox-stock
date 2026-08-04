@@ -71,7 +71,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .product-img-container { width: 100%; height: 170px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; font-size: 0.9rem; position: relative; }
-        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; image-rendering: -webkit-optimize-contrast; }
         .product-card:hover .product-img-container img { transform: scale(1.08); }
 
         .out-of-stock-badge { position: absolute; top: 12px; right: 12px; background: rgba(244, 63, 94, 0.95); color: white; padding: 4px 12px; font-size: 0.75rem; border-radius: 10px; z-index: 2; box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3); font-weight: 400 !important; backdrop-filter: blur(4px); }
@@ -188,7 +188,6 @@
             <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
-        <!-- ✨ เพิ่มปุ่ม ค้นหา และตั้งค่าให้ต้องกดปุ่มหรือกด Enter ก่อนแสดงผล -->
         <div class="search-top-row">
             <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeydown="handleSearchKeyPress(event)">
             
@@ -471,6 +470,7 @@
         }
     };
 
+    /* ✨ ฟังก์ชันอัปโหลดรูปภาพคมชัดระดับ HD (1200px / Quality 90%) */
     window.previewImage = function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -480,11 +480,20 @@
             img.src = e.target.result;
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                let width = img.width, height = img.height, maxWidth = 500; 
-                if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
-                canvas.width = width; canvas.height = height;
-                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                tempImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                let width = img.width, height = img.height, maxWidth = 1200; 
+                if (width > maxWidth) { 
+                    height = Math.round((height * maxWidth) / width); 
+                    width = maxWidth; 
+                }
+                canvas.width = width; 
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, width, height);
+
+                tempImageBase64 = canvas.toDataURL('image/jpeg', 0.9);
                 document.getElementById('img-preview').src = tempImageBase64;
                 document.getElementById('image-preview-box').style.display = 'block';
             }
@@ -506,14 +515,12 @@
         renderProductsLocally(isAdvancedFilterActive);
     };
 
-    // ✨ ฟังก์ชันรับแรงกด Enter จากคีย์บอร์ด
     window.handleSearchKeyPress = function(e) {
         if (e.key === 'Enter') {
             triggerSearch();
         }
     };
 
-    // ✨ ฟังก์ชันสั่งเริ่มทำการค้นหาเมื่อกดปุ่ม
     window.triggerSearch = function(isAdvanced = false) {
         renderProductsLocally(isAdvanced);
     };
