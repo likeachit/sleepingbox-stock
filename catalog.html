@@ -84,6 +84,12 @@
         .stock-table { width: 100%; border-collapse: collapse; min-width: 440px; }
         .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 10px 4px; text-align: center; font-size: 0.9rem; }
         .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
+        
+        /* สไตล์แถวรูปแบบในตารางให้กดคลิกได้ง่ายขึ้น */
+        .stock-table tr.style-row { cursor: pointer; transition: 0.2s; }
+        .stock-table tr.style-row:hover { background-color: #fff1f2; }
+        .stock-table tr.style-row.active-style { background-color: #ffe4e6; font-weight: 500; }
+        
         .qty-has { color: #10b981; font-weight: 500 !important; }
         .qty-none { color: #d1d5db; }
         
@@ -135,7 +141,7 @@
             <p id="modal-subtitle" style="font-size: 0.9rem; color: var(--primary-hover); margin-top: 2px;"></p>
         </div>
 
-        <p style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">จำนวนสินค้าพร้อมส่งตามรูปแบบและไซส์:</p>
+        <p style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">💡 คลิกที่แถวรูปแบบด้านล่างเพื่อดูรูปภาพของรูปแบบนั้นๆ:</p>
         <div class="stock-table-wrapper">
             <table class="stock-table">
                 <thead><tr><th>รูปแบบ/ไซส์</th><th>43</th><th>48</th><th>52</th><th>60</th></tr></thead>
@@ -164,14 +170,28 @@
     const LINE_OA_URL = "https://line.me/R/ti/p/@sleepingbox"; 
 
     let productsData = []; let currentFabric = "ซาติน"; let currentActiveImgSrc = "";
+    let activeModalProduct = null; // เก็บข้อมูลสินค้าตัวที่กำลังเปิด Modal อยู่
 
     window.selectFabric = function(f) { currentFabric = f; document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); document.getElementById('search-keyword').value = ""; fetchProductsFromFirebase(); };
     window.fetchProductsFromFirebase = async function() { const grid = document.getElementById('product-grid'); grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`; try { const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); const qs = await getDocs(q); productsData = []; qs.forEach(d => productsData.push(d.data())); renderProductsLocally(); } catch(e) { grid.innerHTML = `<p style="text-align:center;color:red;grid-column:1/-1;">❌ โหลดข้อมูลไม่สำเร็จ</p>`; } };
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
     window.triggerSearch = function() { renderProductsLocally(); };
 
-    function getDisplayCoverImage(pData) {
+    // ฟังก์ชันดึงรูปภาพสำรองอัตโนมัติ (หากรูปแบบนั้นๆ ไม่มีรูป ให้หาจากรูปแบบอื่นที่มี)
+    function getDisplayCoverImage(pData, selectedStyle = "") {
         if (!pData) return null;
+        let styleImgs = pData['styleImages'] || {};
+        
+        if (selectedStyle && styleImgs[selectedStyle] && styleImgs[selectedStyle].length > 0) {
+            return styleImgs[selectedStyle][0];
+        }
+
+        for (let s of STYLES) {
+            if (styleImgs[s] && styleImgs[s].length > 0) {
+                return styleImgs[s][0];
+            }
+        }
+
         if (pData['coverImage']) return pData['coverImage'];
         let imgs = pData['รูปภาพสินค้า'];
         if (Array.isArray(imgs)) return imgs.length > 0 ? imgs[0] : null;
@@ -191,55 +211,96 @@
             let t = 0; STYLES.forEach(s => SIZES.forEach(sz => t += (parseInt(p[`${s} ${sz}`])||0)));
             const name = p['ชื่อลาย']||'SKU '+p['SKU']; let b = t>0 ? `<div class="stock-badge badge-instock">มีสินค้า</div>` : `<div class="stock-badge badge-outstock">สินค้าหมด</div>`;
             
-            let coverImg = getDisplayCoverImage(p);
+            let coverImg = getDisplayCoverImage(p, st);
             let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
             grid.innerHTML += `<div class="product-card" onclick="openStockModal('${p['SKU']}')"><div class="product-img-container">${b}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-details">สี${p['สี']||'-'}</div></div></div>`;
         });
     };
 
     window.openStockModal = function(sku) {
-        const p = productsData.find(x => x && String(x['SKU'])===String(sku)) || {}; const name = p['ชื่อลาย']||'สินค้า';
-        document.getElementById('modal-title').innerText = name; document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${p['สี']||'-'} (รหัส: ${sku})`;
-
-        let picData = p['รูปภาพสินค้า'];
-        let imgList = [];
-        if (Array.isArray(picData)) { imgList = picData; } 
-        else if (picData) { imgList = [picData]; }
+        const p = productsData.find(x => x && String(x['SKU'])===String(sku)) || {}; 
+        activeModalProduct = p; // บันทึกข้อมูลสินค้าปัจจุบันไว้ใช้อ้างอิงตอนคลิกเปลี่ยนรูปแบบ
+        const name = p['ชื่อลาย']||'สินค้า';
+        document.getElementById('modal-title').innerText = name; 
+        document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${p['สี']||'-'} (รหัส: ${sku})`;
 
         let initialCover = getDisplayCoverImage(p);
-        const imgBox = document.getElementById('modal-img-box');
-        const thumbBox = document.getElementById('modal-thumbnail-box');
+        updateModalMainImage(initialCover);
 
-        if (imgList.length > 0) {
-            currentActiveImgSrc = initialCover || imgList[0];
-            imgBox.innerHTML = `<img id="main-modal-img" src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
-            
-            if (imgList.length > 1) {
-                let tHtml = '';
-                imgList.forEach((src) => {
-                    let aClass = src === currentActiveImgSrc ? 'active' : '';
-                    tHtml += `<img src="${src}" class="thumbnail-img ${aClass}" onclick="changeMainImage('${src}', this); event.stopPropagation();">`;
+        // สร้างรายการ Thumbnail ด้านล่างรวมทุกรูปที่มี
+        let allImages = [];
+        let styleImgsObj = p['styleImages'] || {};
+        STYLES.forEach(s => {
+            if (styleImgsObj[s] && Array.isArray(styleImgsObj[s])) {
+                styleImgsObj[s].forEach(imgUrl => {
+                    if (!allImages.includes(imgUrl)) allImages.push(imgUrl);
                 });
-                thumbBox.innerHTML = tHtml; thumbBox.style.display = 'flex';
-            } else {
-                thumbBox.style.display = 'none'; thumbBox.innerHTML = '';
             }
+        });
+        let legacyImgs = Array.isArray(p['รูปภาพสินค้า']) ? p['รูปภาพสินค้า'] : (p['รูปภาพสินค้า'] ? [p['รูปภาพสินค้า']] : []);
+        legacyImgs.forEach(imgUrl => {
+            if (!allImages.includes(imgUrl)) allImages.push(imgUrl);
+        });
+
+        const thumbBox = document.getElementById('modal-thumbnail-box');
+        if (allImages.length > 1) {
+            let tHtml = '';
+            allImages.forEach((src) => {
+                let aClass = src === currentActiveImgSrc ? 'active' : '';
+                tHtml += `<img src="${src}" class="thumbnail-img ${aClass}" onclick="changeMainImage('${src}', this); event.stopPropagation();">`;
+            });
+            thumbBox.innerHTML = tHtml; thumbBox.style.display = 'flex';
         } else {
-            currentActiveImgSrc = ""; imgBox.innerHTML = `<span style="color:var(--accent-color);padding:40px;display:inline-block;">ไม่มีรูปภาพ</span>`;
             thumbBox.style.display = 'none'; thumbBox.innerHTML = '';
         }
 
+        // สร้างตารางสต๊อก พร้อมใส่ event onclick ให้คลิกที่แถวรูปแบบเพื่อเปลี่ยนรูปได้
         const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
-        STYLES.forEach(s => { let r = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => { let qty = parseInt(p[`${s} ${z}`])||0; r += `<td class="${qty>0?'qty-has':'qty-none'}">${qty>0?qty:'-'}</td>`; }); tbody.innerHTML += r+`</tr>`; });
+        STYLES.forEach(s => { 
+            let r = `<tr class="style-row" onclick="selectStyleRow('${s}', this)"><td><b>${s}</b></td>`; 
+            SIZES.forEach(z => { 
+                let qty = parseInt(p[`${s} ${z}`])||0; 
+                r += `<td class="${qty>0?'qty-has':'qty-none'}">${qty>0?qty:'-'}</td>`; 
+            }); 
+            tbody.innerHTML += r+`</tr>`; 
+        });
+
         document.getElementById('line-order-link').href = `${LINE_OA_URL}?text=${encodeURIComponent('สนใจสอบถามสินค้า: '+name+' (สี '+p['สี']+' / รหัส '+sku+')')}`;
         document.getElementById('stockModal').style.display = 'flex';
     };
 
-    window.changeMainImage = function(src, el) {
+    // ฟังก์ชันเมื่อคลิกเลือกแถวรูปแบบในตารางสต๊อก
+    window.selectStyleRow = function(styleName, rowEl) {
+        document.querySelectorAll('.style-row').forEach(tr => tr.classList.remove('active-style'));
+        rowEl.classList.add('active-style');
+
+        if (!activeModalProduct) return;
+
+        // ดึงรูปของรูปแบบนั้นๆ (ถ้ามี) ถ้าไม่มีจะ fallback ไปรูปรวมหรือรูปแบบอื่นให้อัตโนมัติ
+        let targetImg = getDisplayCoverImage(activeModalProduct, styleName);
+        if (targetImg) {
+            updateModalMainImage(targetImg);
+        }
+    };
+
+    window.updateModalMainImage = function(src) {
+        if (!src) return;
         currentActiveImgSrc = src;
-        document.getElementById('main-modal-img').src = src;
-        document.querySelectorAll('.thumbnail-img').forEach(img => img.classList.remove('active'));
-        el.classList.add('active');
+        const imgBox = document.getElementById('modal-img-box');
+        imgBox.innerHTML = `<img id="main-modal-img" src="${src}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
+        
+        // อัปเดตสถานะ Active ที่ Thumbnail ด้านล่างตาม (ถ้ามี)
+        document.querySelectorAll('.thumbnail-img').forEach(img => {
+            if (img.src === src) {
+                img.classList.add('active');
+            } else {
+                img.classList.remove('active');
+            }
+        });
+    };
+
+    window.changeMainImage = function(src, el) {
+        updateModalMainImage(src);
     };
 
     window.openLightbox = function() { 
@@ -250,7 +311,7 @@
     };
 
     window.closeLightbox = function() { document.getElementById('imageLightbox').style.display = 'none'; };
-    window.closeModal = function() { document.getElementById('stockModal').style.display = 'none'; };
+    window.closeModal = function() { document.getElementById('stockModal').style.display = 'none'; activeModalProduct = null; };
     window.onload = () => fetchProductsFromFirebase();
 </script>
 
