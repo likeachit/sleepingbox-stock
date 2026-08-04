@@ -27,14 +27,14 @@
         .tab-btn { flex: 1; padding: 14px; border: none; background: transparent; cursor: pointer; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: var(--accent-color); font-size: 1.05rem; }
         .tab-btn.active { background: #ffffff; color: var(--accent-color); font-weight: 400 !important; box-shadow: 0 8px 20px rgba(244, 114, 182, 0.15); transform: translateY(-2px); }
 
-        .search-top-row { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
-        .search-input { flex: 2; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: all 0.3s ease; }
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+        .search-input { flex: 2; min-width: 180px; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: all 0.3s ease; }
         .search-input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.15); }
         
-        .filter-select { flex: 1; padding: 14px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.95rem; outline: none; background: #fafaf9; cursor: pointer; transition: 0.3s; }
+        .filter-select { flex: 1; min-width: 120px; padding: 14px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.95rem; outline: none; background: #fafaf9; cursor: pointer; transition: 0.3s; }
         .filter-select:focus { border-color: var(--primary-color); }
 
-        .search-btn { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px 28px; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(190, 24, 93, 0.25); white-space: nowrap; font-weight: 400 !important; }
+        .search-btn { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px 24px; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(190, 24, 93, 0.25); white-space: nowrap; font-weight: 400 !important; }
         .search-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(190, 24, 93, 0.35); }
 
         .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fda4af; padding: 12px; border-radius: 16px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; }
@@ -139,7 +139,6 @@
         .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 1px solid #fbcfe8; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
         .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
 
-        /* ✨ สไตล์การพิมพ์และแบ่งหน้าแยกเนื้อผ้า */
         #print-section { display: none; }
         @media print {
             @page { size: A4 landscape; margin: 8mm; }
@@ -189,10 +188,11 @@
             <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
+        <!-- ✨ เพิ่มปุ่ม ค้นหา และตั้งค่าให้ต้องกดปุ่มหรือกด Enter ก่อนแสดงผล -->
         <div class="search-top-row">
-            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeyup="renderProductsLocally(false)">
+            <input type="text" id="search-keyword" class="search-input" placeholder="🔍 ค้นหาชื่อลาย, สี หรือ SKU..." onkeydown="handleSearchKeyPress(event)">
             
-            <select id="filter-style" class="filter-select" onchange="renderProductsLocally(false)">
+            <select id="filter-style" class="filter-select">
                 <option value="">ทุกรูปแบบ</option>
                 <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
                 <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
@@ -200,13 +200,15 @@
                 <option value="กระโปรง">กระโปรง</option>
             </select>
             
-            <select id="filter-size" class="filter-select" onchange="renderProductsLocally(false)">
+            <select id="filter-size" class="filter-select">
                 <option value="">ทุกขนาด</option>
                 <option value="43">ไซส์ 43</option>
                 <option value="48">ไซส์ 48</option>
                 <option value="52">ไซส์ 52</option>
                 <option value="60">ไซส์ 60</option>
             </select>
+
+            <button type="button" class="search-btn" onclick="triggerSearch()">🔍 ค้นหา</button>
         </div>
 
         <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
@@ -221,7 +223,7 @@
                     <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt; มากกว่า</button>
                 </div>
                 <input type="number" id="low-stock-limit" class="alert-input" value="100" min="0">
-                <button type="button" class="search-btn" style="padding: 10px 20px; font-size:0.9rem;" onclick="renderProductsLocally(true)">
+                <button type="button" class="search-btn" style="padding: 10px 20px; font-size:0.9rem;" onclick="triggerSearch(true)">
                     🔥 กรองสต๊อก
                 </button>
             </div>
@@ -504,6 +506,18 @@
         renderProductsLocally(isAdvancedFilterActive);
     };
 
+    // ✨ ฟังก์ชันรับแรงกด Enter จากคีย์บอร์ด
+    window.handleSearchKeyPress = function(e) {
+        if (e.key === 'Enter') {
+            triggerSearch();
+        }
+    };
+
+    // ✨ ฟังก์ชันสั่งเริ่มทำการค้นหาเมื่อกดปุ่ม
+    window.triggerSearch = function(isAdvanced = false) {
+        renderProductsLocally(isAdvanced);
+    };
+
     window.renderProductsLocally = function(isStockFilterActive = false) {
         const keyword = document.getElementById('search-keyword').value.trim().toLowerCase();
         const styleFilter = document.getElementById('filter-style').value;
@@ -570,7 +584,6 @@
         });
     }
 
-    // ✨ ฟังก์ชันพิมพ์รายงานแบบแยกชนิดเนื้อผ้าไว้คนละหน้าอัตโนมัติ
     window.generatePrintReport = async function() {
         showToast("กำลังเตรียมรายงานแยกหน้า...", "success");
         try {
