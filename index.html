@@ -4,99 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - Premium Stock</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เปลี่ยนฟอนต์เป็น Noto Sans Thai -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #f472b6; --primary-hover: #ec4899; --bg-color: #fdf2f8; --card-bg: #ffffff; --text-color: #44403c; --border-color: #fce7f3; --accent-color: #be185d; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Thai', sans-serif !important; font-weight: 300 !important; }
+        /* ธีมสีชมพู-ขาว น่ารักๆ */
+        :root { 
+            --primary-color: #f9a8d4; 
+            --primary-hover: #f472b6; 
+            --bg-color: #fff0f5; 
+            --card-bg: #ffffff; 
+            --text-color: #57534e; 
+            --border-color: #fce7f3; 
+            --accent-color: #d81b60; 
+        }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Noto Sans Thai', sans-serif !important; 
+            font-weight: 300 !important; /* น้ำหนักบาง สบายตา */
+        }
+        h1, h2, h3, b, strong, .font-bold {
+            font-weight: 500 !important; /* หัวข้อหนาขึ้นนิดหน่อยแต่ไม่ทึบ */
+        }
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 28px; box-shadow: 0 20px 40px -15px rgba(244, 114, 182, 0.25); border: 1px solid rgba(255,255,255,0.8); backdrop-filter: blur(10px); }
+        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; backdrop-filter: blur(10px); }
         .header-container { text-align: center; margin-bottom: 28px; }
-        h1 { font-size: 2rem; color: var(--accent-color); font-weight: 500 !important; letter-spacing: 0.5px; text-shadow: 0 2px 10px rgba(190, 24, 93, 0.1); }
-        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 20px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 14px; border: none; background: transparent; cursor: pointer; border-radius: 14px; transition: 0.3s; color: var(--accent-color); font-size: 1.05rem; }
-        .tab-btn.active { background: #ffffff; font-weight: 400 !important; box-shadow: 0 8px 20px rgba(244, 114, 182, 0.15); transform: translateY(-2px); }
+        h1 { font-size: 2rem; color: var(--accent-color); letter-spacing: 0.5px; }
+        
+        /* แท็บสลับโหมด */
+        .tabs { display: flex; gap: 12px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 30px; border: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; cursor: pointer; border-radius: 24px; transition: 0.3s; color: var(--accent-color); font-size: 1.05rem; font-weight: 400 !important; }
+        .tab-btn.active { background: #ffffff; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.4); transform: translateY(-2px); color: var(--accent-color); font-weight: 500 !important; }
+        
+        /* ช่องค้นหา & ปุ่ม */
         .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-        .search-input { flex: 2; min-width: 180px; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; transition: 0.3s; }
-        .search-input:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.15); }
-        .filter-select { flex: 1; min-width: 120px; padding: 14px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.95rem; outline: none; background: #fafaf9; cursor: pointer; }
-        .search-btn { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 14px 24px; border-radius: 16px; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(190, 24, 93, 0.25); white-space: nowrap; font-weight: 400 !important; }
-        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(190, 24, 93, 0.35); }
-        .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fda4af; padding: 12px; border-radius: 16px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; }
-        .toggle-advanced-btn:hover { background: #fff1f2; }
-        .advanced-filter-panel { display: none; background: #fff1f2; border: 1.5px solid #fda4af; padding: 18px; border-radius: 18px; margin-bottom: 24px; }
+        .search-input, .filter-select { padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; transition: 0.3s; color: var(--text-color); }
+        .search-input { flex: 2; min-width: 180px; }
+        .filter-select { flex: 1; min-width: 120px; cursor: pointer; }
+        .search-input:focus, .filter-select:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(249, 168, 212, 0.2); }
+        .search-btn { background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; padding: 12px 24px; border-radius: 24px; font-size: 0.95rem; cursor: pointer; transition: 0.3s; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); white-space: nowrap; font-weight: 400 !important; }
+        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
+        
+        .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fbcfe8; padding: 12px; border-radius: 24px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; font-weight: 400 !important;}
+        .toggle-advanced-btn:hover { background: #fff1f2; border-color: var(--primary-hover); }
+        .advanced-filter-panel { display: none; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 18px; border-radius: 24px; margin-bottom: 24px; }
         .advanced-filter-panel.active { display: block; }
         .alert-filter-group { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .alert-filter-group label { font-size: 0.95rem; color: #e11d48; margin: 0; font-weight: 400 !important; }
-        .operator-group { display: flex; gap: 6px; background: #ffe4e6; padding: 6px; border-radius: 14px; }
-        .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 10px; font-size: 0.9rem; font-weight: 500 !important; color: #e11d48; cursor: pointer; transition: 0.3s; }
-        .op-btn.active { background: #e11d48; color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
-        .alert-input { width: 100px; padding: 10px; border: 2px solid #fda4af; border-radius: 12px; text-align: center; font-size: 1rem; color: #e11d48; font-weight: 500 !important; outline: none; }
-        .fabric-categories { display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .alert-filter-group label { font-size: 0.95rem; color: var(--accent-color); margin: 0; font-weight: 400 !important; }
+        .operator-group { display: flex; gap: 6px; background: #ffe4e6; padding: 6px; border-radius: 20px; }
+        .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 16px; font-size: 0.9rem; font-weight: 400 !important; color: var(--accent-color); cursor: pointer; transition: 0.3s; }
+        .op-btn.active { background: var(--accent-color); color: white; box-shadow: 0 4px 10px rgba(216, 27, 96, 0.3); }
+        .alert-input { width: 90px; padding: 10px; border: 2px solid #fbcfe8; border-radius: 16px; text-align: center; font-size: 1rem; color: var(--accent-color); font-weight: 500 !important; outline: none; }
+        
+        /* หมวดหมู่ผ้า */
+        .fabric-categories { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .fabric-categories::-webkit-scrollbar { display: none; }
-        .fabric-chip { padding: 12px 26px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 24px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .fabric-chip.active { background: var(--accent-color); color: white; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.3); border-color: var(--accent-color); font-weight: 400 !important; transform: scale(1.05); }
+        .fabric-chip { padding: 10px 24px; background: #fff; border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.9rem; font-weight: 400 !important; }
+        .fabric-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 6px 15px rgba(216, 27, 96, 0.3); transform: scale(1.05); font-weight: 500 !important; }
+        
         .sort-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-        .sort-btn { background: #fff; border: 1.5px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; }
-        .sort-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 400 !important; }
-        .print-btn { background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 14px; font-size: 0.9rem; cursor: pointer; transition: 0.3s; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
-        .product-card { background: #ffffff; border: 1.5px solid #fce7f3; border-radius: 20px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 6px 15px rgba(0,0,0,0.04); }
-        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px -5px rgba(244, 114, 182, 0.3); border-color: var(--primary-color); }
-        .product-img-container { width: 100%; height: 170px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; color: #db2777; position: relative; }
-        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; image-rendering: -webkit-optimize-contrast; }
+        .sort-btn { background: #fff; border: 2px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: 400 !important;}
+        .sort-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+        .print-btn { background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: 400 !important;}
+        
+        /* การ์ดสินค้า */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+        .product-card { background: #ffffff; border: 2px solid var(--border-color); border-radius: 24px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(249, 168, 212, 0.4); border-color: var(--primary-hover); }
+        .product-img-container { width: 100%; height: 170px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--primary-hover); position: relative; }
+        .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .product-card:hover .product-img-container img { transform: scale(1.08); }
-        .out-of-stock-badge { position: absolute; top: 12px; right: 12px; background: rgba(244, 63, 94, 0.95); color: white; padding: 4px 12px; font-size: 0.75rem; border-radius: 10px; z-index: 2; font-weight: 400 !important; }
-        .low-stock-badge { position: absolute; top: 12px; left: 12px; background: rgba(234, 179, 8, 0.95); color: white; padding: 4px 12px; font-size: 0.75rem; border-radius: 10px; z-index: 2; font-weight: 400 !important; }
-        .product-info { padding: 16px; }
-        .product-name { font-size: 1.05rem; margin-bottom: 4px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-fabric { font-size: 0.85rem; color: #db2777; }
-        .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 40px; color: var(--primary-color); }
-        .spinner { width: 40px; height: 40px; border: 4px solid #fce7f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .toast { visibility: hidden; min-width: 280px; background-color: var(--accent-color); color: #fff; text-align: center; border-radius: 16px; padding: 16px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(190, 24, 93, 0.4); }
+        .out-of-stock-badge, .low-stock-badge { position: absolute; top: 12px; padding: 4px 12px; font-size: 0.75rem; border-radius: 12px; z-index: 2; font-weight: 500 !important; color: white; }
+        .out-of-stock-badge { right: 12px; background: rgba(244, 63, 94, 0.9); }
+        .low-stock-badge { left: 12px; background: rgba(245, 158, 11, 0.9); }
+        .product-info { padding: 16px; text-align: center; }
+        .product-name { font-size: 1.05rem; margin-bottom: 2px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500 !important; }
+        .product-fabric { font-size: 0.8rem; color: #9d174d; }
+        
+        /* Modal & Form */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 600px; padding: 24px; border-radius: 36px; position: relative; max-height: 92vh; overflow-y: auto; border: 2px solid var(--border-color); box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); }
+        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;}
+        .close-btn:hover { background: var(--accent-color); color: white; }
+        
+        .modal-img-container { position: relative; display: inline-block; border-radius: 24px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 8px; cursor: zoom-in; border: 2px solid var(--border-color); }
+        .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; }
+        .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(216, 27, 96, 0.7); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important;}
+        
+        .thumb-gallery { display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 6px 0 12px 0; }
+        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 14px; border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; opacity: 0.6; }
+        .thumb-img:hover, .thumb-img.active { opacity: 1; border-color: var(--accent-color); transform: scale(1.05); }
+        .set-cover-btn { display: none; margin: 0 auto 12px auto; background: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 24px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(216, 27, 96, 0.2); font-weight: 400 !important;}
+        .set-cover-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .stock-table-wrapper { border-radius: 20px; border: 2px solid var(--border-color); width: 100%; overflow-x: auto; margin-bottom: 12px; }
+        .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 12px 6px; text-align: center; font-size: 0.9rem; }
+        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
+        .stock-table td:first-child { text-align: left; color: var(--accent-color); background: #fffbfc; padding-left: 12px; font-weight: 500 !important; }
+        .stock-input { width: 65px; padding: 8px; border: 2px solid transparent; border-radius: 12px; text-align: center; font-size: 0.95rem; background: transparent; color: var(--text-color); outline: none; transition: 0.3s; margin: 0 auto; display: block; font-family: 'Noto Sans Thai', sans-serif;}
+        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(249,168,212,0.2); }
+        
+        .action-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; border-radius: 24px; font-size: 1rem; cursor: pointer; margin-top: 16px; transition: 0.3s; font-weight: 400 !important; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
+        .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 24px; font-size: 0.95rem; cursor: pointer; margin-top: 12px; font-weight: 400 !important; transition: 0.2s;}
+        .delete-action-btn:hover { background: #fff1f2; }
+        .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 2px solid #fbcfe8; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; }
+        .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+        
+        /* Inputs in update mode */
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: var(--accent-color); font-weight: 400 !important; }
+        select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { width: 100%; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; color: var(--text-color); transition: 0.3s;}
+        select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249,168,212,0.2); background: #fff; }
+        
+        .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-bottom: 10px; }
+        .color-btn { padding: 10px 4px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; font-weight: 400 !important; }
+        .color-btn.active { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(216,27,96,0.15); transform: scale(1.05); }
+        
+        .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,240,245,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
+        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 24px; border: 2px solid #fff; box-shadow: 0 10px 30px rgba(216,27,96,0.2); }
+        .lightbox-close { position: absolute; top: 20px; right: 20px; color: var(--accent-color); font-size: 2rem; cursor: pointer; background: #fff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(216,27,96,0.2); }
+        
+        .toast { visibility: hidden; min-width: 280px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: #fff; text-align: center; border-radius: 24px; padding: 14px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(216, 27, 96, 0.4); font-weight: 400 !important; }
         .toast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.5s forwards; }
+        .toast.error { background: #e11d48; box-shadow: 0 10px 30px rgba(225, 29, 72, 0.4); }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 40px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 40px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-        .toast.error { background-color: #e11d48; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 600px; padding: 24px 16px; border-radius: 28px; position: relative; max-height: 92vh; overflow-y: auto; }
-        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
-        .modal-img-container { position: relative; display: inline-block; border-radius: 20px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 16px; cursor: zoom-in; }
-        .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; }
-        .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.65); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; display: flex; gap: 4px; backdrop-filter: blur(4px); }
-        .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
-        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 16px; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; }
-        .lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; background: rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .stock-table-wrapper { border-radius: 16px; border: 1.5px solid var(--border-color); width: 100%; overflow-x: auto; margin-bottom: 8px; }
-        .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
-        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 10px 6px; text-align: center; font-size: 0.9rem; }
-        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 400 !important; }
-        .stock-table td:first-child { text-align: left; color: #831843; background: #fffbfc; padding-left: 10px; }
-        .stock-input { width: 65px; padding: 6px; border: 2px solid transparent; border-radius: 10px; text-align: center; font-size: 0.95rem; background: transparent; color: #44403c; outline: none; transition: 0.3s; margin: 0 auto; display: block; }
-        .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(244,114,182,0.15); }
         
-        .sub-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1100; justify-content: center; align-items: center; padding: 12px; }
-        .sub-modal-content { background: white; width: 100%; max-width: 650px; padding: 22px; border-radius: 22px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-        
-        .diff-pos { color: #059669; font-weight: 500 !important; }
-        .diff-neg { color: #dc2626; font-weight: 500 !important; }
-        .diff-zero { color: #78716c; }
-
+        .sub-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); z-index: 1100; justify-content: center; align-items: center; padding: 12px; backdrop-filter: blur(5px); }
+        .sub-modal-content { background: white; width: 100%; max-width: 650px; padding: 26px; border-radius: 32px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); border: 2px solid var(--border-color); }
+        .diff-pos { color: #10b981; font-weight: 500 !important; }
+        .diff-neg { color: #ef4444; font-weight: 500 !important; }
+        .diff-zero { color: #a8a29e; }
         .mode-section { display: none; }
         .mode-section.active { display: block; animation: fadeIn 0.4s; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 1rem; color: var(--accent-color); }
-        select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { width: 100%; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 1rem; outline: none; background: #fafaf9; }
-        .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 10px; margin-bottom: 10px; }
-        .color-btn { padding: 12px 6px; border: 2px solid var(--border-color); border-radius: 14px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-align: center; font-weight: 400 !important; }
-        .color-btn.active { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(244,114,182,0.25); transform: scale(1.05); }
-        .action-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; border-radius: 16px; font-size: 1.05rem; cursor: pointer; margin-top: 16px; transition: 0.3s; font-weight: 400 !important; }
-        .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 16px; font-size: 1rem; cursor: pointer; margin-top: 12px; }
-        .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 1.5px solid #fbcfe8; padding: 8px 14px; border-radius: 14px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
-        .edit-toggle-btn.active { background: #accent-color; color: white; border-color: var(--accent-color); }
+        .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 40px; color: var(--primary-hover); }
+        .spinner { width: 44px; height: 44px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-hover); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #print-section { display: none; }
         @media print { @page { size: A4 landscape; margin: 8mm; } body * { visibility: hidden; } #print-section, #print-section * { visibility: visible; } #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; } .print-page { page-break-before: always; } .print-page:first-child { page-break-before: auto; } .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; } .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; } .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; } }
-        @media screen and (max-width: 600px) { .container { padding: 20px 14px; } .search-top-row { flex-direction: column; } .search-input, .filter-select, .search-btn { width: 100%; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 140px; } }
+        @media screen and (max-width: 600px) { .container { padding: 24px 16px; border-radius: 28px; } .search-top-row { flex-direction: column; } .search-input, .filter-select, .search-btn { width: 100%; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 150px; } }
     </style>
 </head>
 <body>
@@ -210,8 +259,14 @@
 <div id="stockModal" class="modal">
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()">&times;</button>
+        
+        <!-- กล่องรูปหลักใหญ่ -->
         <div class="modal-img-container" id="modal-img-box" onclick="openLightbox()"></div>
         
+        <!-- แถบปุ่มตั้งเป็นภาพหลัก และอัลบั้มรูปภาพย่อย -->
+        <button id="set-cover-btn" class="set-cover-btn" onclick="saveSelectedCoverImage()">📌 ตั้งเป็นภาพหลัก (โชว์หน้าปก)</button>
+        <div id="modal-thumb-gallery" class="thumb-gallery"></div>
+
         <div style="display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
             <div style="flex: 1;">
                 <div id="view-info-box">
@@ -219,7 +274,7 @@
                     <p id="modal-subtitle" style="font-size: 0.85rem; color: var(--primary-hover);"></p>
                 </div>
                 
-                <div id="edit-info-box" style="display: none; background: #fff1f2; padding: 12px; border-radius: 14px; margin-bottom: 10px; border: 1.5px solid #fbcfe8;">
+                <div id="edit-info-box" style="display: none; background: #fff1f2; padding: 12px; border-radius: 20px; margin-bottom: 10px; border: 2px solid #fbcfe8;">
                     <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">อัปโหลดรูปภาพใหม่ (แทนที่รูปเดิม):</label>
                     <input type="file" id="edit-image-input" accept="image/*" multiple="multiple" onchange="previewEditImages(event)" style="width: 100%; margin-bottom: 6px; padding: 8px; background: #fff;">
                     <div id="edit-image-preview-box" style="display:none; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px;"></div>
@@ -248,22 +303,22 @@
     </div>
 </div>
 
-<!-- หน้าต่างเปรียบเทียบสต๊อกระหว่าง 2 ช่วงเวลา -->
+<!-- หน้าต่างเปรียบเทียบสต๊อก -->
 <div id="logSubModal" class="sub-modal">
     <div class="sub-modal-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <h3 style="color: var(--accent-color); font-size: 1.1rem; font-weight: 500 !important;">📊 เปรียบเทียบสต๊อกรายช่วงเวลา</h3>
-            <button onclick="closeLogModal()" style="border:none; background:#fff1f2; color:var(--accent-color); width:32px; height:32px; border-radius:50%; font-size:1.2rem; cursor:pointer;">&times;</button>
+            <h3 style="color: var(--accent-color); font-size: 1.1rem; font-weight: 500 !important;">📊 เปรียบเทียบสต๊อก</h3>
+            <button onclick="closeLogModal()" class="close-btn" style="position:relative; top:0; right:0; width:32px; height:32px;">&times;</button>
         </div>
         
-        <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center; background: #fff1f2; padding: 12px; border-radius: 14px; border: 1px solid #fbcfe8; flex-wrap: wrap;">
+        <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center; background: #fff1f2; padding: 16px; border-radius: 20px; border: 2px solid #fbcfe8; flex-wrap: wrap;">
             <div style="flex: 1; min-width: 140px;">
-                <label style="font-size: 0.8rem; color: var(--accent-color); margin-bottom: 2px;">📅 ช่วงที่ 1 (ตั้งต้น):</label>
-                <input type="date" id="compare-date-1" onchange="renderComparisonTable()" style="width:100%; padding: 6px; font-size: 0.85rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: #fff;">
+                <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 4px;">📅 ช่วงที่ 1 (ตั้งต้น):</label>
+                <input type="date" id="compare-date-1" onchange="renderComparisonTable()" style="width:100%; padding: 8px 12px; font-size: 0.85rem;">
             </div>
             <div style="flex: 1; min-width: 140px;">
-                <label style="font-size: 0.8rem; color: var(--accent-color); margin-bottom: 2px;">📅 ช่วงที่ 2 (เปรียบเทียบ):</label>
-                <input type="date" id="compare-date-2" onchange="renderComparisonTable()" style="width:100%; padding: 6px; font-size: 0.85rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: #fff;">
+                <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 4px;">📅 ช่วงที่ 2 (เปรียบเทียบ):</label>
+                <input type="date" id="compare-date-2" onchange="renderComparisonTable()" style="width:100%; padding: 8px 12px; font-size: 0.85rem;">
             </div>
         </div>
 
@@ -283,7 +338,7 @@
                 </tbody>
             </table>
         </div>
-        <p id="comparison-status-note" style="text-align: center; font-size: 0.8rem; color: #db2777; margin-top: 10px;"></p>
+        <p id="comparison-status-note" style="text-align: center; font-size: 0.85rem; color: #db2777; margin-top: 10px;"></p>
     </div>
 </div>
 
@@ -324,6 +379,7 @@
     let activeProductLogs = [];
     let currentActiveProduct = null;
     let minAllowedDateStr = "";
+    let selectedImageForCover = "";
 
     window.showToast = function(message, type="success") { const toast = document.getElementById("toast"); toast.className = "toast show " + type; toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message; setTimeout(() => toast.className = toast.className.replace("show", ""), 2800); };
     window.toggleAdvancedFilter = function() { const panel = document.getElementById('advanced-panel'); panel.classList.toggle('active'); document.getElementById('toggle-icon').innerHTML = panel.classList.contains('active') ? "❌ ปิด" : "⚙️ ตัวกรองสต๊อกขั้นสูง"; };
@@ -334,7 +390,13 @@
     window.selectFabric = function(f) { currentFabric = f; document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); document.getElementById('search-keyword').value = ""; fetchProductsFromFirebase(); };
     window.fetchProductsFromFirebase = async function() { const grid = document.getElementById('product-grid'); grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`; try { const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); const snap = await getDocs(q); productsData = []; snap.forEach(d => productsData.push(d.data())); renderProductsLocally(false); } catch(e) { grid.innerHTML = `<p style="text-align:center;color:red;grid-column:1/-1;">❌ โหลดไม่สำเร็จ</p>`; } };
     
-    function getFirstImage(picData) { if (Array.isArray(picData)) return picData.length > 0 ? picData[0] : null; return picData || null; }
+    function getDisplayCoverImage(pData) {
+        if (!pData) return null;
+        if (pData['coverImage']) return pData['coverImage'];
+        let imgs = pData['รูปภาพสินค้า'];
+        if (Array.isArray(imgs)) return imgs.length > 0 ? imgs[0] : null;
+        return imgs || null;
+    }
 
     window.previewImages = async function(event) {
         const files = event.target.files;
@@ -350,7 +412,7 @@
                 const snapshot = await uploadBytes(storageRef, file);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 tempImageUrlsArray.push(downloadURL);
-                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 100px; width: 100px; object-fit: cover; border-radius: 12px; border: 2px solid #fce7f3;">`;
+                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 100px; width: 100px; object-fit: cover; border-radius: 16px; border: 2px solid var(--border-color);">`;
             }
             showToast("อัปโหลดรูปสำเร็จ!");
         } catch (error) {
@@ -372,7 +434,7 @@
                 const snapshot = await uploadBytes(storageRef, file);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 editTempImageUrlsArray.push(downloadURL);
-                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 60px; width: 60px; object-fit: cover; border-radius: 8px; border: 2px solid #fce7f3;">`;
+                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 60px; width: 60px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
             }
             showToast("อัปโหลดรูปใหม่สำเร็จ!");
         } catch (error) {
@@ -393,12 +455,12 @@
         }).filter(i => i !== null);
         if(currentSortOrder==='asc') mapped.sort((a,b)=>a.total-b.total); else if(currentSortOrder==='desc') mapped.sort((a,b)=>b.total-a.total);
         const grid = document.getElementById('product-grid'); grid.innerHTML = "";
-        if(mapped.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9ca3af;"><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`; return; }
+        if(mapped.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-color);"><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`; return; }
         mapped.forEach((item, i) => {
             const p = item.data; const name = p['ชื่อลาย'] || ('SKU '+p['SKU']);
             let badge = item.total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${item.total} ชุด</div>`;
-            let firstImg = getFirstImage(p['รูปภาพสินค้า']); 
-            let img = firstImg ? `<img src="${firstImg}" loading="lazy">` : `📸`;
+            let coverImg = getDisplayCoverImage(p); 
+            let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
             grid.innerHTML += `<div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')"><div class="product-img-container">${badge}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div></div></div>`;
         });
     };
@@ -421,75 +483,101 @@
         
         activeProductLogs = currentActiveProduct['logs'] || [];
 
-        let firstImg = getFirstImage(currentActiveProduct['รูปภาพสินค้า']); 
+        let allImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) 
+            ? currentActiveProduct['รูปภาพสินค้า'] 
+            : (currentActiveProduct['รูปภาพสินค้า'] ? [currentActiveProduct['รูปภาพสินค้า']] : []);
+            
+        let coverImg = getDisplayCoverImage(currentActiveProduct);
+        selectedImageForCover = coverImg || (allImages.length > 0 ? allImages[0] : "");
+
         const imgBox = document.getElementById('modal-img-box');
-        if (firstImg) { currentActiveImgSrc = firstImg; imgBox.innerHTML = `<img src="${firstImg}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`; } else { currentActiveImgSrc = ""; imgBox.innerHTML = `<span style="color:var(--accent-color);padding:40px;display:inline-block;">ไม่มีรูปภาพ</span>`; }
+        if (selectedImageForCover) { 
+            currentActiveImgSrc = selectedImageForCover; 
+            imgBox.innerHTML = `<img src="${selectedImageForCover}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`; 
+        } else { 
+            currentActiveImgSrc = ""; 
+            imgBox.innerHTML = `<span style="color:var(--accent-color);padding:40px;display:inline-block;">ไม่มีรูปภาพ</span>`; 
+        }
+
+        const thumbGallery = document.getElementById('modal-thumb-gallery');
+        thumbGallery.innerHTML = '';
+        document.getElementById('set-cover-btn').style.display = 'none';
+
+        if (allImages.length > 0) {
+            allImages.forEach((imgUrl) => {
+                let imgEl = document.createElement('img');
+                imgEl.src = imgUrl;
+                imgEl.className = `thumb-img ${imgUrl === coverImg ? 'active' : ''}`;
+                imgEl.onclick = (e) => {
+                    e.stopPropagation();
+                    selectModalImage(imgUrl, imgEl);
+                };
+                thumbGallery.appendChild(imgEl);
+            });
+        }
+
         const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
         STYLES.forEach(s => { let row = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => row += `<td><input type="number" class="stock-input" data-key="${s} ${z}" value="${currentActiveProduct[`${s} ${z}`]||0}" readonly></td>`); tbody.innerHTML += row+`</tr>`; });
         document.getElementById('stockModal').style.display = 'flex';
+    };
+
+    window.selectModalImage = function(imgUrl, el) {
+        selectedImageForCover = imgUrl;
+        currentActiveImgSrc = imgUrl;
+        document.getElementById('modal-img-box').innerHTML = `<img src="${imgUrl}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
+        document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
+        if(el) el.classList.add('active');
+        document.getElementById('set-cover-btn').style.display = 'block';
+    };
+
+    window.saveSelectedCoverImage = async function() {
+        if(!activeSku || !selectedImageForCover) return;
+        try {
+            await updateDoc(doc(db, "products", String(activeSku)), {
+                coverImage: selectedImageForCover
+            });
+            showToast("ตั้งเป็นภาพหลักเรียบร้อย!");
+            document.getElementById('set-cover-btn').style.display = 'none';
+            if(currentActiveProduct) currentActiveProduct['coverImage'] = selectedImageForCover;
+            fetchProductsFromFirebase();
+        } catch(e) {
+            showToast("ไม่สามารถเปลี่ยนภาพหลักได้", "error");
+        }
     };
 
     window.openLogModal = function() {
         const todayStr = new Date().toISOString().split('T')[0];
         const datePicker1 = document.getElementById('compare-date-1');
         const datePicker2 = document.getElementById('compare-date-2');
-        
         minAllowedDateStr = todayStr;
         if(activeProductLogs && activeProductLogs.length > 0) {
             let firstLog = activeProductLogs[0];
-            try {
-                let parts = firstLog.date.split(' ')[0].split('/');
-                if(parts.length === 3) {
-                    minAllowedDateStr = `${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`;
-                }
-            } catch(e) {}
+            try { let parts = firstLog.date.split(' ')[0].split('/'); if(parts.length === 3) minAllowedDateStr = `${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`; } catch(e) {}
         }
-
         datePicker1.min = minAllowedDateStr; datePicker1.max = todayStr; datePicker1.value = minAllowedDateStr;
         datePicker2.min = minAllowedDateStr; datePicker2.max = todayStr; datePicker2.value = todayStr;
-
         renderComparisonTable();
         document.getElementById('logSubModal').style.display = 'flex';
     };
-
-    window.closeLogModal = function() {
-        document.getElementById('logSubModal').style.display = 'none';
-    };
+    window.closeLogModal = function() { document.getElementById('logSubModal').style.display = 'none'; };
 
     window.renderComparisonTable = function() {
-        const date1 = document.getElementById('compare-date-1').value;
-        const date2 = document.getElementById('compare-date-2').value;
-        const tbody = document.getElementById('comparison-stock-data');
-        const noteEl = document.getElementById('comparison-status-note');
-        
-        if(!date1 || !date2 || !currentActiveProduct) {
-            tbody.innerHTML = `<tr><td colspan="5" style="color:#9ca3af; padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`;
-            return;
-        }
-
-        let formatThai = (dStr) => {
-            let d = new Date(dStr);
-            return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`;
-        };
-
+        const date1 = document.getElementById('compare-date-1').value, date2 = document.getElementById('compare-date-2').value;
+        const tbody = document.getElementById('comparison-stock-data'), noteEl = document.getElementById('comparison-status-note');
+        if(!date1 || !date2 || !currentActiveProduct) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-color); padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`; return; }
+        let formatThai = (dStr) => { let d = new Date(dStr); return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`; };
         noteEl.innerHTML = `📌 เปรียบเทียบระหว่างวันที่ ${formatThai(date1)} และ ${formatThai(date2)}`;
-
         let html = '';
         STYLES.forEach(s => {
             let row = `<tr><td><b>${s}</b></td>`;
             SIZES.forEach(z => {
                 let currentVal = currentActiveProduct[`${s} ${z}`] || 0;
-                let val1 = currentVal; 
-                let val2 = currentVal; 
-                let diff = val2 - val1; 
-                let diffText = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : `0`;
+                let val1 = currentVal; let val2 = currentVal; 
+                let diff = val2 - val1; let diffText = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : `0`;
                 let diffClass = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-zero';
-
                 row += `<td>${val2} <span class="${diffClass}">(${diffText})</span></td>`;
-            });
-            html += row + `</tr>`;
-        });
-        tbody.innerHTML = html;
+            }); html += row + `</tr>`;
+        }); tbody.innerHTML = html;
     };
 
     window.openLightbox = function() { if(!currentActiveImgSrc) return; document.getElementById('lightbox-img').src = currentActiveImgSrc; document.getElementById('imageLightbox').style.display = 'flex'; };
@@ -501,45 +589,22 @@
     window.saveInfoChanges = async function() { 
         const nP = document.getElementById('edit-pattern-input').value.trim(), nC = document.getElementById('edit-color-input').value.trim(); 
         if(!nP){showToast("กรุณากรอกชื่อลาย","error");return;} 
-        
         let updateData = { 'ชื่อลาย': nP, 'สี': nC };
-        if (editTempImageUrlsArray.length > 0) {
-            updateData['รูปภาพสินค้า'] = editTempImageUrlsArray;
-        }
-
+        if (editTempImageUrlsArray.length > 0) { updateData['รูปภาพสินค้า'] = editTempImageUrlsArray; updateData['coverImage'] = editTempImageUrlsArray[0]; }
         try{ 
-            await updateDoc(doc(db,"products",String(activeSku)), updateData); 
-            showToast("อัปเดตข้อมูลสำเร็จ!"); 
-            document.getElementById('modal-title').innerText=nP; 
-            document.getElementById('modal-subtitle').innerText=`ผ้า: ${currentFabric} | สี: ${nC} | SKU: ${activeSku}`; 
-            
-            if (editTempImageUrlsArray.length > 0) {
-                const imgBox = document.getElementById('modal-img-box');
-                currentActiveImgSrc = editTempImageUrlsArray[0];
-                imgBox.innerHTML = `<img src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
-            }
-
-            toggleInfoEditMode(); 
-            fetchProductsFromFirebase(); 
+            await updateDoc(doc(db,"products",String(activeSku)), updateData); showToast("อัปเดตข้อมูลสำเร็จ!"); 
+            document.getElementById('modal-title').innerText=nP; document.getElementById('modal-subtitle').innerText=`ผ้า: ${currentFabric} | สี: ${nC} | SKU: ${activeSku}`; 
+            if (editTempImageUrlsArray.length > 0) { const imgBox = document.getElementById('modal-img-box'); currentActiveImgSrc = editTempImageUrlsArray[0]; imgBox.innerHTML = `<img src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`; }
+            toggleInfoEditMode(); fetchProductsFromFirebase(); 
         }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
     };
 
     window.saveStockChanges = async function() { 
         if(!confirm("บันทึกจำนวนสต๊อกใช่หรือไม่?")) return; 
-        let ud = {}; 
-        document.querySelectorAll('.stock-input').forEach(i => ud[i.getAttribute('data-key')] = parseInt(i.value)||0); 
-        
-        const now = new Date();
-        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        activeProductLogs.push({ date: dateStr, type: 'อัปเดต', note: 'แก้ไขจำนวนสต๊อกผ่านตาราง' });
-        ud['logs'] = activeProductLogs;
-
-        try{ 
-            await updateDoc(doc(db,"products",String(activeSku)), ud); 
-            showToast("บันทึกสต๊อกเรียบร้อย!"); 
-            closeModal(); 
-            fetchProductsFromFirebase(); 
-        }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
+        let ud = {}; document.querySelectorAll('.stock-input').forEach(i => ud[i.getAttribute('data-key')] = parseInt(i.value)||0); 
+        const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        activeProductLogs.push({ date: dateStr, type: 'อัปเดต', note: 'แก้ไขจำนวนสต๊อกผ่านตาราง' }); ud['logs'] = activeProductLogs;
+        try{ await updateDoc(doc(db,"products",String(activeSku)), ud); showToast("บันทึกสต๊อกเรียบร้อย!"); closeModal(); fetchProductsFromFirebase(); }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
     };
 
     window.confirmDeleteProduct = async function() { if(confirm(`ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); fetchProductsFromFirebase(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
@@ -547,21 +612,15 @@
     window.submitUpdate = async function() {
         const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, s = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
         if(!p) {showToast("กรุณากรอกชื่อลาย","error");return;}
-        
-        const now = new Date();
-        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: 'สร้างสินค้าเริ่มต้น' }];
-
-        let newProd = { 'SKU': sku, 'ชื่อลาย': p, 'สี': c, 'fabric': f, 'รูปภาพสินค้า': tempImageUrlsArray, 'logs': initialLogs };
+        let initialCover = tempImageUrlsArray.length > 0 ? tempImageUrlsArray[0] : "";
+        let newProd = { 'SKU': sku, 'ชื่อลาย': p, 'สี': c, 'fabric': f, 'รูปภาพสินค้า': tempImageUrlsArray, 'coverImage': initialCover, 'logs': initialLogs };
         STYLES.forEach(st => SIZES.forEach(sz => newProd[`${st} ${sz}`] = (st===s && sz===document.getElementById('update-size').value) ? qty : 0));
-        try{ 
-            await setDoc(doc(db,"products",String(sku)), newProd); 
-            showToast(`เพิ่มสินค้าสำเร็จ!`); 
-            document.getElementById('update-pattern').value=''; document.getElementById('update-qty').value=''; document.getElementById('update-image').value=''; document.getElementById('image-preview-box').style.display='none'; document.getElementById('image-preview-box').innerHTML=''; tempImageUrlsArray=[]; generateSKU(); switchMode('check'); 
-        }catch(e){showToast("บันทึกไม่สำเร็จ","error");}
+        try{ await setDoc(doc(db,"products",String(sku)), newProd); showToast(`เพิ่มสินค้าสำเร็จ!`); document.getElementById('update-pattern').value=''; document.getElementById('update-qty').value=''; document.getElementById('update-image').value=''; document.getElementById('image-preview-box').style.display='none'; document.getElementById('image-preview-box').innerHTML=''; tempImageUrlsArray=[]; generateSKU(); switchMode('check'); }catch(e){showToast("บันทึกไม่สำเร็จ","error");}
     };
 
-    window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getFirstImage(p['รูปภาพสินค้า']); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
+    window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
     window.onload = () => fetchProductsFromFirebase();
 </script>
 </body>
