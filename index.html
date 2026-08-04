@@ -139,6 +139,14 @@
         select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { width: 100%; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; color: var(--text-color); transition: 0.3s;}
         select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249,168,212,0.2); background: #fff; }
         
+        /* สไตล์ช่องอัปโหลดรูปเรียงยาวลงมา 4 แถวแนวตั้ง */
+        .style-upload-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
+        .style-upload-box { background: #fff1f2; border: 2px dashed #fbcfe8; border-radius: 20px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; transition: 0.2s; }
+        .style-upload-box:hover { border-color: var(--primary-hover); background: #ffe4e6; }
+        .style-upload-title { font-size: 0.95rem; color: var(--accent-color); font-weight: 500 !important; min-width: 140px; display: flex; align-items: center; gap: 6px; }
+        .style-upload-input-wrap { flex: 1; min-width: 220px; }
+        .style-preview-container { display: flex; flex-wrap: gap: 6px; justify-content: flex-start; margin-top: 6px; gap: 6px; }
+
         .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-bottom: 10px; }
         .color-btn { padding: 10px 4px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; font-weight: 400 !important; }
         .color-btn.active { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(216,27,96,0.15); transform: scale(1.05); }
@@ -164,7 +172,7 @@
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-hover); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* การ์ดคำขอเติมสต๊อก (เพิ่มสไตล์ปุ่มแว่นขยายบนรูป) */
+        /* การ์ดคำขอเติมสต๊อก */
         .order-card { background: #ffffff; border: 2px solid var(--border-color); border-radius: 24px; padding: 18px; margin-bottom: 16px; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.15); display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; transition: 0.2s; }
         .order-card:hover { border-color: var(--primary-hover); box-shadow: 0 10px 25px rgba(249, 168, 212, 0.3); }
         
@@ -234,7 +242,6 @@
                 <option value="บุญ">บุญ</option>
                 <option value="ทัน">ทัน</option>
                 <option value="โมเน่">โมเน่</option>
-                <option value="จ๋อม">จ๋อม</option>
             </select>
         </div>
 
@@ -243,7 +250,6 @@
 </div>
 
 <div class="container">
-    <!-- แถบแสดงชื่อผู้ใช้งานปัจจุบัน (มุมขวาบน) สามารถคลิกเพื่อเปลี่ยนชื่อได้ -->
     <div class="current-user-bar" onclick="openLoginModal()" title="คลิกเพื่อเปลี่ยนผู้ใช้งาน">
         👤 <span id="display-current-user">ชิต</span> ✏️
     </div>
@@ -252,7 +258,6 @@
         <h1>✨ Sleepingbox Stock</h1>
     </div>
 
-    <!-- แท็บสลับโหมด 3 เมนู (พร้อมจุดแดงแจ้งเตือน iOS) -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อก</button>
         <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้า</button>
@@ -316,13 +321,41 @@
         <div class="product-grid" id="product-grid"></div>
     </div>
 
-    <!-- โหมดเพิ่มสินค้า -->
+    <!-- โหมดเพิ่มสินค้า (ช่องอัปโหลดรูปเรียงลงมา 4 แถวแนวตั้ง) -->
     <div id="update-mode" class="mode-section">
         <div class="form-group">
-            <label>อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป):</label>
-            <input type="file" id="update-image" accept="image/*" multiple="multiple" onchange="previewImages(event)">
+            <label style="font-weight: 500 !important; margin-bottom: 12px;">📸 อัปโหลดรูปภาพแยกตามรูปแบบ (เลือกอัปโหลดเฉพาะรูปแบบที่มีได้):</label>
+            <div class="style-upload-stack">
+                <div class="style-upload-box">
+                    <div class="style-upload-title">👕 แขนสั้นขาสั้น</div>
+                    <div class="style-upload-input-wrap">
+                        <input type="file" accept="image/*" multiple onchange="previewStyleImages('แขนสั้นขาสั้น', event)">
+                        <div id="preview-แขนสั้นขาสั้น" class="style-preview-container"></div>
+                    </div>
+                </div>
+                <div class="style-upload-box">
+                    <div class="style-upload-title">👚 แขนสั้นขายยาว</div>
+                    <div class="style-upload-input-wrap">
+                        <input type="file" accept="image/*" multiple onchange="previewStyleImages('แขนสั้นขายยาว', event)">
+                        <div id="preview-แขนสั้นขายยาว" class="style-preview-container"></div>
+                    </div>
+                </div>
+                <div class="style-upload-box">
+                    <div class="style-upload-title">👔 แขนยาวขายยาว</div>
+                    <div class="style-upload-input-wrap">
+                        <input type="file" accept="image/*" multiple onchange="previewStyleImages('แขนยาวขายยาว', event)">
+                        <div id="preview-แขนยาวขายยาว" class="style-preview-container"></div>
+                    </div>
+                </div>
+                <div class="style-upload-box">
+                    <div class="style-upload-title">👗 กระโปรง</div>
+                    <div class="style-upload-input-wrap">
+                        <input type="file" accept="image/*" multiple onchange="previewStyleImages('กระโปรง', event)">
+                        <div id="preview-กระโปรง" class="style-preview-container"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group" id="image-preview-box" style="display:none; text-align: center; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
         
         <div class="form-group"><label>ชื่อลายสินค้า:</label><input type="text" id="update-pattern" placeholder="เช่น ลายหมี, 8016"></div>
         <div class="form-group">
@@ -347,7 +380,7 @@
             <select id="fabric-select" onchange="generateSKU()"><option value="ซาติน">ผ้าซาติน</option><option value="ไหม">ผ้าไหม</option><option value="คอตตอน">ผ้าคอตตอน</option><option value="ผ้าย่น">ผ้าย่น</option></select>
         </div>
         <div class="form-group">
-            <label>รูปแบบแขน-ขา:</label>
+            <label>รูปแบบแขน-ขา (เริ่มต้น):</label>
             <select id="update-style"><option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option><option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option><option value="แขนยาวขายยาว">แขนยาวขายยาว</option><option value="กระโปรง">กระโปรง</option></select>
         </div>
         <div class="form-group"><label>รหัส SKU:</label><input type="text" id="generated-sku" style="background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; text-align: center;" readonly></div>
@@ -356,7 +389,7 @@
         <button class="action-btn" onclick="submitUpdate()">✨ บันทึกสินค้าใหม่</button>
     </div>
 
-    <!-- โหมดรายการเติมสต๊อก (ฝั่งโกดังจัดการคำขอ) -->
+    <!-- โหมดรายการเติมสต๊อก -->
     <div id="orders-mode" class="mode-section">
         <h2 style="font-size: 1.2rem; color: var(--accent-color); margin-bottom: 16px;">📦 รายการคำขอเติมสต๊อกจากหน้าร้าน</h2>
         <div id="orders-list-container">
@@ -383,6 +416,14 @@
                 </div>
                 
                 <div id="edit-info-box" style="display: none; background: #fff1f2; padding: 12px; border-radius: 20px; margin-bottom: 10px; border: 2px solid #fbcfe8;">
+                    <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">👕 เลือกรูปแบบแขน-ขาของรูปที่อัปเพิ่ม:</label>
+                    <select id="edit-upload-style-target" style="width: 100%; margin-bottom: 8px; padding: 8px; background: #fff;">
+                        <option value="แขนสั้นขาสั้น">แขนสั้นขาสั้น</option>
+                        <option value="แขนสั้นขายยาว">แขนสั้นขายยาว</option>
+                        <option value="แขนยาวขายยาว">แขนยาวขายยาว</option>
+                        <option value="กระโปรง">กระโปรง</option>
+                    </select>
+
                     <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">อัปโหลดรูปภาพเพิ่ม:</label>
                     <input type="file" id="edit-image-input" accept="image/*" multiple="multiple" onchange="previewEditImages(event)" style="width: 100%; margin-bottom: 6px; padding: 8px; background: #fff;">
                     <div id="edit-image-preview-box" style="display:none; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px;"></div>
@@ -526,7 +567,14 @@
     let currentFabric = "ซาติน"; 
     let loadedFabric = ""; 
     let activeSku = ""; 
-    let tempImageUrlsArray = []; 
+    
+    let styleImagesObj = {
+        "แขนสั้นขาสั้น": [],
+        "แขนสั้นขายยาว": [],
+        "แขนยาวขายยาว": [],
+        "กระโปรง": []
+    };
+
     let editTempImageUrlsArray = []; 
     let currentOperator = "<"; 
     let isStockEditable = false; 
@@ -611,9 +659,28 @@
         } 
     };
     
-    function getDisplayCoverImage(pData) {
+    // ฟังก์ชันดึงรูปภาพ (หากไม่มีรูปตรงรูปแบบ จะดึงรูปจากรูปแบบอื่นมาใช้แทนก่อนอัตโนมัติ)
+    function getDisplayCoverImage(pData, selectedStyleFilter = "") {
         if (!pData) return null;
+        
+        let styleImgs = pData['styleImages'] || {};
+        
+        // ถ้ามีการระองเจาะจงรูปแบบ และมีรูปของรูปแบบนั้น ให้ใช้รูปนั้นก่อน
+        if (selectedStyleFilter && styleImgs[selectedStyleFilter] && styleImgs[selectedStyleFilter].length > 0) {
+            return styleImgs[selectedStyleFilter][0];
+        }
+
+        // ถ้าไม่มีรูปแบบที่ระบุ ให้เช็คไล่จากทุกรูปแบบที่มี (แขนสั้นขาสั้น, แขนสั้นขายยาว, แขนยาวขายยาว, กระโปรง)
+        for (let s of STYLES) {
+            if (styleImgs[s] && styleImgs[s].length > 0) {
+                return styleImgs[s][0];
+            }
+        }
+
+        // สำรองกรณีมี coverImage เดิม
         if (pData['coverImage']) return pData['coverImage'];
+        
+        // สำรองกรณีเก็บในรูปภาพสินค้าแบบเก่า
         let imgs = pData['รูปภาพสินค้า'];
         if (Array.isArray(imgs)) return imgs.length > 0 ? imgs[0] : null;
         return imgs || null;
@@ -651,23 +718,25 @@
         });
     }
 
-    window.previewImages = async function(event) {
+    window.previewStyleImages = async function(styleName, event) {
         const files = event.target.files;
         if (!files || files.length === 0) return;
-        showToast("กำลังย่อและอัปโหลดรูปภาพ...", "success");
-        tempImageUrlsArray = [];
-        const previewBox = document.getElementById('image-preview-box');
-        previewBox.innerHTML = ''; previewBox.style.display = 'flex';
+        showToast(`กำลังอัปโหลดรูป (${styleName})...`, "success");
+        
+        if (!styleImagesObj[styleName]) styleImagesObj[styleName] = [];
+        const previewBox = document.getElementById(`preview-${styleName}`);
+        previewBox.style.display = 'flex';
+
         try {
             for (let i = 0; i < files.length; i++) {
                 const compressedFile = await compressImage(files[i], 1200, 0.8);
-                const storageRef = ref(storage, `products/${Date.now()}_${i}_${files[i].name}`);
+                const storageRef = ref(storage, `products/styles_${Date.now()}_${i}_${files[i].name}`);
                 const snapshot = await uploadBytes(storageRef, compressedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
-                tempImageUrlsArray.push(downloadURL);
-                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 100px; width: 100px; object-fit: cover; border-radius: 16px; border: 2px solid var(--border-color);">`;
+                styleImagesObj[styleName].push(downloadURL);
+                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 55px; width: 55px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
             }
-            showToast("อัปโหลดรูปสำเร็จ!");
+            showToast(`อัปโหลดรูป (${styleName}) สำเร็จ!`);
         } catch (error) {
             showToast("อัปโหลดรูปไม่สำเร็จ", "error");
         }
@@ -722,8 +791,10 @@
         mapped.forEach((item, i) => {
             const p = item.data; const name = p['ชื่อลาย'] || ('SKU '+p['SKU']);
             let badge = item.total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${item.total} ชุด</div>`;
-            let coverImg = getDisplayCoverImage(p); 
+            
+            let coverImg = getDisplayCoverImage(p, st); 
             let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
+            
             htmlString += `<div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')"><div class="product-img-container">${badge}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div></div></div>`;
         });
         grid.innerHTML = htmlString;
@@ -748,9 +819,18 @@
         activeProductLogs = currentActiveProduct['logs'] || [];
 
         let allImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) 
-            ? currentActiveProduct['รูปภาพสินค้า'] 
+            ? [...currentActiveProduct['รูปภาพสินค้า']] 
             : (currentActiveProduct['รูปภาพสินค้า'] ? [currentActiveProduct['รูปภาพสินค้า']] : []);
             
+        let styleImgsObj = currentActiveProduct['styleImages'] || {};
+        STYLES.forEach(s => {
+            if (styleImgsObj[s] && Array.isArray(styleImgsObj[s])) {
+                styleImgsObj[s].forEach(imgUrl => {
+                    if (!allImages.includes(imgUrl)) allImages.push(imgUrl);
+                });
+            }
+        });
+
         let coverImg = getDisplayCoverImage(currentActiveProduct);
         selectedImageForCover = coverImg || (allImages.length > 0 ? allImages[0] : "");
 
@@ -933,7 +1013,7 @@
     };
 
     // ==========================================
-    // 📦 โหลดรายการออเดอร์ (เพิ่มปุ่มแว่นขยายที่รูปภาพ)
+    // 📦 โหลดรายการออเดอร์
     // ==========================================
     window.fetchWarehouseOrders = async function() {
         const container = document.getElementById('orders-list-container');
@@ -1004,7 +1084,6 @@
                 let pData = allProductsMap[order.sku];
                 let itemImg = order.coverImage || (pData ? getDisplayCoverImage(pData) : "");
                 
-                // โครงสร้างรูปภาพพร้อมปุ่มแว่นขยาย (Zoom Badge)
                 let imgThumbHtml = itemImg ? `
                     <div class="order-img-wrapper" onclick="openOrderImageLightbox('${itemImg}')" title="คลิกเพื่อดูรูปใหญ่">
                         <img src="${itemImg}" class="order-img-thumb">
@@ -1040,7 +1119,6 @@
         });
     };
 
-    // ฟังก์ชันเปิดดูรูปใหญ่จากหน้าออเดอร์
     window.openOrderImageLightbox = function(imgSrc) {
         document.getElementById('lightbox-img').src = imgSrc;
         document.getElementById('imageLightbox').style.display = 'flex';
@@ -1163,23 +1241,29 @@
     
     window.saveInfoChanges = async function() { 
         const nP = document.getElementById('edit-pattern-input').value.trim(), nC = document.getElementById('edit-color-input').value.trim(); 
+        const targetStyle = document.getElementById('edit-upload-style-target').value;
         if(!nP){showToast("กรุณากรอกชื่อลาย","error");return;} 
         
         let updateData = { 'ชื่อลาย': nP, 'สี': nC };
 
         if (editTempImageUrlsArray.length > 0) {
             let existingImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) 
-                ? currentActiveProduct['รูปภาพสินค้า'] 
+                ? [...currentActiveProduct['รูปภาพสินค้า']] 
                 : (currentActiveProduct['รูปภาพสินค้า'] ? [currentActiveProduct['รูปภาพสินค้า']] : []);
             
             let combinedImages = existingImages.concat(editTempImageUrlsArray);
             updateData['รูปภาพสินค้า'] = combinedImages;
+
+            let styleImgsObj = currentActiveProduct['styleImages'] || {};
+            if (!styleImgsObj[targetStyle]) styleImgsObj[targetStyle] = [];
+            styleImgsObj[targetStyle] = styleImgsObj[targetStyle].concat(editTempImageUrlsArray);
+            updateData['styleImages'] = styleImgsObj;
         }
 
         try{ 
             const now = new Date();
             const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            activeProductLogs.push({ date: dateStr, type: 'อัปเดตข้อมูล', note: `ผู้ใช้ (${currentUsername}) แก้ไขชื่อ/สี/รูป` });
+            activeProductLogs.push({ date: dateStr, type: 'อัปเดตข้อมูล', note: `ผู้ใช้ (${currentUsername}) แก้ไขชื่อ/สี/รูป (${targetStyle})` });
             updateData['logs'] = activeProductLogs;
 
             await updateDoc(doc(db,"products",String(activeSku)), updateData); 
@@ -1191,6 +1275,10 @@
             if (editTempImageUrlsArray.length > 0 && currentActiveProduct) {
                 let existingImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) ? currentActiveProduct['รูปภาพสินค้า'] : [];
                 currentActiveProduct['รูปภาพสินค้า'] = existingImages.concat(editTempImageUrlsArray);
+                if (!currentActiveProduct['styleImages']) currentActiveProduct['styleImages'] = {};
+                if (!currentActiveProduct['styleImages'][targetStyle]) currentActiveProduct['styleImages'][targetStyle] = [];
+                currentActiveProduct['styleImages'][targetStyle] = currentActiveProduct['styleImages'][targetStyle].concat(editTempImageUrlsArray);
+                
                 currentActiveProduct['ชื่อลาย'] = nP;
                 currentActiveProduct['สี'] = nC;
                 
@@ -1232,14 +1320,51 @@
     window.confirmDeleteProduct = async function() { if(confirm(`[ผู้ลบ: ${currentUsername}] ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); triggerSearch(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
     
     window.submitUpdate = async function() {
-        const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, s = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
+        const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, styleInitial = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
         if(!p) {showToast("กรุณากรอกชื่อลาย","error");return;}
+        
         const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: `ผู้สร้าง (${currentUsername}) สร้างสินค้าเริ่มต้น` }];
-        let initialCover = tempImageUrlsArray.length > 0 ? tempImageUrlsArray[0] : "";
-        let newProd = { 'SKU': sku, 'ชื่อลาย': p, 'สี': c, 'fabric': f, 'รูปภาพสินค้า': tempImageUrlsArray, 'coverImage': initialCover, 'logs': initialLogs };
-        STYLES.forEach(st => SIZES.forEach(sz => newProd[`${st} ${sz}`] = (st===s && sz===document.getElementById('update-size').value) ? qty : 0));
-        try{ await setDoc(doc(db,"products",String(sku)), newProd); showToast(`เพิ่มสินค้าสำเร็จ!`); document.getElementById('update-pattern').value=''; document.getElementById('update-qty').value=''; document.getElementById('update-image').value=''; document.getElementById('image-preview-box').style.display='none'; document.getElementById('image-preview-box').innerHTML=''; tempImageUrlsArray=[]; generateSKU(); switchMode('check'); }catch(e){showToast("บันทึกไม่สำเร็จ","error");}
+        
+        let allUploadedImgs = [];
+        STYLES.forEach(st => {
+            if (styleImagesObj[st] && styleImagesObj[st].length > 0) {
+                allUploadedImgs = allUploadedImgs.concat(styleImagesObj[st]);
+            }
+        });
+
+        let initialCover = allUploadedImgs.length > 0 ? allUploadedImgs[0] : "";
+
+        let newProd = { 
+            'SKU': sku, 
+            'ชื่อลาย': p, 
+            'สี': c, 
+            'fabric': f, 
+            'รูปภาพสินค้า': allUploadedImgs, 
+            'styleImages': styleImagesObj, 
+            'coverImage': initialCover, 
+            'logs': initialLogs 
+        };
+
+        STYLES.forEach(st => SIZES.forEach(sz => newProd[`${st} ${sz}`] = (st===styleInitial && sz===document.getElementById('update-size').value) ? qty : 0));
+        
+        try{ 
+            await setDoc(doc(db,"products",String(sku)), newProd); 
+            showToast(`เพิ่มสินค้าสำเร็จ!`); 
+            document.getElementById('update-pattern').value=''; 
+            document.getElementById('update-qty').value=''; 
+            
+            styleImagesObj = { "แขนสั้นขาสั้น": [], "แขนสั้นขายยาว": [], "แขนยาวขายยาว": [], "กระโปรง": [] };
+            STYLES.forEach(st => {
+                let pv = document.getElementById(`preview-${st}`);
+                if(pv) { pv.innerHTML = ''; pv.style.display = 'none'; }
+            });
+
+            generateSKU(); 
+            switchMode('check'); 
+        }catch(e){
+            showToast("บันทึกไม่สำเร็จ","error");
+        }
     };
 
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
