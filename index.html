@@ -89,10 +89,16 @@
         .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;}
         .close-btn:hover { background: var(--accent-color); color: white; }
         
-        .modal-img-container { position: relative; display: inline-block; border-radius: 24px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 8px; cursor: zoom-in; border: 2px solid var(--border-color); }
-        .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; }
-        .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(216, 27, 96, 0.7); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important;}
+        .modal-img-container { position: relative; display: inline-block; border-radius: 24px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 8px; border: 2px solid var(--border-color); }
+        .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; cursor: zoom-in; }
         
+        /* ✨ ปุ่มซ้อนบนมุมขวาล่างของรูป (แว่นขยาย & ลบรูป) */
+        .image-action-buttons { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 6px; }
+        .zoom-badge { background: rgba(216, 27, 96, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; cursor: pointer; transition: 0.2s; }
+        .zoom-badge:hover { background: rgba(216, 27, 96, 1); }
+        .delete-img-badge { background: rgba(239, 68, 68, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; cursor: pointer; transition: 0.2s; }
+        .delete-img-badge:hover { background: rgba(239, 68, 68, 1); }
+
         .thumb-gallery { display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 6px 0 12px 0; }
         .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 14px; border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; opacity: 0.6; }
         .thumb-img:hover, .thumb-img.active { opacity: 1; border-color: var(--accent-color); transform: scale(1.05); }
@@ -161,6 +167,8 @@
 
         @media print { @page { size: A4 landscape; margin: 8mm; } body * { visibility: hidden; } #print-section, #print-section * { visibility: visible; } #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; } .print-page { page-break-before: always; } .print-page:first-child { page-break-before: auto; } .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; } .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; } .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; } }
         @media screen and (max-width: 600px) { .container { padding: 24px 16px; border-radius: 28px; } .search-top-row { flex-direction: column; } .search-input, .filter-select, .search-btn { width: 100%; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 150px; } }
+        
+        .search-prompt-box { grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: #fff1f2; border-radius: 24px; border: 2px dashed #fbcfe8; color: var(--text-color); margin-top: 20px; animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body>
@@ -275,8 +283,8 @@
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()">&times;</button>
         
-        <!-- กล่องรูปหลักใหญ่ -->
-        <div class="modal-img-container" id="modal-img-box" onclick="openLightbox()"></div>
+        <!-- กล่องรูปหลักใหญ่ พร้อมปุ่มแว่นขยายและปุ่มลบรูป -->
+        <div class="modal-img-container" id="modal-img-box"></div>
         
         <!-- แถบปุ่มตั้งเป็นภาพหลัก และอัลบั้มรูปภาพย่อย -->
         <button id="set-cover-btn" class="set-cover-btn" onclick="saveSelectedCoverImage()">📌 ตั้งเป็นภาพหลัก (โชว์หน้าปก)</button>
@@ -305,7 +313,6 @@
                 <button type="button" id="edit-info-btn" class="edit-toggle-btn" onclick="toggleInfoEditMode()">✏️ แก้ชื่อ/สี/รูป</button>
                 <button type="button" id="edit-mode-btn" class="edit-toggle-btn" onclick="toggleStockEditMode()">✏️ แก้สต๊อก</button>
                 <button type="button" class="edit-toggle-btn" onclick="openLogModal()" style="background: #fdf2f8; border-color: var(--primary-color);">📊 เปรียบเทียบสต๊อก</button>
-                <!-- ✨ ปุ่มกราฟเชิงลึกที่เพิ่มเข้ามาใหม่ -->
                 <button type="button" class="btn-chart-open" onclick="openStockChartModal()">📈 กราฟ</button>
             </div>
         </div>
@@ -429,6 +436,7 @@
 
     let productsData = []; 
     let currentFabric = "ซาติน"; 
+    let loadedFabric = ""; 
     let activeSku = ""; 
     let tempImageUrlsArray = []; 
     let editTempImageUrlsArray = []; 
@@ -449,8 +457,37 @@
     window.switchMode = function(mode) { document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); document.querySelectorAll('.mode-section').forEach(sec => sec.classList.remove('active')); if(mode === 'check') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); document.getElementById('check-mode').classList.add('active'); } else { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('update-mode').classList.add('active'); generateSKU(); } };
     window.selectColor = function(c, btn) { document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById('update-color').value = c; };
     window.generateSKU = async function() { const f = document.getElementById('fabric-select').value; let prefix = f === "คอตตอน" ? "CT" : f === "ไหม" ? "SILK" : f === "ผ้าย่น" ? "AA" : "Satin"; let unique = false, finalSku = ""; while (!unique) { finalSku = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`; const snap = await getDoc(doc(db, "products", finalSku)); if (!snap.exists()) unique = true; } document.getElementById('generated-sku').value = finalSku; };
-    window.selectFabric = function(f) { currentFabric = f; document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); document.getElementById('search-keyword').value = ""; fetchProductsFromFirebase(); };
-    window.fetchProductsFromFirebase = async function() { const grid = document.getElementById('product-grid'); grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`; try { const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); const snap = await getDocs(q); productsData = []; snap.forEach(d => productsData.push(d.data())); renderProductsLocally(false); } catch(e) { grid.innerHTML = `<p style="text-align:center;color:red;grid-column:1/-1;">❌ โหลดไม่สำเร็จ</p>`; } };
+    
+    window.selectFabric = function(f) { 
+        currentFabric = f; 
+        document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); 
+        document.getElementById('search-keyword').value = ""; 
+        loadedFabric = ""; 
+        productsData = []; 
+
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = `
+            <div class="search-prompt-box">
+                <h2 style="font-size:1.4rem; color: var(--accent-color); margin-bottom: 8px;">📦 หมวดหมู่ผ้า${f}</h2>
+                <p style="font-size:1rem; color: #6b7280; font-weight: 400 !important;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อดึงข้อมูลสต๊อก</p>
+            </div>
+        `;
+    };
+
+    window.fetchProductsFromFirebase = async function(adv=false) { 
+        const grid = document.getElementById('product-grid'); 
+        grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="color:var(--accent-color); font-weight:500;">กำลังดึงข้อมูลจากคลัง...</p></div>`; 
+        try { 
+            const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); 
+            const snap = await getDocs(q); 
+            productsData = []; 
+            snap.forEach(d => productsData.push(d.data())); 
+            loadedFabric = currentFabric; 
+            renderProductsLocally(adv); 
+        } catch(e) { 
+            grid.innerHTML = `<p style="text-align:center;color:red;grid-column:1/-1;">❌ โหลดไม่สำเร็จ กรุณาลองใหม่</p>`; 
+        } 
+    };
     
     function getDisplayCoverImage(pData) {
         if (!pData) return null;
@@ -538,7 +575,15 @@
 
     window.applySort = function(o) { currentSortOrder = currentSortOrder === o ? 'default' : o; document.getElementById('sort-asc').classList.toggle('active', currentSortOrder === 'asc'); document.getElementById('sort-desc').classList.toggle('active', currentSortOrder === 'desc'); renderProductsLocally(document.getElementById('advanced-panel').classList.contains('active')); };
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
-    window.triggerSearch = function(adv=false) { renderProductsLocally(adv); };
+    
+    window.triggerSearch = async function(adv=false) { 
+        if (loadedFabric !== currentFabric || productsData.length === 0) {
+            await fetchProductsFromFirebase(adv);
+        } else {
+            renderProductsLocally(adv); 
+        }
+    };
+
     window.renderProductsLocally = function(adv=false) {
         const kw = document.getElementById('search-keyword').value.trim().toLowerCase(), st = document.getElementById('filter-style').value, sz = document.getElementById('filter-size').value, lim = parseInt(document.getElementById('low-stock-limit').value) || 0;
         let mapped = productsData.map(p => {
@@ -590,7 +635,13 @@
         const imgBox = document.getElementById('modal-img-box');
         if (selectedImageForCover) { 
             currentActiveImgSrc = selectedImageForCover; 
-            imgBox.innerHTML = `<img src="${selectedImageForCover}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`; 
+            imgBox.innerHTML = `
+                <img src="${selectedImageForCover}" onclick="openLightbox()">
+                <div class="image-action-buttons">
+                    <span class="delete-img-badge" onclick="confirmDeleteCurrentImage()">🗑️ ลบรูปนี้</span>
+                    <span class="zoom-badge" onclick="openLightbox()">🔍 ดูรูปใหญ่</span>
+                </div>
+            `; 
         } else { 
             currentActiveImgSrc = ""; 
             imgBox.innerHTML = `<span style="color:var(--accent-color);padding:40px;display:inline-block;">ไม่มีรูปภาพ</span>`; 
@@ -623,10 +674,62 @@
     window.selectModalImage = function(imgUrl, el) {
         selectedImageForCover = imgUrl;
         currentActiveImgSrc = imgUrl;
-        document.getElementById('modal-img-box').innerHTML = `<img src="${imgUrl}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
+        document.getElementById('modal-img-box').innerHTML = `
+            <img src="${imgUrl}" onclick="openLightbox()">
+            <div class="image-action-buttons">
+                <span class="delete-img-badge" onclick="confirmDeleteCurrentImage()">🗑️ ลบรูปนี้</span>
+                <span class="zoom-badge" onclick="openLightbox()">🔍 ดูรูปใหญ่</span>
+            </div>
+        `;
         document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
         if(el) el.classList.add('active');
         document.getElementById('set-cover-btn').style.display = 'block';
+    };
+
+    // ==========================================
+    // 💡 [เพิ่มใหม่] ฟังก์ชันลบรูปภาพปัจจุบันที่เลือกอยู่
+    // ==========================================
+    window.confirmDeleteCurrentImage = async function() {
+        if (!currentActiveProduct || !currentActiveImgSrc) return;
+        
+        let allImages = Array.isArray(currentActiveProduct['รูปภาพสินค้า']) 
+            ? [...currentActiveProduct['รูปภาพสินค้า']] 
+            : (currentActiveProduct['รูปภาพสินค้า'] ? [currentActiveProduct['รูปภาพสินค้า']] : []);
+
+        if (allImages.length <= 1) {
+            showToast("ไม่สามารถลบได้ ต้องมีรูปภาพอย่างน้อย 1 รูป", "error");
+            return;
+        }
+
+        if (!confirm("คุณต้องการลบรูปภาพนี้ออกจากสินค้าใช่หรือไม่?")) return;
+
+        // กรองรูปที่ต้องการลบออก
+        let updatedImages = allImages.filter(img => img !== currentActiveImgSrc);
+        let newCover = currentActiveProduct['coverImage'];
+
+        // ถ้าลบรูปที่เป็น Cover อยู่ ให้สลับไปใช้รูปแรกที่เหลือแทน
+        if (newCover === currentActiveImgSrc) {
+            newCover = updatedImages.length > 0 ? updatedImages[0] : "";
+        }
+
+        try {
+            await updateDoc(doc(db, "products", String(activeSku)), {
+                'รูปภาพสินค้า': updatedImages,
+                'coverImage': newCover
+            });
+
+            // อัปเดตข้อมูลในตัวแปรหน้าร้าน
+            currentActiveProduct['รูปภาพสินค้า'] = updatedImages;
+            currentActiveProduct['coverImage'] = newCover;
+
+            showToast("ลบรูปภาพสำเร็จ!");
+            
+            // รีเฟรช Modal และหน้าจอหลัก
+            openStockModal(activeSku, currentActiveProduct['ชื่อลาย']);
+            triggerSearch();
+        } catch (e) {
+            showToast("ลบรูปภาพไม่สำเร็จ", "error");
+        }
     };
 
     window.saveSelectedCoverImage = async function() {
@@ -638,7 +741,7 @@
             showToast("ตั้งเป็นภาพหลักเรียบร้อย!");
             document.getElementById('set-cover-btn').style.display = 'none';
             if(currentActiveProduct) currentActiveProduct['coverImage'] = selectedImageForCover;
-            fetchProductsFromFirebase();
+            triggerSearch();
         } catch(e) {
             showToast("ไม่สามารถเปลี่ยนภาพหลักได้", "error");
         }
@@ -717,7 +820,7 @@
             }
 
             toggleInfoEditMode(); 
-            fetchProductsFromFirebase(); 
+            triggerSearch(); 
         }catch(e){
             showToast("บันทึกไม่สำเร็จ","error");
         } 
@@ -728,10 +831,10 @@
         let ud = {}; document.querySelectorAll('.stock-input').forEach(i => ud[i.getAttribute('data-key')] = parseInt(i.value)||0); 
         const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         activeProductLogs.push({ date: dateStr, type: 'อัปเดต', note: 'แก้ไขจำนวนสต๊อกผ่านตาราง' }); ud['logs'] = activeProductLogs;
-        try{ await updateDoc(doc(db,"products",String(activeSku)), ud); showToast("บันทึกสต๊อกเรียบร้อย!"); closeModal(); fetchProductsFromFirebase(); }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
+        try{ await updateDoc(doc(db,"products",String(activeSku)), ud); showToast("บันทึกสต๊อกเรียบร้อย!"); closeModal(); triggerSearch(); }catch(e){showToast("บันทึกไม่สำเร็จ","error");} 
     };
 
-    window.confirmDeleteProduct = async function() { if(confirm(`ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); fetchProductsFromFirebase(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
+    window.confirmDeleteProduct = async function() { if(confirm(`ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); triggerSearch(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
     
     window.submitUpdate = async function() {
         const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, s = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
@@ -747,7 +850,7 @@
     window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
 
     // ==========================================
-    // ฟังก์ชันควบคุมกราฟเชิงลึก (อ้างอิงวันสร้างสินค้าเป็นหลัก และตัดแสดงตามจริง)
+    // ฟังก์ชันควบคุมกราฟเชิงลึก
     // ==========================================
     window.openStockChartModal = function() {
         document.getElementById('stockChartModal').style.display = 'flex';
@@ -779,19 +882,16 @@
         return new Date();
     };
 
-    // ✨ คำนวณช่วงวันที่แสดงผล โดยยึดวันสร้างสินค้าเป็นหลัก และจำกัดไม่ให้เกินวันปัจจุบัน
     const getChartDatesAndRange = (requestedDays) => {
         let creationDate = getProductCreationDate();
         let today = new Date();
         today.setHours(0, 0, 0, 0);
         creationDate.setHours(0, 0, 0, 0);
 
-        // คำนวณจำนวนวันที่ผ่านมาตั้งแต่สร้างสินค้าถึงวันนี้
         let diffTime = today.getTime() - creationDate.getTime();
         let diffDays = Math.floor(diffTime / (1000 * 3600 * 24)) + 1;
         if (diffDays < 1) diffDays = 1;
 
-        // ถ้าระยะเวลาตั้งแต่สร้างสินค้าน้อยกว่าที่ผู้ใช้เลือก ให้แสดงแค่เท่าที่มีจริง
         let actualDays = Math.min(requestedDays, diffDays);
 
         let dates = [];
@@ -945,7 +1045,14 @@
         }
     }
 
-    window.onload = () => fetchProductsFromFirebase();
+    window.onload = () => {
+        document.getElementById('product-grid').innerHTML = `
+            <div class="search-prompt-box">
+                <h2 style="font-size:1.4rem; color: var(--accent-color); margin-bottom: 8px;">📦 ยินดีต้อนรับสู่ระบบสต๊อก</h2>
+                <p style="font-size:1rem; color: #6b7280; font-weight: 400 !important;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อเริ่มต้นดึงข้อมูลสต๊อก</p>
+            </div>
+        `;
+    };
 </script>
 </body>
 </html>
