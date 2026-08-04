@@ -4,69 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleepingbox - สินค้าพร้อมส่ง</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- เปลี่ยนฟอนต์เป็น Noto Sans Thai ให้เหมือนกัน -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary-color: #f472b6; --primary-hover: #ec4899; --bg-color: #fdf2f8; --card-bg: #ffffff; --text-color: #44403c; --border-color: #fce7f3; --accent-color: #be185d; --line-green: #06c755; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Mitr', sans-serif !important; font-weight: 300 !important; }
+        /* ใช้ธีมสีเดียวกันกับหน้า Admin 100% */
+        :root { 
+            --primary-color: #f9a8d4; 
+            --primary-hover: #f472b6; 
+            --bg-color: #fff0f5; 
+            --card-bg: #ffffff; 
+            --text-color: #57534e; 
+            --border-color: #fce7f3; 
+            --accent-color: #d81b60; 
+            --line-green: #06c755; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Thai', sans-serif !important; font-weight: 300 !important; }
+        h1, h2, h3, b, strong, .font-bold { font-weight: 500 !important; }
+        
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .container { width: 100%; max-width: 800px; background: var(--card-bg); padding: 28px 20px; border-radius: 28px; box-shadow: 0 20px 40px -15px rgba(244, 114, 182, 0.2); border: 1px solid rgba(255,255,255,0.8); }
+        .container { width: 100%; max-width: 800px; background: var(--card-bg); padding: 28px 20px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; }
+        
         .header-container { text-align: center; margin-bottom: 24px; }
-        h1 { font-size: 1.8rem; color: var(--accent-color); font-weight: 500 !important; }
-        p.subtitle { font-size: 0.9rem; color: #9d174d; margin-top: 4px; }
+        h1 { font-size: 1.8rem; color: var(--accent-color); letter-spacing: 0.5px; }
+        p.subtitle { font-size: 0.95rem; color: var(--primary-hover); margin-top: 4px; font-weight: 400 !important; }
+        
         .fabric-categories { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .fabric-categories::-webkit-scrollbar { display: none; }
-        .fabric-chip { padding: 10px 22px; background: #fff; border: 1.5px solid var(--border-color); border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; }
-        .fabric-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 400 !important; box-shadow: 0 6px 15px rgba(190, 24, 93, 0.25); transform: scale(1.03); }
-        .search-top-row { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
-        .search-input { flex: 2; min-width: 160px; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.95rem; outline: none; background: #fafaf9; }
-        .search-input:focus { border-color: var(--primary-color); background: #fff; }
-        .filter-select { flex: 1; min-width: 110px; padding: 12px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.9rem; outline: none; background: #fafaf9; }
-        .search-btn { background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); color: white; border: none; padding: 12px 20px; border-radius: 16px; font-size: 0.95rem; cursor: pointer; white-space: nowrap; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
-        .product-card { background: #ffffff; border: 1.5px solid #fce7f3; border-radius: 20px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(244, 114, 182, 0.25); border-color: var(--primary-color); }
-        .product-img-container { width: 100%; height: 200px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .product-img-container img, .modal-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s ease; image-rendering: high-quality; image-rendering: -webkit-optimize-contrast; }
-        .product-card:hover .product-img-container img { transform: scale(1.06); }
-        .stock-badge { position: absolute; top: 10px; right: 10px; padding: 4px 10px; font-size: 0.75rem; border-radius: 10px; color: white; font-weight: 400 !important; backdrop-filter: blur(4px); }
-        .badge-instock { background: rgba(16, 185, 129, 0.9); }
-        .badge-outstock { background: rgba(239, 68, 68, 0.9); }
-        .product-info { padding: 14px; text-align: center; }
-        .product-name { font-size: 1.05rem; margin-bottom: 2px; color: #831843; font-weight: 400 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .product-details { font-size: 0.85rem; color: #db2777; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 520px; padding: 24px 16px; border-radius: 24px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.4rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        .fabric-chip { padding: 10px 24px; background: #fff; border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; font-weight: 400 !important; }
+        .fabric-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 6px 15px rgba(216, 27, 96, 0.3); transform: scale(1.05); font-weight: 500 !important; }
         
-        .modal-img-container { width: 100%; max-height: 280px; border-radius: 16px; overflow: hidden; background: #fdf2f8; text-align: center; margin-bottom: 8px; position: relative; cursor: zoom-in; }
+        .search-top-row { display: flex; gap: 10px; margin-bottom: 24px; align-items: center; flex-wrap: wrap; }
+        .search-input, .filter-select { padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; transition: 0.3s; color: var(--text-color); }
+        .search-input { flex: 2; min-width: 160px; }
+        .filter-select { flex: 1; min-width: 110px; cursor: pointer; }
+        .search-input:focus, .filter-select:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(249, 168, 212, 0.2); }
+        .search-btn { background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; padding: 12px 24px; border-radius: 24px; font-size: 0.95rem; cursor: pointer; white-space: nowrap; transition: 0.3s; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); font-weight: 400 !important; }
+        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
+        
+        /* การ์ดสินค้า */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+        .product-card { background: #ffffff; border: 2px solid var(--border-color); border-radius: 24px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(249, 168, 212, 0.4); border-color: var(--primary-hover); }
+        .product-img-container { width: 100%; height: 200px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .product-img-container img, .modal-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.4s ease; }
+        .product-card:hover .product-img-container img { transform: scale(1.06); }
+        
+        .stock-badge { position: absolute; top: 12px; right: 12px; padding: 4px 12px; font-size: 0.75rem; border-radius: 12px; color: white; font-weight: 500 !important; backdrop-filter: blur(4px); }
+        .badge-instock { background: rgba(16, 185, 129, 0.9); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+        .badge-outstock { background: rgba(244, 63, 94, 0.9); box-shadow: 0 2px 8px rgba(244,63,94,0.3); }
+        
+        .product-info { padding: 16px; text-align: center; }
+        .product-name { font-size: 1.05rem; margin-bottom: 2px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500 !important; }
+        .product-details { font-size: 0.85rem; color: #9d174d; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
+        .modal-content { background: white; width: 100%; max-width: 520px; padding: 26px 16px; border-radius: 36px; position: relative; max-height: 90vh; overflow-y: auto; border: 2px solid var(--border-color); box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); }
+        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;}
+        .close-btn:hover { background: var(--accent-color); color: white; }
+        
+        .modal-img-container { width: 100%; max-height: 280px; border-radius: 24px; overflow: hidden; background: #fdf2f8; text-align: center; margin-bottom: 12px; position: relative; cursor: zoom-in; border: 2px solid var(--border-color); }
         .modal-img-container img { max-height: 280px; width: auto; object-fit: contain; }
-        .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.65); color: #ffffff; padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; display: flex; gap: 4px; backdrop-filter: blur(4px); }
+        .zoom-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(216, 27, 96, 0.7); color: #ffffff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; }
         
         .thumbnail-container { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
         .thumbnail-container::-webkit-scrollbar { display: none; }
-        .thumbnail-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; cursor: pointer; transition: 0.2s; opacity: 0.6; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .thumbnail-img:hover { opacity: 1; }
-        .thumbnail-img.active { border-color: var(--accent-color); opacity: 1; box-shadow: 0 4px 10px rgba(190,24,93,0.3); transform: translateY(-2px); }
+        .thumbnail-img { width: 55px; height: 55px; border-radius: 16px; object-fit: cover; border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; opacity: 0.6; }
+        .thumbnail-img:hover { opacity: 1; border-color: var(--primary-hover); }
+        .thumbnail-img.active { border-color: var(--accent-color); opacity: 1; transform: scale(1.05); }
 
-        .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.92); z-index: 2000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(8px); }
-        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 16px; image-rendering: high-quality; image-rendering: -webkit-optimize-contrast; }
+        .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,240,245,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
+        .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 24px; border: 2px solid #fff; box-shadow: 0 10px 30px rgba(216,27,96,0.2); }
         
         .lightbox-actions { position: absolute; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 2010; }
-        .lightbox-btn { color: #fff; font-size: 1.2rem; cursor: pointer; background: rgba(255, 255, 255, 0.2); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s; border: none; backdrop-filter: blur(4px); }
-        .lightbox-btn:hover { background: rgba(244, 114, 182, 0.9); transform: scale(1.05); }
+        .lightbox-btn { color: var(--accent-color); font-size: 1.4rem; cursor: pointer; background: #fff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s; border: none; box-shadow: 0 4px 10px rgba(216,27,96,0.2); }
+        .lightbox-btn:hover { background: var(--primary-hover); color: white; transform: scale(1.05); }
 
-        .stock-table-wrapper { border-radius: 14px; border: 1.5px solid var(--border-color); width: 100%; overflow-x: auto; margin: 12px 0; }
+        .stock-table-wrapper { border-radius: 20px; border: 2px solid var(--border-color); width: 100%; overflow-x: auto; margin: 12px 0; }
         .stock-table { width: 100%; border-collapse: collapse; min-width: 440px; }
-        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 8px 4px; text-align: center; font-size: 0.85rem; }
-        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 400 !important; }
-        .qty-has { color: #059669; font-weight: 500 !important; }
+        .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 10px 4px; text-align: center; font-size: 0.9rem; }
+        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
+        .qty-has { color: #10b981; font-weight: 500 !important; }
         .qty-none { color: #d1d5db; }
-        .line-buy-btn { width: 100%; padding: 14px; background: var(--line-green); color: white; border: none; border-radius: 16px; font-size: 1rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 400 !important; }
-        .loader-container { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--primary-color); }
-        .spinner { width: 36px; height: 36px; border: 4px solid #fce7f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
+        
+        /* ปุ่ม LINE ซื้อสินค้า */
+        .line-buy-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #00c300, #009900); color: white; border: none; border-radius: 24px; font-size: 1.05rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 400 !important; box-shadow: 0 6px 15px rgba(0, 195, 0, 0.3); transition: 0.3s; }
+        .line-buy-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 195, 0, 0.4); }
+        
+        .loader-container { grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--primary-hover); }
+        .spinner { width: 44px; height: 44px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-hover); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media screen and (max-width: 600px) { .container { padding: 18px 12px; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 160px; } }
+        
+        @media screen and (max-width: 600px) { .container { padding: 24px 16px; border-radius: 28px; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 160px; } }
     </style>
 </head>
 <body>
@@ -101,12 +130,12 @@
         <div class="modal-img-container" id="modal-img-box" onclick="openLightbox()"></div>
         <div id="modal-thumbnail-box" class="thumbnail-container"></div>
 
-        <div style="text-align: center; margin-bottom: 12px;">
-            <h2 id="modal-title" style="font-size: 1.3rem; color: var(--accent-color); font-weight: 500 !important;">ชื่อลาย</h2>
-            <p id="modal-subtitle" style="font-size: 0.85rem; color: #db2777;"></p>
+        <div style="text-align: center; margin-bottom: 16px;">
+            <h2 id="modal-title" style="font-size: 1.4rem; color: var(--accent-color); font-weight: 500 !important;">ชื่อลาย</h2>
+            <p id="modal-subtitle" style="font-size: 0.9rem; color: var(--primary-hover); margin-top: 2px;"></p>
         </div>
 
-        <p style="text-align: center; font-size: 0.8rem; color: #6b7280; margin-bottom: 4px;">จำนวนสินค้าพร้อมส่งตามรูปแบบและไซส์:</p>
+        <p style="text-align: center; font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">จำนวนสินค้าพร้อมส่งตามรูปแบบและไซส์:</p>
         <div class="stock-table-wrapper">
             <table class="stock-table">
                 <thead><tr><th>รูปแบบ/ไซส์</th><th>43</th><th>48</th><th>52</th><th>60</th></tr></thead>
@@ -117,10 +146,9 @@
     </div>
 </div>
 
-<!-- ✨ เปลี่ยนปุ่มดาวน์โหลดให้เป็นลิงก์เปิดแท็บรูปต้นฉบับ เพื่อให้กด Save image ได้ 100% -->
 <div id="imageLightbox" class="image-lightbox" onclick="closeLightbox()">
     <div class="lightbox-actions">
-        <a id="lightbox-download-btn" href="#" target="_blank" class="lightbox-btn" title="ดาวน์โหลด/บันทึกรูปภาพ" onclick="event.stopPropagation()">📥</a>
+        <a id="lightbox-download-btn" href="#" target="_blank" class="lightbox-btn" title="ดาวน์โหลดรูปภาพ" onclick="event.stopPropagation()">📥</a>
         <button class="lightbox-btn" onclick="closeLightbox()" title="ปิด">&times;</button>
     </div>
     <img id="lightbox-img" src="" onclick="event.stopPropagation()">
@@ -142,7 +170,13 @@
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
     window.triggerSearch = function() { renderProductsLocally(); };
 
-    function getFirstImage(picData) { if (Array.isArray(picData)) return picData.length > 0 ? picData[0] : null; return picData || null; }
+    function getDisplayCoverImage(pData) {
+        if (!pData) return null;
+        if (pData['coverImage']) return pData['coverImage'];
+        let imgs = pData['รูปภาพสินค้า'];
+        if (Array.isArray(imgs)) return imgs.length > 0 ? imgs[0] : null;
+        return imgs || null;
+    }
 
     window.renderProductsLocally = function() {
         const kw = document.getElementById('search-keyword').value.trim().toLowerCase(), st = document.getElementById('filter-style').value, sz = document.getElementById('filter-size').value;
@@ -152,12 +186,13 @@
             return (!kw || hay.includes(kw)) && ((!st && !sz) || total>0);
         });
         const grid = document.getElementById('product-grid'); grid.innerHTML = "";
-        if(filtered.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9ca3af;"><p>🌸 ไม่พบสินค้า</p></div>`; return; }
+        if(filtered.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-color);"><p>🌸 ไม่พบสินค้า</p></div>`; return; }
         filtered.forEach(p => {
             let t = 0; STYLES.forEach(s => SIZES.forEach(sz => t += (parseInt(p[`${s} ${sz}`])||0)));
             const name = p['ชื่อลาย']||'SKU '+p['SKU']; let b = t>0 ? `<div class="stock-badge badge-instock">มีสินค้า</div>` : `<div class="stock-badge badge-outstock">สินค้าหมด</div>`;
-            let firstImg = getFirstImage(p['รูปภาพสินค้า']);
-            let img = firstImg ? `<img src="${firstImg}" loading="lazy">` : `📸`;
+            
+            let coverImg = getDisplayCoverImage(p);
+            let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
             grid.innerHTML += `<div class="product-card" onclick="openStockModal('${p['SKU']}')"><div class="product-img-container">${b}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-details">สี${p['สี']||'-'}</div></div></div>`;
         });
     };
@@ -171,17 +206,18 @@
         if (Array.isArray(picData)) { imgList = picData; } 
         else if (picData) { imgList = [picData]; }
 
+        let initialCover = getDisplayCoverImage(p);
         const imgBox = document.getElementById('modal-img-box');
         const thumbBox = document.getElementById('modal-thumbnail-box');
 
         if (imgList.length > 0) {
-            currentActiveImgSrc = imgList[0];
+            currentActiveImgSrc = initialCover || imgList[0];
             imgBox.innerHTML = `<img id="main-modal-img" src="${currentActiveImgSrc}"><div class="zoom-badge">🔍 กดเพื่อดูรูปใหญ่</div>`;
             
             if (imgList.length > 1) {
                 let tHtml = '';
-                imgList.forEach((src, idx) => {
-                    let aClass = idx === 0 ? 'active' : '';
+                imgList.forEach((src) => {
+                    let aClass = src === currentActiveImgSrc ? 'active' : '';
                     tHtml += `<img src="${src}" class="thumbnail-img ${aClass}" onclick="changeMainImage('${src}', this); event.stopPropagation();">`;
                 });
                 thumbBox.innerHTML = tHtml; thumbBox.style.display = 'flex';
@@ -195,7 +231,7 @@
 
         const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
         STYLES.forEach(s => { let r = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => { let qty = parseInt(p[`${s} ${z}`])||0; r += `<td class="${qty>0?'qty-has':'qty-none'}">${qty>0?qty:'-'}</td>`; }); tbody.innerHTML += r+`</tr>`; });
-        document.getElementById('line-order-link', href => {}).href = `${LINE_OA_URL}?text=${encodeURIComponent('สนใจสอบถามสินค้า: '+name+' (สี '+p['สี']+' / รหัส '+sku+')')}`;
+        document.getElementById('line-order-link').href = `${LINE_OA_URL}?text=${encodeURIComponent('สนใจสอบถามสินค้า: '+name+' (สี '+p['สี']+' / รหัส '+sku+')')}`;
         document.getElementById('stockModal').style.display = 'flex';
     };
 
@@ -206,7 +242,6 @@
         el.classList.add('active');
     };
 
-    /* ✨ อัปเดตให้ปุ่มดาวน์โหลดลิงก์ตรงไปยังรูปภาพต้นฉบับ ป้องกันบราวเซอร์บล็อก */
     window.openLightbox = function() { 
         if(!currentActiveImgSrc) return;
         document.getElementById('lightbox-img').src = currentActiveImgSrc;
