@@ -548,15 +548,18 @@
             return (!kw || hay.includes(kw)) && ms ? { data: p, total } : null;
         }).filter(i => i !== null);
         if(currentSortOrder==='asc') mapped.sort((a,b)=>a.total-b.total); else if(currentSortOrder==='desc') mapped.sort((a,b)=>b.total-a.total);
-        const grid = document.getElementById('product-grid'); grid.innerHTML = "";
+        const grid = document.getElementById('product-grid'); 
         if(mapped.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-color);"><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`; return; }
+        
+        let htmlString = "";
         mapped.forEach((item, i) => {
             const p = item.data; const name = p['ชื่อลาย'] || ('SKU '+p['SKU']);
             let badge = item.total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${item.total} ชุด</div>`;
             let coverImg = getDisplayCoverImage(p); 
             let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
-            grid.innerHTML += `<div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')"><div class="product-img-container">${badge}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div></div></div>`;
+            htmlString += `<div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')"><div class="product-img-container">${badge}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div></div></div>`;
         });
+        grid.innerHTML = htmlString;
     };
 
     window.openStockModal = function(sku, displayName) {
@@ -610,8 +613,10 @@
             });
         }
 
-        const tbody = document.getElementById('modal-stock-data'); tbody.innerHTML = "";
-        STYLES.forEach(s => { let row = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => row += `<td><input type="number" class="stock-input" data-key="${s} ${z}" value="${currentActiveProduct[`${s} ${z}`]||0}" readonly></td>`); tbody.innerHTML += row+`</tr>`; });
+        const tbody = document.getElementById('modal-stock-data');
+        let stockTableHtml = "";
+        STYLES.forEach(s => { let row = `<tr><td><b>${s}</b></td>`; SIZES.forEach(z => row += `<td><input type="number" class="stock-input" data-key="${s} ${z}" value="${currentActiveProduct[`${s} ${z}`]||0}" readonly></td>`); stockTableHtml += row+`</tr>`; });
+        tbody.innerHTML = stockTableHtml;
         document.getElementById('stockModal').style.display = 'flex';
     };
 
