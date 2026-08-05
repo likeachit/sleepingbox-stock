@@ -17,68 +17,182 @@
             --border-color: #fce7f3; 
             --accent-color: #d81b60; 
         }
+        
+        /* Reset & Typography */
         * { 
             box-sizing: border-box; 
             margin: 0; 
             padding: 0; 
-            font-family: 'Noto Sans Thai', sans-serif !important; 
-            font-weight: 300 !important; 
+        }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            font-family: 'Noto Sans Thai', sans-serif; 
+            font-weight: 300;
+            padding: 20px 12px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100vh; 
         }
         h1, h2, h3, b, strong, .font-bold {
-            font-weight: 500 !important; 
+            font-weight: 500; 
         }
-        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px 12px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
-        .container { width: 100%; max-width: 760px; background: var(--card-bg); padding: 32px; border-radius: 36px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; backdrop-filter: blur(10px); position: relative; }
-        
-        /* แถบแสดงผู้ใช้งานปัจจุบัน (มุมขวาบน) */
-        .current-user-bar { position: absolute; top: 24px; right: 28px; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: var(--accent-color); display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; }
-        .current-user-bar:hover { background: #ffe4e6; }
 
+        /* Layout */
+        .container { 
+            width: 100%; 
+            max-width: 760px; 
+            background: var(--card-bg); 
+            padding: 32px; 
+            border-radius: 36px; 
+            box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); 
+            border: 2px solid #fff; 
+            backdrop-filter: blur(10px); 
+            position: relative; 
+        }
         .header-container { text-align: center; margin-bottom: 28px; }
         h1 { font-size: 2rem; color: var(--accent-color); letter-spacing: 0.5px; }
         
-        /* หน้าต่าง Modal เลือกผู้ใช้งานตอนเข้าเว็บ */
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 240, 245, 0.95); backdrop-filter: blur(10px); z-index: 3000; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .login-card { background: #ffffff; width: 100%; max-width: 420px; padding: 36px 28px; border-radius: 36px; text-align: center; box-shadow: 0 20px 50px rgba(249, 168, 212, 0.4); border: 2px solid #fff; }
+        /* แถบแสดงผู้ใช้งานปัจจุบัน */
+        .current-user-bar { 
+            position: absolute; 
+            top: 24px; 
+            right: 28px; 
+            background: #fff1f2; 
+            border: 1.5px solid #fbcfe8; 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 0.85rem; 
+            color: var(--accent-color); 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+        .current-user-bar:hover { background: #ffe4e6; }
+
+        /* Modal ทั่วไป */
+        .modal, .login-overlay, .chart-modal-overlay, .sub-modal { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 240, 245, 0.7); 
+            backdrop-filter: blur(8px); 
+            justify-content: center; 
+            align-items: center; 
+            padding: 12px; 
+            z-index: 1000; 
+            display: none;
+        }
+        .login-overlay { z-index: 3000; display: flex; background: rgba(255, 240, 245, 0.95); padding: 20px; }
+        
+        .modal-card {
+            background: #ffffff; 
+            width: 100%; 
+            padding: 24px; 
+            border-radius: 36px; 
+            position: relative; 
+            max-height: 92vh; 
+            overflow-y: auto; 
+            border: 2px solid #fff; 
+            box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3);
+        }
+        .login-card { max-width: 420px; padding: 36px 28px; text-align: center; }
+        .stock-modal-card { max-width: 600px; border-color: var(--border-color); }
+        .chart-modal-card { max-width: 720px; }
+        .sub-modal-content { max-width: 650px; border-radius: 32px; border-color: var(--border-color); }
+
+        .modal-title-text { font-size: 1.5rem; color: var(--accent-color); margin-bottom: 8px; }
+        .modal-subtitle-text { font-size: 0.9rem; color: #6b7280; margin-bottom: 24px; }
+        .close-btn, .chart-modal-close { 
+            position: absolute; 
+            top: 16px; 
+            right: 16px; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            border: none; 
+            background: #fff1f2; 
+            color: var(--accent-color); 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 10; 
+            transition: 0.2s;
+        }
+        .close-btn:hover, .chart-modal-close:hover { background: var(--accent-color); color: white; }
         
         /* แท็บสลับโหมด */
         .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: #fff1f2; padding: 8px; border-radius: 30px; border: 1px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; cursor: pointer; border-radius: 24px; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; font-weight: 400 !important; position: relative; text-align: center; white-space: nowrap; }
-        .tab-btn.active { background: #ffffff; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.4); transform: translateY(-2px); color: var(--accent-color); font-weight: 500 !important; }
+        .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; cursor: pointer; border-radius: 24px; transition: 0.3s; color: var(--accent-color); font-size: 0.95rem; position: relative; text-align: center; white-space: nowrap; }
+        .tab-btn.active { background: #ffffff; box-shadow: 0 6px 15px rgba(249, 168, 212, 0.4); transform: translateY(-2px); font-weight: 500; }
         
-        .notification-badge { position: absolute; top: 6px; right: 10px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 500 !important; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4); display: none; }
+        .notification-badge { position: absolute; top: 6px; right: 10px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 500; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4); display: none; }
         .notification-badge.show { display: flex; }
 
+        /* ฟอร์มและอินพุต */
+        .form-group { margin-bottom: 18px; }
+        .form-group.login-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: var(--accent-color); }
+        select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { 
+            width: 100%; 
+            padding: 12px 18px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 24px; 
+            font-size: 0.95rem; 
+            outline: none; 
+            background: #fafaf9; 
+            color: var(--text-color); 
+            transition: 0.3s;
+            font-family: 'Noto Sans Thai', sans-serif;
+        }
+        select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249,168,212,0.2); background: #fff; }
+        
         /* ช่องค้นหา & ปุ่ม */
         .search-top-row { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
-        .search-input, .filter-select { padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; transition: 0.3s; color: var(--text-color); }
         .search-input { flex: 2; min-width: 180px; }
-        .filter-select { flex: 1; min-width: 120px; cursor: pointer; }
-        .search-input:focus, .filter-select:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(249, 168, 212, 0.2); }
-        .search-btn { background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; padding: 12px 24px; border-radius: 24px; font-size: 0.95rem; cursor: pointer; transition: 0.3s; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); white-space: nowrap; font-weight: 400 !important; }
-        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
+        .filter-select { flex: 1; min-width: 120px; cursor: pointer; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; transition: 0.3s; color: var(--text-color); }
+        .filter-select:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 0 0 4px rgba(249, 168, 212, 0.2); }
         
-        .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fbcfe8; padding: 12px; border-radius: 24px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; font-weight: 400 !important;}
+        .btn { border: none; border-radius: 24px; cursor: pointer; transition: 0.3s; font-family: 'Noto Sans Thai', sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
+        
+        .search-btn { padding: 12px 24px; font-size: 0.95rem; white-space: nowrap; }
+        .action-btn { width: 100%; padding: 14px; font-size: 1rem; margin-top: 16px; }
+        .action-btn.login-btn { margin-top: 0; }
+        .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 24px; font-size: 0.95rem; margin-top: 12px; transition: 0.2s;}
+        .delete-action-btn:hover { background: #fff1f2; }
+        
+        /* ตัวกรองขั้นสูง */
+        .toggle-advanced-btn { width: 100%; background: transparent; color: var(--accent-color); border: 1.5px dashed #fbcfe8; padding: 12px; border-radius: 24px; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px; transition: 0.2s; }
         .toggle-advanced-btn:hover { background: #fff1f2; border-color: var(--primary-hover); }
         .advanced-filter-panel { display: none; background: #fff1f2; border: 1.5px solid #fbcfe8; padding: 18px; border-radius: 24px; margin-bottom: 24px; }
         .advanced-filter-panel.active { display: block; }
         .alert-filter-group { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .alert-filter-group label { font-size: 0.95rem; color: var(--accent-color); margin: 0; font-weight: 400 !important; }
+        .alert-filter-group label { font-size: 0.95rem; color: var(--accent-color); margin: 0; }
         .operator-group { display: flex; gap: 6px; background: #ffe4e6; padding: 6px; border-radius: 20px; }
-        .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 16px; font-size: 0.9rem; font-weight: 400 !important; color: var(--accent-color); cursor: pointer; transition: 0.3s; }
+        .op-btn { background: transparent; border: none; padding: 8px 16px; border-radius: 16px; font-size: 0.9rem; color: var(--accent-color); cursor: pointer; transition: 0.3s; }
         .op-btn.active { background: var(--accent-color); color: white; box-shadow: 0 4px 10px rgba(216, 27, 96, 0.3); }
-        .alert-input { width: 90px; padding: 10px; border: 2px solid #fbcfe8; border-radius: 16px; text-align: center; font-size: 1rem; color: var(--accent-color); font-weight: 500 !important; outline: none; }
+        .alert-input { width: 90px; padding: 10px; border: 2px solid #fbcfe8; border-radius: 16px; text-align: center; font-size: 1rem; color: var(--accent-color); font-weight: 500; outline: none; }
         
         /* หมวดหมู่ผ้า */
         .fabric-categories { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .fabric-categories::-webkit-scrollbar { display: none; }
-        .fabric-chip { padding: 10px 24px; background: #fff; border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.9rem; font-weight: 400 !important; }
-        .fabric-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 6px 15px rgba(216, 27, 96, 0.3); transform: scale(1.05); font-weight: 500 !important; }
+        .fabric-chip { padding: 10px 24px; background: #fff; border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; white-space: nowrap; transition: 0.3s; color: var(--accent-color); font-size: 0.9rem; }
+        .fabric-chip.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 6px 15px rgba(216, 27, 96, 0.3); transform: scale(1.05); font-weight: 500; }
         
+        /* จัดเรียงและพิมพ์ */
         .sort-container { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-        .sort-btn { background: #fff; border: 2px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: 400 !important;}
+        .sort-btn { background: #fff; border: 2px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
         .sort-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
-        .print-btn { background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; font-weight: 400 !important;}
+        .print-btn { background: #10b981; color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
         
         /* การ์ดสินค้า */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
@@ -87,83 +201,70 @@
         .product-img-container { width: 100%; height: 170px; background: #fdf2f8; display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--primary-hover); position: relative; }
         .product-img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
         .product-card:hover .product-img-container img { transform: scale(1.08); }
-        .out-of-stock-badge, .low-stock-badge { position: absolute; top: 12px; padding: 4px 12px; font-size: 0.75rem; border-radius: 12px; z-index: 2; font-weight: 500 !important; color: white; }
+        .out-of-stock-badge, .low-stock-badge { position: absolute; top: 12px; padding: 4px 12px; font-size: 0.75rem; border-radius: 12px; z-index: 2; font-weight: 500; color: white; }
         .out-of-stock-badge { right: 12px; background: rgba(244, 63, 94, 0.9); }
         .low-stock-badge { left: 12px; background: rgba(245, 158, 11, 0.9); }
         .product-info { padding: 16px; text-align: center; }
-        .product-name { font-size: 1.05rem; margin-bottom: 2px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500 !important; }
+        .product-name { font-size: 1.05rem; margin-bottom: 2px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         .product-fabric { font-size: 0.8rem; color: #9d174d; }
         
-        /* Modal & Form */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 12px; z-index: 1000; }
-        .modal-content { background: white; width: 100%; max-width: 600px; padding: 24px; border-radius: 36px; position: relative; max-height: 92vh; overflow-y: auto; border: 2px solid var(--border-color); box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); }
-        .close-btn { position: absolute; top: 16px; right: 16px; font-size: 1.5rem; cursor: pointer; border: none; background: #fff1f2; color: var(--accent-color); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10; transition: 0.2s;}
-        .close-btn:hover { background: var(--accent-color); color: white; }
-        
+        /* รูปภาพใน Modal */
         .modal-img-container { position: relative; display: inline-block; border-radius: 24px; overflow: hidden; background: #fdf2f8; max-height: 240px; text-align: center; width: 100%; margin-bottom: 8px; border: 2px solid var(--border-color); }
         .modal-img-container img { display: inline-block; max-height: 240px; width: auto; object-fit: contain; cursor: zoom-in; }
         
         .image-action-buttons { position: absolute; bottom: 10px; right: 10px; display: flex; gap: 6px; }
-        .zoom-badge { background: rgba(216, 27, 96, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; cursor: pointer; transition: 0.2s; }
+        .zoom-badge { background: rgba(216, 27, 96, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); cursor: pointer; transition: 0.2s; }
         .zoom-badge:hover { background: rgba(216, 27, 96, 1); }
-        .delete-img-badge { background: rgba(239, 68, 68, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); font-weight: 400 !important; cursor: pointer; transition: 0.2s; }
+        .delete-img-badge { background: rgba(239, 68, 68, 0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; display: flex; gap: 4px; backdrop-filter: blur(4px); cursor: pointer; transition: 0.2s; }
         .delete-img-badge:hover { background: rgba(239, 68, 68, 1); }
 
         .thumb-gallery { display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 6px 0 12px 0; }
         .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 14px; border: 2px solid var(--border-color); cursor: pointer; transition: 0.2s; opacity: 0.6; }
         .thumb-img:hover, .thumb-img.active { opacity: 1; border-color: var(--accent-color); transform: scale(1.05); }
-        .set-cover-btn { display: none; margin: 0 auto 12px auto; background: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 24px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(216, 27, 96, 0.2); font-weight: 400 !important;}
+        .set-cover-btn { display: none; margin: 0 auto 12px auto; background: var(--accent-color); color: white; border: none; padding: 8px 18px; border-radius: 24px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(216, 27, 96, 0.2); }
         .set-cover-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
+        /* ตารางสต๊อก */
         .stock-table-wrapper { border-radius: 20px; border: 2px solid var(--border-color); width: 100%; overflow-x: auto; margin-bottom: 12px; }
         .stock-table { width: 100%; border-collapse: collapse; min-width: 480px; }
         .stock-table th, .stock-table td { border: 1px solid var(--border-color); padding: 12px 6px; text-align: center; font-size: 0.9rem; }
-        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; }
-        .stock-table td:first-child { text-align: left; color: var(--accent-color); background: #fffbfc; padding-left: 12px; font-weight: 500 !important; }
+        .stock-table th { background: #fff1f2; color: var(--accent-color); font-weight: 500; }
+        .stock-table td:first-child { text-align: left; color: var(--accent-color); background: #fffbfc; padding-left: 12px; font-weight: 500; }
         
         .stock-input { width: 65px; padding: 8px; border: 2px solid transparent; border-radius: 12px; text-align: center; font-size: 0.95rem; background: transparent; color: var(--text-color); outline: none; transition: 0.3s; margin: 0 auto; display: block; font-family: 'Noto Sans Thai', sans-serif;}
         .stock-input.editable { border-color: var(--primary-color); background: #ffffff; box-shadow: 0 0 0 3px rgba(249,168,212,0.2); }
         .stock-input.editable::placeholder { color: #d1d5db; opacity: 1; font-weight: 300; }
         
-        .action-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: white; border: none; border-radius: 24px; font-size: 1rem; cursor: pointer; margin-top: 16px; transition: 0.3s; font-weight: 400 !important; box-shadow: 0 6px 15px rgba(216, 27, 96, 0.2); }
-        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); }
-        .delete-action-btn { width: 100%; padding: 14px; background: transparent; color: #ef4444; border: 2px solid #fecdd3; border-radius: 24px; font-size: 0.95rem; cursor: pointer; margin-top: 12px; font-weight: 400 !important; transition: 0.2s;}
-        .delete-action-btn:hover { background: #fff1f2; }
-        .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 2px solid #fbcfe8; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; }
+        .edit-toggle-btn { background: #fff1f2; color: var(--accent-color); border: 2px solid #fbcfe8; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
         .edit-toggle-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
         
-        .form-group { margin-bottom: 18px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: var(--accent-color); font-weight: 400 !important; }
-        select, input[type="text"], input[type="number"], input[type="file"], input[type="date"] { width: 100%; padding: 12px 18px; border: 2px solid var(--border-color); border-radius: 24px; font-size: 0.95rem; outline: none; background: #fafaf9; color: var(--text-color); transition: 0.3s;}
-        select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249,168,212,0.2); background: #fff; }
-        
-        /* สไตล์ช่องอัปโหลดรูปเรียงยาวลงมา 4 แถวแนวตั้ง */
+        /* สไตล์ช่องอัปโหลดรูป */
         .style-upload-stack { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
         .style-upload-box { background: #fff1f2; border: 2px dashed #fbcfe8; border-radius: 20px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; transition: 0.2s; }
         .style-upload-box:hover { border-color: var(--primary-hover); background: #ffe4e6; }
-        .style-upload-title { font-size: 0.95rem; color: var(--accent-color); font-weight: 500 !important; min-width: 140px; display: flex; align-items: center; gap: 6px; }
+        .style-upload-title { font-size: 0.95rem; color: var(--accent-color); font-weight: 500; min-width: 140px; display: flex; align-items: center; gap: 6px; }
         .style-upload-input-wrap { flex: 1; min-width: 220px; }
         .style-preview-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; margin-top: 6px; }
 
         .color-palette { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-bottom: 10px; }
-        .color-btn { padding: 10px 4px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; font-weight: 400 !important; }
+        .color-btn { padding: 10px 4px; border: 2px solid var(--border-color); border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: 0.3s; text-align: center; }
         .color-btn.active { border-color: var(--accent-color); box-shadow: 0 0 0 4px rgba(216,27,96,0.15); transform: scale(1.05); }
         
         .image-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,240,245,0.9); z-index: 2000; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(5px); }
         .image-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 24px; border: 2px solid #fff; box-shadow: 0 10px 30px rgba(216,27,96,0.2); }
         .lightbox-close { position: absolute; top: 20px; right: 20px; color: var(--accent-color); font-size: 2rem; cursor: pointer; background: #fff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(216,27,96,0.2); }
         
-        .toast { visibility: hidden; min-width: 280px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: #fff; text-align: center; border-radius: 24px; padding: 14px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(216, 27, 96, 0.4); font-weight: 400 !important; }
+        /* Toast Notification */
+        .toast { visibility: hidden; min-width: 280px; background: linear-gradient(135deg, var(--primary-hover), var(--accent-color)); color: #fff; text-align: center; border-radius: 24px; padding: 14px 20px; position: fixed; z-index: 9999; left: 50%; bottom: 40px; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(216, 27, 96, 0.4); }
         .toast.show { visibility: visible; animation: fadein 0.4s, fadeout 0.4s 2.5s forwards; }
         .toast.error { background: #e11d48; box-shadow: 0 10px 30px rgba(225, 29, 72, 0.4); }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 40px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 40px; opacity: 1;} to {bottom: 0; opacity: 0;} }
         
-        .sub-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,240,245,0.7); z-index: 1100; justify-content: center; align-items: center; padding: 12px; backdrop-filter: blur(5px); }
-        .sub-modal-content { background: white; width: 100%; max-width: 650px; padding: 26px; border-radius: 32px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(249, 168, 212, 0.3); border: 2px solid var(--border-color); }
-        .diff-pos { color: #10b981; font-weight: 500 !important; }
-        .diff-neg { color: #ef4444; font-weight: 500 !important; }
+        .diff-pos { color: #10b981; font-weight: 500; }
+        .diff-neg { color: #ef4444; font-weight: 500; }
         .diff-zero { color: #a8a29e; }
+        
         .mode-section { display: none; }
         .mode-section.active { display: block; animation: fadeIn 0.4s; }
         .loader-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 40px; color: var(--primary-hover); }
@@ -180,9 +281,9 @@
         .order-img-wrapper:hover .order-zoom-badge { background: rgba(216, 27, 96, 1); transform: scale(1.1); }
 
         .order-info { flex: 1; min-width: 240px; }
-        .order-title { font-size: 1.1rem; color: var(--accent-color); font-weight: 500 !important; margin-bottom: 3px; }
+        .order-title { font-size: 1.1rem; color: var(--accent-color); font-weight: 500; margin-bottom: 3px; }
         .order-detail { font-size: 0.85rem; color: #6b7280; }
-        .order-status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500 !important; margin-bottom: 6px; }
+        .order-status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 500; margin-bottom: 6px; }
         .status-pending { background: #fef3c7; color: #d97706; }
         .status-completed { background: #d1fae5; color: #059669; }
         .status-cancelled { background: #fee2e2; color: #ef4444; }
@@ -192,15 +293,12 @@
         .order-item-row:last-child { border-bottom: none; padding-bottom: 0; }
 
         .order-action-container { display: flex; gap: 8px; justify-content: flex-end; width: 100%; margin-top: 4px; flex-wrap: wrap; }
-        .btn-fulfill { background: #10b981; color: white; border: none; padding: 10px 22px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+        .btn-fulfill { background: #10b981; color: white; border: none; padding: 10px 22px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
         .btn-fulfill:hover { background: #059669; transform: translateY(-2px); }
-        .btn-cancel { background: transparent; color: #ef4444; border: 1.5px solid #fecdd3; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; font-weight: 400 !important; }
+        .btn-cancel { background: transparent; color: #ef4444; border: 1.5px solid #fecdd3; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
         .btn-cancel:hover { background: #fee2e2; }
 
         /* กราฟเชิงลึก */
-        .chart-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1200; justify-content: center; align-items: center; padding: 15px; }
-        .chart-modal-card { background: #ffffff; width: 100%; max-width: 720px; padding: 24px; border-radius: 32px; box-shadow: 0 15px 35px -5px rgba(249, 168, 212, 0.3); border: 2px solid #fff; position: relative; max-height: 90vh; overflow-y: auto; }
-        .chart-modal-close { position: absolute; top: 20px; right: 20px; background: #fff1f2; border: none; width: 32px; height: 32px; border-radius: 50%; color: #d81b60; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
         .chart-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
         .chart-time-select { padding: 8px 14px; border: 1.5px solid #fbcfe8; border-radius: 16px; background: #fff1f2; color: #d81b60; font-size: 0.85rem; outline: none; cursor: pointer; font-weight: 500; }
         .chart-filter-section { background: #fff1f2; padding: 12px 14px; border-radius: 20px; border: 1.5px solid #fbcfe8; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
@@ -209,25 +307,43 @@
         .chart-checkbox-label { font-size: 0.78rem; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #57534e; background: #fff; padding: 4px 10px; border-radius: 12px; border: 1px solid #fce7f3; user-select: none; }
         .chart-checkbox-label input { accent-color: #d81b60; width: 13px; height: 13px; cursor: pointer; }
         .chart-canvas-container { position: relative; width: 100%; height: 280px; background: #ffffff; border-radius: 20px; padding: 12px; border: 2px solid #fce7f3; }
-        .btn-chart-open { background: #fdf2f8; border: 1.5px solid #f472b6; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: #d81b60; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 400 !important; transition: 0.2s; }
+        .btn-chart-open { background: #fdf2f8; border: 1.5px solid #f472b6; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; color: #d81b60; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; }
         .btn-chart-open:hover { background: #fce7f3; }
 
-        @media print { @page { size: A4 landscape; margin: 8mm; } body * { visibility: hidden; } #print-section, #print-section * { visibility: visible; } #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; } .print-page { page-break-before: always; } .print-page:first-child { page-break-before: auto; } .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; } .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; } .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; } }
-        @media screen and (max-width: 600px) { .container { padding: 24px 16px; border-radius: 28px; } .search-top-row { flex-direction: column; } .search-input, .filter-select, .search-btn { width: 100%; } .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } .product-img-container { height: 150px; } }
+        @media print { 
+            @page { size: A4 landscape; margin: 8mm; } 
+            body * { visibility: hidden; } 
+            #print-section, #print-section * { visibility: visible; } 
+            #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: #fff; color: #000; } 
+            .print-page { page-break-before: always; } 
+            .print-page:first-child { page-break-before: auto; } 
+            .print-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; margin-bottom: 20px; } 
+            .print-table th, .print-table td { border: 1px solid #000; padding: 4px 2px; } 
+            .print-img { width: 45px; height: 55px; object-fit: cover; display: block; margin: 0 auto; } 
+        }
+        
+        @media screen and (max-width: 600px) { 
+            .container { padding: 24px 16px; border-radius: 28px; } 
+            .search-top-row { flex-direction: column; } 
+            .search-input, .filter-select, .search-btn { width: 100%; } 
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } 
+            .product-img-container { height: 150px; } 
+        }
         
         .search-prompt-box { grid-column: 1 / -1; text-align: center; padding: 50px 20px; background: #fff1f2; border-radius: 24px; border: 2px dashed #fbcfe8; color: var(--text-color); margin-top: 20px; animation: fadeIn 0.5s ease-out; }
     </style>
 </head>
 <body>
 
+<!-- ส่วน Modal เลือกผู้ใช้งาน -->
 <div id="loginModal" class="login-overlay">
-    <div class="login-card">
-        <h2 style="font-size: 1.5rem; color: var(--accent-color); margin-bottom: 8px;">✨ Sleepingbox Stock</h2>
-        <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 24px;">กรุณาเลือกชื่อผู้ใช้งานของคุณเพื่อเข้าสู่ระบบ</p>
+    <div class="modal-card login-card">
+        <h2 class="modal-title-text">✨ Sleepingbox Stock</h2>
+        <p class="modal-subtitle-text">กรุณาเลือกชื่อผู้ใช้งานของคุณเพื่อเข้าสู่ระบบ</p>
         
-        <div class="form-group" style="text-align: left; margin-bottom: 20px;">
-            <label style="font-size: 0.9rem; color: var(--accent-color); margin-bottom: 6px;">👤 ผู้ใช้งาน:</label>
-            <select id="login-user-select" style="padding: 12px 16px; border-radius: 20px; border: 2px solid var(--border-color); background: #fafaf9; font-size: 0.95rem; outline: none;">
+        <div class="form-group login-group">
+            <label>👤 ผู้ใช้งาน:</label>
+            <select id="login-user-select">
                 <option value="ชิต">ชิต</option>
                 <option value="มิ้น">มิ้น</option>
                 <option value="ปาม">ปาม</option>
@@ -242,7 +358,7 @@
             </select>
         </div>
 
-        <button class="action-btn" onclick="confirmLogin()" style="margin-top: 0; width: 100%;">🚀 เข้าสู่ระบบสต๊อก</button>
+        <button type="button" class="btn btn-primary action-btn login-btn" onclick="confirmLogin()">🚀 เข้าสู่ระบบสต๊อก</button>
     </div>
 </div>
 
@@ -255,21 +371,23 @@
         <h1>✨ Sleepingbox Stock</h1>
     </div>
 
+    <!-- ส่วนแท็บสลับโหมด -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อก</button>
-        <button class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้า</button>
-        <button class="tab-btn" onclick="switchMode('orders')">
+        <button type="button" class="tab-btn active" onclick="switchMode('check')">🔍 เช็คสต๊อก</button>
+        <button type="button" class="tab-btn" onclick="switchMode('update')">📝 เพิ่มสินค้า</button>
+        <button type="button" class="tab-btn" onclick="switchMode('orders')">
             🛒 เติมสต๊อก
             <span id="order-badge" class="notification-badge">0</span>
         </button>
     </div>
 
+    <!-- โหมดเช็คสต๊อก -->
     <div id="check-mode" class="mode-section active">
         <div class="fabric-categories">
-            <button class="fabric-chip active" onclick="selectFabric('ซาติน')">ผ้าซาติน</button>
-            <button class="fabric-chip" onclick="selectFabric('ไหม')">ผ้าไหม</button>
-            <button class="fabric-chip" onclick="selectFabric('คอตตอน')">ผ้าคอตตอน</button>
-            <button class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
+            <button type="button" class="fabric-chip active" onclick="selectFabric('ซาติน')">ผ้าซาติน</button>
+            <button type="button" class="fabric-chip" onclick="selectFabric('ไหม')">ผ้าไหม</button>
+            <button type="button" class="fabric-chip" onclick="selectFabric('คอตตอน')">ผ้าคอตตอน</button>
+            <button type="button" class="fabric-chip" onclick="selectFabric('ผ้าย่น')">ผ้าย่น</button>
         </div>
 
         <div class="search-top-row">
@@ -288,7 +406,7 @@
                 <option value="52">ไซส์ 52</option>
                 <option value="60">ไซส์ 60</option>
             </select>
-            <button type="button" class="search-btn" onclick="triggerSearch()">🔍 ค้นหา</button>
+            <button type="button" class="btn btn-primary search-btn" onclick="triggerSearch()">🔍 ค้นหา</button>
         </div>
 
         <button type="button" class="toggle-advanced-btn" onclick="toggleAdvancedFilter()">
@@ -303,7 +421,7 @@
                     <button type="button" id="op-gt" class="op-btn" onclick="setOperator('>')">&gt; มากกว่า</button>
                 </div>
                 <input type="number" id="low-stock-limit" class="alert-input" value="100" min="0">
-                <button type="button" class="search-btn" style="padding: 10px 20px;" onclick="triggerSearch(true)">🔥 กรองสต๊อก</button>
+                <button type="button" class="btn btn-primary search-btn" style="padding: 10px 20px;" onclick="triggerSearch(true)">🔥 กรองสต๊อก</button>
             </div>
         </div>
 
@@ -318,9 +436,10 @@
         <div class="product-grid" id="product-grid"></div>
     </div>
 
+    <!-- โหมดเพิ่มสินค้า -->
     <div id="update-mode" class="mode-section">
         <div class="form-group">
-            <label style="font-weight: 500 !important; margin-bottom: 12px;">📸 อัปโหลดรูปภาพแยกตามรูปแบบ (เลือกอัปโหลดเฉพาะรูปแบบที่มีได้):</label>
+            <label style="font-weight: 500; margin-bottom: 12px;">📸 อัปโหลดรูปภาพแยกตามรูปแบบ (เลือกอัปโหลดเฉพาะรูปแบบที่มีได้):</label>
             <div class="style-upload-stack">
                 <div class="style-upload-box">
                     <div class="style-upload-title">👕 SS (แขนสั้นขาสั้น)</div>
@@ -379,12 +498,13 @@
             <label>รูปแบบแขน-ขา (เริ่มต้น):</label>
             <select id="update-style"><option value="แขนสั้นขาสั้น">SS (แขนสั้นขาสั้น)</option><option value="แขนสั้นขายยาว">SL (แขนสั้นขายยาว)</option><option value="แขนยาวขายยาว">LL (แขนยาวขายยาว)</option><option value="กระโปรง">SK (กระโปรง)</option></select>
         </div>
-        <div class="form-group"><label>รหัส SKU:</label><input type="text" id="generated-sku" style="background: #fff1f2; color: var(--accent-color); font-weight: 500 !important; text-align: center;" readonly></div>
+        <div class="form-group"><label>รหัส SKU:</label><input type="text" id="generated-sku" style="background: #fff1f2; color: var(--accent-color); font-weight: 500; text-align: center;" readonly></div>
         <div class="form-group"><label>ขนาด:</label><select id="update-size"><option value="43">43</option><option value="48">48</option><option value="52">52</option><option value="60">60</option></select></div>
         <div class="form-group"><label>จำนวนเริ่มต้น:</label><input type="number" id="update-qty" placeholder="เช่น 10"></div>
-        <button class="action-btn" onclick="submitUpdate()">✨ บันทึกสินค้าใหม่</button>
+        <button type="button" class="btn btn-primary action-btn" onclick="submitUpdate()">✨ บันทึกสินค้าใหม่</button>
     </div>
 
+    <!-- โหมดรายการเติมสต๊อก -->
     <div id="orders-mode" class="mode-section">
         <h2 style="font-size: 1.2rem; color: var(--accent-color); margin-bottom: 16px;">📦 รายการคำขอเติมสต๊อกจากหน้าร้าน</h2>
         <div id="orders-list-container">
@@ -393,13 +513,14 @@
     </div>
 </div>
 
+<!-- Modal จัดการสต๊อก -->
 <div id="stockModal" class="modal">
-    <div class="modal-content">
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+    <div class="modal-card stock-modal-card">
+        <button type="button" class="close-btn" onclick="closeModal()">&times;</button>
         
         <div class="modal-img-container" id="modal-img-box"></div>
         
-        <button id="set-cover-btn" class="set-cover-btn" onclick="saveSelectedCoverImage()">📌 ตั้งเป็นภาพหลัก (โชว์หน้าปก)</button>
+        <button type="button" id="set-cover-btn" class="set-cover-btn" onclick="saveSelectedCoverImage()">📌 ตั้งเป็นภาพหลัก (โชว์หน้าปก)</button>
         <div id="modal-thumb-gallery" class="thumb-gallery"></div>
 
         <div style="display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
@@ -415,13 +536,13 @@
                     <label style="font-size: 0.85rem; color: var(--accent-color); margin-bottom: 2px;">สี:</label>
                     <input type="text" id="edit-color-input" style="width: 100%; margin-bottom: 8px; padding: 8px;">
                     <div style="display: flex; gap: 6px;">
-                        <button class="search-btn" style="flex: 1; padding: 8px;" onclick="saveInfoChanges()">💾 บันทึก</button>
-                        <button class="search-btn" style="flex: 1; padding: 8px; background: #6b7280;" onclick="toggleInfoEditMode()">❌ ยกเลิก</button>
+                        <button type="button" class="btn btn-primary search-btn" style="flex: 1; padding: 8px;" onclick="saveInfoChanges()">💾 บันทึก</button>
+                        <button type="button" class="btn search-btn" style="flex: 1; padding: 8px; background: #6b7280; color: white;" onclick="toggleInfoEditMode()">❌ ยกเลิก</button>
                     </div>
                 </div>
 
                 <div id="edit-image-box" style="display: none; background: #fff1f2; padding: 14px; border-radius: 20px; margin-bottom: 10px; border: 2px solid #fbcfe8;">
-                    <label style="font-size: 0.9rem; color: var(--accent-color); margin-bottom: 8px; font-weight: 500 !important;">📸 อัปโหลดรูปภาพเพิ่มแยกตามรูปแบบ:</label>
+                    <label style="font-size: 0.9rem; color: var(--accent-color); margin-bottom: 8px; font-weight: 500;">📸 อัปโหลดรูปภาพเพิ่มแยกตามรูปแบบ:</label>
                     
                     <div class="style-upload-stack" style="margin-bottom: 12px;">
                         <div class="style-upload-box" style="padding: 8px 12px;">
@@ -455,8 +576,8 @@
                     </div>
 
                     <div style="display: flex; gap: 6px;">
-                        <button class="search-btn" style="flex: 1; padding: 8px;" onclick="saveStagedImages()">💾 บันทึกรูปที่อัปเพิ่ม</button>
-                        <button class="search-btn" style="flex: 1; padding: 8px; background: #ef4444;" onclick="cancelStagedImages()">❌ ยกเลิก</button>
+                        <button type="button" class="btn btn-primary search-btn" style="flex: 1; padding: 8px;" onclick="saveStagedImages()">💾 บันทึกรูปที่อัปเพิ่ม</button>
+                        <button type="button" class="btn search-btn" style="flex: 1; padding: 8px; background: #ef4444; color: white;" onclick="cancelStagedImages()">❌ ยกเลิก</button>
                     </div>
                 </div>
             </div>
@@ -476,15 +597,16 @@
                 <tbody id="modal-stock-data"></tbody>
             </table>
         </div>
-        <button class="action-btn" onclick="saveStockChanges()" style="margin-top: 12px;">💾 บันทึกสต๊อก</button>
-        <button class="action-btn" onclick="submitRestockOrder()" style="margin-top: 8px; background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);">🛒 ส่งคำขอเติมสต๊อก (ให้โกดังจัดของ)</button>
-        <button class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
+        <button type="button" class="btn btn-primary action-btn" onclick="saveStockChanges()" style="margin-top: 12px;">💾 บันทึกสต๊อก</button>
+        <button type="button" class="btn action-btn" onclick="submitRestockOrder()" style="margin-top: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);">🛒 ส่งคำขอเติมสต๊อก (ให้โกดังจัดของ)</button>
+        <button type="button" class="delete-action-btn" onclick="confirmDeleteProduct()">🗑️ ลบสินค้านี้</button>
     </div>
 </div>
 
+<!-- Modal กราฟเชิงลึก -->
 <div id="stockChartModal" class="chart-modal-overlay">
-    <div class="chart-modal-card">
-        <button class="chart-modal-close" onclick="closeStockChartModal()">✕</button>
+    <div class="modal-card chart-modal-card">
+        <button type="button" class="chart-modal-close" onclick="closeStockChartModal()">✕</button>
 
         <div class="chart-header-row">
             <div>
@@ -525,11 +647,12 @@
     </div>
 </div>
 
+<!-- Modal เปรียบเทียบสต๊อก -->
 <div id="logSubModal" class="sub-modal">
-    <div class="sub-modal-content">
+    <div class="modal-card sub-modal-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <h3 style="color: var(--accent-color); font-size: 1.1rem; font-weight: 500 !important;">📊 เปรียบเทียบสต๊อก</h3>
-            <button onclick="closeLogModal()" class="close-btn" style="position:relative; top:0; right:0; width:32px; height:32px;">&times;</button>
+            <h3 style="color: var(--accent-color); font-size: 1.1rem; font-weight: 500;">📊 เปรียบเทียบสต๊อก</h3>
+            <button type="button" onclick="closeLogModal()" class="close-btn" style="position:relative; top:0; right:0; width:32px; height:32px;">&times;</button>
         </div>
         
         <div style="display: flex; gap: 8px; margin-bottom: 10px; align-items: center; background: #fff1f2; padding: 16px; border-radius: 20px; border: 2px solid #fbcfe8; flex-wrap: wrap;">
@@ -563,20 +686,29 @@
     </div>
 </div>
 
+<!-- Image Lightbox -->
 <div id="imageLightbox" class="image-lightbox" onclick="closeLightbox()">
     <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-    <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+    <img id="lightbox-img" src="" alt="ภาพสินค้าขยายใหญ่" onclick="event.stopPropagation()">
 </div>
 
 <div id="print-section"></div>
 <div id="toast" class="toast">✔️ ทำรายการสำเร็จ</div>
 
+<!-- Scripts -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc, query, where, addDoc, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao", authDomain: "sleepingbox-store.firebaseapp.com", projectId: "sleepingbox-store", storageBucket: "sleepingbox-store.firebasestorage.app", messagingSenderId: "103888013687", appId: "1:103888013687:web:b65485adec7acafdf2b972" };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyAi8UmPK79Ajf1YTmuV-TgS5k7pDgn3-Ao", 
+        authDomain: "sleepingbox-store.firebaseapp.com", 
+        projectId: "sleepingbox-store", 
+        storageBucket: "sleepingbox-store.firebasestorage.app", 
+        messagingSenderId: "103888013687", 
+        appId: "1:103888013687:web:b65485adec7acafdf2b972" 
+    };
     
     const app = initializeApp(firebaseConfig); 
     const db = getFirestore(app);
@@ -603,19 +735,8 @@
     let loadedFabric = ""; 
     let activeSku = ""; 
     
-    let styleImagesObj = {
-        "แขนสั้นขาสั้น": [],
-        "แขนสั้นขายยาว": [],
-        "แขนยาวขายยาว": [],
-        "กระโปรง": []
-    };
-
-    let stagedModalImagesObj = {
-        "แขนสั้นขาสั้น": [],
-        "แขนสั้นขายยาว": [],
-        "แขนยาวขายยาว": [],
-        "กระโปรง": []
-    };
+    let styleImagesObj = { "แขนสั้นขาสั้น": [], "แขนสั้นขายยาว": [], "แขนยาวขายยาว": [], "กระโปรง": [] };
+    let stagedModalImagesObj = { "แขนสั้นขาสั้น": [], "แขนสั้นขายยาว": [], "แขนยาวขายยาว": [], "กระโปรง": [] };
 
     let currentOperator = "<"; 
     let isStockEditable = false; 
@@ -629,10 +750,28 @@
     let selectedImageForCover = "";
     let myDeepChart = null;
 
-    window.showToast = function(message, type="success") { const toast = document.getElementById("toast"); toast.className = "toast show " + type; toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message; setTimeout(() => toast.className = toast.className.replace("show", ""), 2800); };
-    window.toggleAdvancedFilter = function() { const panel = document.getElementById('advanced-panel'); panel.classList.toggle('active'); document.getElementById('toggle-icon').innerHTML = panel.classList.contains('active') ? "❌ ปิด" : "⚙️ ตัวกรองสต๊อกขั้นสูง"; };
-    window.setOperator = function(op) { currentOperator = op; document.getElementById('op-lt').classList.toggle('active', op === '<'); document.getElementById('op-gt').classList.toggle('active', op === '>'); };
+    // Toast Notification
+    window.showToast = function(message, type="success") { 
+        const toast = document.getElementById("toast"); 
+        toast.className = "toast show " + type; 
+        toast.innerHTML = (type === "success" ? "✔️ " : "❌ ") + message; 
+        setTimeout(() => toast.className = toast.className.replace("show", ""), 2800); 
+    };
+
+    // UI Toggles
+    window.toggleAdvancedFilter = function() { 
+        const panel = document.getElementById('advanced-panel'); 
+        panel.classList.toggle('active'); 
+        document.getElementById('toggle-icon').innerHTML = panel.classList.contains('active') ? "❌ ปิด" : "⚙️ ตัวกรองสต๊อกขั้นสูง"; 
+    };
     
+    window.setOperator = function(op) { 
+        currentOperator = op; 
+        document.getElementById('op-lt').classList.toggle('active', op === '<'); 
+        document.getElementById('op-gt').classList.toggle('active', op === '>'); 
+    };
+    
+    // Auth & Navigation
     window.openLoginModal = function() { document.getElementById('loginModal').style.display = 'flex'; }
     window.confirmLogin = function() {
         const selectedUser = document.getElementById('login-user-select').value;
@@ -660,20 +799,39 @@
         }
     };
 
-    window.selectColor = function(c, btn) { document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById('update-color').value = c; };
-    window.generateSKU = async function() { const f = document.getElementById('fabric-select').value; let prefix = f === "คอตตอน" ? "CT" : f === "ไหม" ? "SILK" : f === "ผ้าย่น" ? "AA" : "Satin"; let unique = false, finalSku = ""; while (!unique) { finalSku = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`; const snap = await getDoc(doc(db, "products", finalSku)); if (!snap.exists()) unique = true; } document.getElementById('generated-sku').value = finalSku; };
+    // Add Product Mode Functions
+    window.selectColor = function(c, btn) { 
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); 
+        btn.classList.add('active'); 
+        document.getElementById('update-color').value = c; 
+    };
+
+    window.generateSKU = async function() { 
+        const f = document.getElementById('fabric-select').value; 
+        let prefix = f === "คอตตอน" ? "CT" : f === "ไหม" ? "SILK" : f === "ผ้าย่น" ? "AA" : "Satin"; 
+        let unique = false, finalSku = ""; 
+        
+        while (!unique) { 
+            finalSku = `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`; 
+            const snap = await getDoc(doc(db, "products", finalSku)); 
+            if (!snap.exists()) unique = true; 
+        } 
+        document.getElementById('generated-sku').value = finalSku; 
+    };
     
+    // Check Stock Mode Functions
     window.selectFabric = function(f) { 
         currentFabric = f; 
         document.querySelectorAll('.fabric-chip').forEach(c => c.classList.toggle('active', c.innerText.includes(f))); 
         document.getElementById('search-keyword').value = ""; 
         loadedFabric = ""; 
         productsData = []; 
+        
         const grid = document.getElementById('product-grid');
         grid.innerHTML = `
             <div class="search-prompt-box">
                 <h2 style="font-size:1.4rem; color: var(--accent-color); margin-bottom: 8px;">📦 หมวดหมู่ผ้า${f}</h2>
-                <p style="font-size:1rem; color: #6b7280; font-weight: 400 !important;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อดึงข้อมูลสต๊อก</p>
+                <p style="font-size:1rem; color: #6b7280;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อดึงข้อมูลสต๊อก</p>
             </div>
         `;
     };
@@ -681,6 +839,7 @@
     window.fetchProductsFromFirebase = async function(adv=false) { 
         const grid = document.getElementById('product-grid'); 
         grid.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="color:var(--accent-color); font-weight:500;">กำลังดึงข้อมูลจากคลัง...</p></div>`; 
+        
         try { 
             const q = query(collection(db, "products"), where("fabric", "==", currentFabric)); 
             const snap = await getDocs(q); 
@@ -710,6 +869,7 @@
         return imgs || null;
     }
 
+    // Image Compression
     function compressImage(file, maxWidth = 1200, quality = 0.8) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -749,6 +909,7 @@
         if (!styleImagesObj[styleName]) styleImagesObj[styleName] = [];
         const previewBox = document.getElementById(`preview-${styleName}`);
         previewBox.style.display = 'flex';
+        
         try {
             for (let i = 0; i < files.length; i++) {
                 const compressedFile = await compressImage(files[i], 1200, 0.8);
@@ -756,7 +917,7 @@
                 const snapshot = await uploadBytes(storageRef, compressedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 styleImagesObj[styleName].push(downloadURL);
-                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 55px; width: 55px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
+                previewBox.innerHTML += `<img src="${downloadURL}" alt="Preview" style="height: 55px; width: 55px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
             }
             showToast(`อัปโหลดรูป (${styleName}) สำเร็จ!`);
         } catch (error) {
@@ -764,14 +925,15 @@
         }
     };
 
-    // ฟังก์ชันจัดการอัปโหลดรูปเพิ่มใน Modal พร้อมพรีวิวแยกแถว
     window.stageNewImage = async function(styleName, event) {
         const files = event.target.files;
         if (!files || files.length === 0) return;
         showToast(`กำลังย่อรูป (${styleName})...`, "success");
         if (!stagedModalImagesObj[styleName]) stagedModalImagesObj[styleName] = [];
+        
         const previewBox = document.getElementById(`preview-modal-${styleName}`);
         previewBox.style.display = 'flex';
+        
         try {
             for (let i = 0; i < files.length; i++) {
                 const compressedFile = await compressImage(files[i], 1200, 0.8);
@@ -779,7 +941,7 @@
                 const snapshot = await uploadBytes(storageRef, compressedFile);
                 const downloadURL = await getDownloadURL(snapshot.ref);
                 stagedModalImagesObj[styleName].push(downloadURL);
-                previewBox.innerHTML += `<img src="${downloadURL}" style="height: 50px; width: 50px; object-fit: cover; border-radius: 10px; border: 2px solid var(--border-color);">`;
+                previewBox.innerHTML += `<img src="${downloadURL}" alt="Preview" style="height: 50px; width: 50px; object-fit: cover; border-radius: 10px; border: 2px solid var(--border-color);">`;
             }
             showToast("เพิ่มรูปลงคิวสำเร็จ!");
         } catch (error) {
@@ -853,7 +1015,13 @@
         }
     };
 
-    window.applySort = function(o) { currentSortOrder = currentSortOrder === o ? 'default' : o; document.getElementById('sort-asc').classList.toggle('active', currentSortOrder === 'asc'); document.getElementById('sort-desc').classList.toggle('active', currentSortOrder === 'desc'); renderProductsLocally(document.getElementById('advanced-panel').classList.contains('active')); };
+    window.applySort = function(o) { 
+        currentSortOrder = currentSortOrder === o ? 'default' : o; 
+        document.getElementById('sort-asc').classList.toggle('active', currentSortOrder === 'asc'); 
+        document.getElementById('sort-desc').classList.toggle('active', currentSortOrder === 'desc'); 
+        renderProductsLocally(document.getElementById('advanced-panel').classList.contains('active')); 
+    };
+    
     window.handleSearchKeyPress = function(e) { if(e.key === 'Enter') triggerSearch(); };
     
     window.triggerSearch = async function(adv=false) { 
@@ -865,37 +1033,73 @@
     };
 
     window.renderProductsLocally = function(adv=false) {
-        const kw = document.getElementById('search-keyword').value.trim().toLowerCase(), st = document.getElementById('filter-style').value, sz = document.getElementById('filter-size').value, lim = parseInt(document.getElementById('low-stock-limit').value) || 0;
+        const kw = document.getElementById('search-keyword').value.trim().toLowerCase();
+        const st = document.getElementById('filter-style').value;
+        const sz = document.getElementById('filter-size').value;
+        const lim = parseInt(document.getElementById('low-stock-limit').value) || 0;
+        
         let mapped = productsData.map(p => {
-            if(!p) return null; const hay = [(p['ชื่อลาย']||''), (p['สี']||''), (p['SKU']||'')].join(' ').toLowerCase();
-            let total = 0; STYLES.forEach(s => { if(st && s!==st) return; SIZES.forEach(z => { if(sz && z!==sz) return; total += parseInt(p[`${s} ${z}`]) || 0; }); });
+            if(!p) return null; 
+            const hay = [(p['ชื่อลาย']||''), (p['สี']||''), (p['SKU']||'')].join(' ').toLowerCase();
+            let total = 0; 
+            
+            STYLES.forEach(s => { 
+                if(st && s!==st) return; 
+                SIZES.forEach(z => { 
+                    if(sz && z!==sz) return; 
+                    total += parseInt(p[`${s} ${z}`]) || 0; 
+                }); 
+            });
+            
             let ms = adv ? (currentOperator === '<' ? total < lim : total > lim) : ((st || sz) ? total > 0 : true);
             return (!kw || hay.includes(kw)) && ms ? { data: p, total } : null;
         }).filter(i => i !== null);
-        if(currentSortOrder==='asc') mapped.sort((a,b)=>a.total-b.total); else if(currentSortOrder==='desc') mapped.sort((a,b)=>b.total-a.total);
+        
+        if(currentSortOrder==='asc') mapped.sort((a,b)=>a.total-b.total); 
+        else if(currentSortOrder==='desc') mapped.sort((a,b)=>b.total-a.total);
+        
         const grid = document.getElementById('product-grid'); 
-        if(mapped.length===0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-color);"><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`; return; }
+        if(mapped.length===0) { 
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-color);"><p>ไม่พบสินค้าที่ตรงกับการค้นหา</p></div>`; 
+            return; 
+        }
         
         let htmlString = "";
         mapped.forEach((item, i) => {
-            const p = item.data; const name = p['ชื่อลาย'] || ('SKU '+p['SKU']);
+            const p = item.data; 
+            const name = p['ชื่อลาย'] || ('SKU '+p['SKU']);
             let badge = item.total <= 0 ? `<div class="out-of-stock-badge">หมด</div>` : `<div class="low-stock-badge">รวม ${item.total} ชุด</div>`;
             let coverImg = getDisplayCoverImage(p, st); 
-            let img = coverImg ? `<img src="${coverImg}" loading="lazy">` : `📸`;
-            htmlString += `<div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')"><div class="product-img-container">${badge}${img}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div></div></div>`;
+            let img = coverImg ? `<img src="${coverImg}" loading="lazy" alt="${name}">` : `📸`;
+            
+            htmlString += `
+                <div class="product-card" style="animation-delay:${i*0.03}s" onclick="openStockModal('${p['SKU']}', '${name.replace(/'/g,"\\'")}')">
+                    <div class="product-img-container">${badge}${img}</div>
+                    <div class="product-info">
+                        <div class="product-name">${name}</div>
+                        <div class="product-fabric">สี: ${p['สี']||'-'} | SKU: ${p['SKU']}</div>
+                    </div>
+                </div>`;
         });
         grid.innerHTML = htmlString;
     };
 
     window.openStockModal = function(sku, displayName) {
-        activeSku = sku; isStockEditable = isInfoEditable = isImageEditable = false;
+        activeSku = sku; 
+        isStockEditable = isInfoEditable = isImageEditable = false;
+        
         document.getElementById('edit-info-box').style.display = 'none';
         document.getElementById('edit-image-box').style.display = 'none';
         document.getElementById('view-info-box').style.display = 'block';
 
-        document.getElementById('edit-mode-btn').classList.remove('active'); document.getElementById('edit-mode-btn').innerText = "✏️ แก้สต๊อก";
-        document.getElementById('edit-info-btn').classList.remove('active'); document.getElementById('edit-info-btn').innerText = "✏️ แก้ชื่อ/สี";
-        document.getElementById('edit-img-btn').classList.remove('active'); document.getElementById('edit-img-btn').innerText = "📸 เพิ่มรูป";
+        document.getElementById('edit-mode-btn').classList.remove('active'); 
+        document.getElementById('edit-mode-btn').innerText = "✏️ แก้สต๊อก";
+        
+        document.getElementById('edit-info-btn').classList.remove('active'); 
+        document.getElementById('edit-info-btn').innerText = "✏️ แก้ชื่อ/สี";
+        
+        document.getElementById('edit-img-btn').classList.remove('active'); 
+        document.getElementById('edit-img-btn').innerText = "📸 เพิ่มรูป";
         
         currentActiveProduct = productsData.find(x => x && String(x['SKU']) === String(sku)) || {};
         document.getElementById('modal-title').innerText = currentActiveProduct['ชื่อลาย'] || displayName || ''; 
@@ -925,7 +1129,7 @@
         if (selectedImageForCover) { 
             currentActiveImgSrc = selectedImageForCover; 
             imgBox.innerHTML = `
-                <img src="${selectedImageForCover}" onclick="openLightbox()">
+                <img src="${selectedImageForCover}" alt="Cover Image" onclick="openLightbox()">
                 <div class="image-action-buttons">
                     <span class="delete-img-badge" onclick="confirmDeleteCurrentImage()">🗑️ ลบรูปนี้</span>
                     <span class="zoom-badge" onclick="openLightbox()">🔍 ดูรูปใหญ่</span>
@@ -944,6 +1148,7 @@
             allImages.forEach((imgUrl) => {
                 let imgEl = document.createElement('img');
                 imgEl.src = imgUrl;
+                imgEl.alt = "Thumbnail";
                 imgEl.className = `thumb-img ${imgUrl === coverImg ? 'active' : ''}`;
                 imgEl.onclick = (e) => {
                     e.stopPropagation();
@@ -964,6 +1169,7 @@
             }); 
             stockTableHtml += row + `</tr>`; 
         });
+        
         tbody.innerHTML = stockTableHtml;
         document.getElementById('stockModal').style.display = 'flex';
     };
@@ -972,7 +1178,7 @@
         selectedImageForCover = imgUrl;
         currentActiveImgSrc = imgUrl;
         document.getElementById('modal-img-box').innerHTML = `
-            <img src="${imgUrl}" onclick="openLightbox()">
+            <img src="${imgUrl}" alt="Selected Image" onclick="openLightbox()">
             <div class="image-action-buttons">
                 <span class="delete-img-badge" onclick="confirmDeleteCurrentImage()">🗑️ ลบรูปนี้</span>
                 <span class="zoom-badge" onclick="openLightbox()">🔍 ดูรูปใหญ่</span>
@@ -1034,6 +1240,7 @@
 
     window.submitRestockOrder = async function() {
         if (!confirm(`[ผู้ขอ: ${currentUsername}] ยืนยันส่งคำขอเติมสต๊อกตามจำนวนที่กรอกใช่หรือไม่? ระบบจะตัดสต๊อกทันที`)) return;
+        
         let stockInputs = document.querySelectorAll('.stock-input');
         let updates = {};
         let orderItems = [];
@@ -1094,6 +1301,7 @@
         const container = document.getElementById('orders-list-container');
         container.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`;
         let allProductsMap = {};
+        
         try {
             const prodSnap = await getDocs(collection(db, "products"));
             prodSnap.forEach(d => { let p = d.data(); allProductsMap[p['SKU']] = p; });
@@ -1103,6 +1311,7 @@
         onSnapshot(q, (snapshot) => {
             let orders = [];
             let pendingCount = 0;
+            
             snapshot.forEach(docSnap => {
                 let data = docSnap.data();
                 data.id = docSnap.id;
@@ -1124,13 +1333,15 @@
                 let itemsRowsHtml = order.items.map(i => `<div class="order-item-row"><span>👕 ${i.item}</span><span><b>${i.qty}</b> ชุด</span></div>`).join('');
                 let isPending = order.status === 'รอดำเนินการ';
                 let isCancelled = order.status === 'ยกเลิก';
-                let statusBadge = isPending ? `<span class="order-status-badge status-pending">⏳ รอดำเนินการ</span>` : (isCancelled ? `<span class="order-status-badge status-cancelled">❌ ยกเลิกคำขอแล้ว</span>` : `<span class="order-status-badge status-completed">✅ จัดของเรียบร้อยแล้ว</span>`);
+                let statusBadge = isPending 
+                    ? `<span class="order-status-badge status-pending">⏳ รอดำเนินการ</span>` 
+                    : (isCancelled ? `<span class="order-status-badge status-cancelled">❌ ยกเลิกคำขอแล้ว</span>` : `<span class="order-status-badge status-completed">✅ จัดของเรียบร้อยแล้ว</span>`);
                 
                 let actionBtnHtml = "";
                 if (isPending) {
                     actionBtnHtml = `
-                        <button class="btn-cancel" onclick="cancelOrder('${order.id}', '${order.sku}', '${encodeURIComponent(JSON.stringify(order.items))}')">❌ ยกเลิกคำขอ</button>
-                        <button class="btn-fulfill" onclick="markOrderCompleted('${order.id}')">✅ จัดของเรียบร้อย</button>
+                        <button type="button" class="btn-cancel" onclick="cancelOrder('${order.id}', '${order.sku}', '${encodeURIComponent(JSON.stringify(order.items))}')">❌ ยกเลิกคำขอ</button>
+                        <button type="button" class="btn-fulfill" onclick="markOrderCompleted('${order.id}')">✅ จัดของเรียบร้อย</button>
                     `;
                 } else if (isCancelled) {
                     actionBtnHtml = `<span style="font-size:0.85rem; color:#ef4444; font-weight:500;">ยกเลิกแล้ว</span>`;
@@ -1140,7 +1351,10 @@
 
                 let pData = allProductsMap[order.sku];
                 let itemImg = order.coverImage || (pData ? getDisplayCoverImage(pData) : "");
-                let imgThumbHtml = itemImg ? `<div class="order-img-wrapper" onclick="openOrderImageLightbox('${itemImg}')" title="คลิกเพื่อดูรูปใหญ่"><img src="${itemImg}" class="order-img-thumb"><div class="order-zoom-badge">🔍</div></div>` : `<div class="order-img-wrapper" style="display:flex; align-items:center; justify-content:center; font-size:1.5rem;">📸</div>`;
+                let imgThumbHtml = itemImg 
+                    ? `<div class="order-img-wrapper" onclick="openOrderImageLightbox('${itemImg}')" title="คลิกเพื่อดูรูปใหญ่"><img src="${itemImg}" alt="Order Image" class="order-img-thumb"><div class="order-zoom-badge">🔍</div></div>` 
+                    : `<div class="order-img-wrapper" style="display:flex; align-items:center; justify-content:center; font-size:1.5rem;">📸</div>`;
+                
                 let requesterDisplay = order.requester ? `👤 ผู้สั่งขอ: <b style="color:var(--accent-color);">${order.requester}</b>` : `👤 ผู้สั่งขอ: ไม่ระบุ`;
 
                 html += `
@@ -1184,13 +1398,19 @@
             let items = JSON.parse(decodeURIComponent(itemsEncoded));
             let prodRef = doc(db, "products", String(sku));
             let prodSnap = await getDoc(prodRef);
-            if (!prodSnap.exists()) { showToast("ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบแล้ว", "error"); return; }
+            
+            if (!prodSnap.exists()) { 
+                showToast("ไม่พบข้อมูลสินค้าชิ้นนี้ในระบบแล้ว", "error"); 
+                return; 
+            }
+            
             let prodData = prodSnap.data();
             let updates = {};
             items.forEach(i => {
                 let currentQty = parseInt(prodData[i.item]) || 0;
                 updates[i.item] = currentQty + i.qty;
             });
+            
             const now = new Date();
             const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             let logs = prodData['logs'] || [];
@@ -1210,38 +1430,71 @@
         const datePicker1 = document.getElementById('compare-date-1');
         const datePicker2 = document.getElementById('compare-date-2');
         minAllowedDateStr = todayStr;
+        
         if(activeProductLogs && activeProductLogs.length > 0) {
             let firstLog = activeProductLogs[0];
-            try { let parts = firstLog.date.split(' ')[0].split('/'); if(parts.length === 3) minAllowedDateStr = `${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`; } catch(e) {}
+            try { 
+                let parts = firstLog.date.split(' ')[0].split('/'); 
+                if(parts.length === 3) minAllowedDateStr = `${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`; 
+            } catch(e) {}
         }
-        datePicker1.min = minAllowedDateStr; datePicker1.max = todayStr; datePicker1.value = minAllowedDateStr;
-        datePicker2.min = minAllowedDateStr; datePicker2.max = todayStr; datePicker2.value = todayStr;
+        
+        datePicker1.min = minAllowedDateStr; 
+        datePicker1.max = todayStr; 
+        datePicker1.value = minAllowedDateStr;
+        datePicker2.min = minAllowedDateStr; 
+        datePicker2.max = todayStr; 
+        datePicker2.value = todayStr;
+        
         renderComparisonTable();
         document.getElementById('logSubModal').style.display = 'flex';
     };
+    
     window.closeLogModal = function() { document.getElementById('logSubModal').style.display = 'none'; };
 
     window.renderComparisonTable = function() {
-        const date1 = document.getElementById('compare-date-1').value, date2 = document.getElementById('compare-date-2').value;
-        const tbody = document.getElementById('comparison-stock-data'), noteEl = document.getElementById('comparison-status-note');
-        if(!date1 || !date2 || !currentActiveProduct) { tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-color); padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`; return; }
-        let formatThai = (dStr) => { let d = new Date(dStr); return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`; };
+        const date1 = document.getElementById('compare-date-1').value;
+        const date2 = document.getElementById('compare-date-2').value;
+        const tbody = document.getElementById('comparison-stock-data');
+        const noteEl = document.getElementById('comparison-status-note');
+        
+        if(!date1 || !date2 || !currentActiveProduct) { 
+            tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-color); padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`; 
+            return; 
+        }
+        
+        let formatThai = (dStr) => { 
+            let d = new Date(dStr); 
+            return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`; 
+        };
+        
         noteEl.innerHTML = `📌 เปรียบเทียบระหว่างวันที่ ${formatThai(date1)} และ ${formatThai(date2)}`;
+        
         let html = '';
         STYLES.forEach(s => {
             let abbr = getStyleAbbr(s);
             let row = `<tr><td><b>${abbr}</b></td>`;
             SIZES.forEach(z => {
                 let currentVal = currentActiveProduct[`${s} ${z}`] || 0;
-                let val1 = currentVal; let val2 = currentVal; 
-                let diff = val2 - val1; let diffText = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : `0`;
+                let val1 = currentVal; 
+                let val2 = currentVal; 
+                let diff = val2 - val1; 
+                let diffText = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : `0`;
                 let diffClass = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-zero';
                 row += `<td>${val2} <span class="${diffClass}">(${diffText})</span></td>`;
-            }); html += row + `</tr>`;
-        }); tbody.innerHTML = html;
+            }); 
+            html += row + `</tr>`;
+        }); 
+        
+        tbody.innerHTML = html;
     };
 
-    window.openLightbox = function() { if(!currentActiveImgSrc) return; document.getElementById('lightbox-img').src = currentActiveImgSrc; document.getElementById('imageLightbox').style.display = 'flex'; };
+    window.openLightbox = function() { 
+        if(!currentActiveImgSrc) return; 
+        document.getElementById('lightbox-img').src = currentActiveImgSrc; 
+        document.getElementById('imageLightbox').style.display = 'flex'; 
+    };
+    
     window.closeLightbox = function() { document.getElementById('imageLightbox').style.display = 'none'; };
     window.closeModal = function() { document.getElementById('stockModal').style.display = 'none'; };
 
@@ -1250,11 +1503,19 @@
         const b = document.getElementById('edit-mode-btn'); 
         b.classList.toggle('active', isStockEditable); 
         b.innerText = isStockEditable ? "🔒 ล็อกสต๊อก" : "✏️ แก้สต๊อก"; 
+        
         document.querySelectorAll('.stock-input').forEach(i => { 
             i.classList.toggle('editable', isStockEditable); 
             let origVal = i.getAttribute('data-original') || "0";
-            if (isStockEditable) { i.removeAttribute('readonly'); i.setAttribute('placeholder', origVal); i.value = ""; } 
-            else { i.setAttribute('readonly', 'true'); i.removeAttribute('placeholder'); i.value = origVal; }
+            if (isStockEditable) { 
+                i.removeAttribute('readonly'); 
+                i.setAttribute('placeholder', origVal); 
+                i.value = ""; 
+            } else { 
+                i.setAttribute('readonly', 'true'); 
+                i.removeAttribute('placeholder'); 
+                i.value = origVal; 
+            }
         }); 
     };
 
@@ -1263,7 +1524,9 @@
         const b = document.getElementById('edit-info-btn'); 
         b.classList.toggle('active', isInfoEditable); 
         b.innerText = isInfoEditable ? "🔒 ปิด" : "✏️ แก้ชื่อ/สี"; 
+        
         document.getElementById('edit-info-box').style.display = isInfoEditable ? 'block' : 'none'; 
+        
         if (isInfoEditable) {
             document.getElementById('edit-image-box').style.display = 'none';
             isImageEditable = false;
@@ -1278,7 +1541,9 @@
         const b = document.getElementById('edit-img-btn');
         b.classList.toggle('active', isImageEditable);
         b.innerText = isImageEditable ? "🔒 ปิด" : "📸 เพิ่มรูป";
+        
         document.getElementById('edit-image-box').style.display = isImageEditable ? 'block' : 'none';
+        
         if (isImageEditable) {
             document.getElementById('edit-info-box').style.display = 'none';
             isInfoEditable = false;
@@ -1289,9 +1554,12 @@
     };
     
     window.saveInfoChanges = async function() { 
-        const nP = document.getElementById('edit-pattern-input').value.trim(), nC = document.getElementById('edit-color-input').value.trim(); 
+        const nP = document.getElementById('edit-pattern-input').value.trim();
+        const nC = document.getElementById('edit-color-input').value.trim(); 
+        
         if(!nP){ showToast("กรุณากรอกชื่อลาย","error"); return; } 
         let updateData = { 'ชื่อลาย': nP, 'สี': nC };
+        
         try{ 
             const now = new Date();
             const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -1300,10 +1568,13 @@
 
             await updateDoc(doc(db,"products",String(activeSku)), updateData); 
             showToast("อัปเดตข้อมูลสำเร็จ!"); 
+            
             document.getElementById('modal-title').innerText = nP; 
             document.getElementById('modal-subtitle').innerText = `ผ้า: ${currentFabric} | สี: ${nC} | SKU: ${activeSku}`; 
+            
             currentActiveProduct['ชื่อลาย'] = nP;
             currentActiveProduct['สี'] = nC;
+            
             toggleInfoEditMode(); 
             triggerSearch(); 
         }catch(e){
@@ -1313,6 +1584,7 @@
 
     window.saveStockChanges = async function() { 
         if(!confirm(`[ผู้แก้ไข: ${currentUsername}] บันทึกจำนวนสต๊อกใช่หรือไม่?`)) return; 
+        
         let ud = {}; 
         document.querySelectorAll('.stock-input').forEach(i => {
             let key = i.getAttribute('data-key');
@@ -1320,6 +1592,7 @@
             let val = i.value === "" ? orig : parseInt(i.value);
             ud[key] = val;
         }); 
+        
         const now = new Date(); 
         const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         activeProductLogs.push({ date: dateStr, type: 'อัปเดตสต๊อก', note: `ผู้แก้ไข (${currentUsername}) แก้ไขจำนวนสต๊อกผ่านตาราง` }); 
@@ -1335,17 +1608,38 @@
         } 
     };
 
-    window.confirmDeleteProduct = async function() { if(confirm(`[ผู้ลบ: ${currentUsername}] ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { try{ await deleteDoc(doc(db,"products",String(activeSku))); showToast("ลบสำเร็จ!"); closeModal(); triggerSearch(); }catch(e){showToast("ลบไม่สำเร็จ","error");} } };
+    window.confirmDeleteProduct = async function() { 
+        if(confirm(`[ผู้ลบ: ${currentUsername}] ลบสินค้ารหัส ${activeSku} ใช่หรือไม่?\n(ลบแล้วกู้คืนไม่ได้)`)) { 
+            try{ 
+                await deleteDoc(doc(db,"products",String(activeSku))); 
+                showToast("ลบสำเร็จ!"); 
+                closeModal(); 
+                triggerSearch(); 
+            }catch(e){
+                showToast("ลบไม่สำเร็จ","error");
+            } 
+        } 
+    };
     
     window.submitUpdate = async function() {
-        const p = document.getElementById('update-pattern').value.trim(), c = document.getElementById('update-color').value.trim(), f = document.getElementById('fabric-select').value, styleInitial = document.getElementById('update-style').value, sku = document.getElementById('generated-sku').value, qty = parseInt(document.getElementById('update-qty').value)||0;
-        if(!p) {showToast("กรุณากรอกชื่อลาย","error");return;}
-        const now = new Date(); const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const p = document.getElementById('update-pattern').value.trim();
+        const c = document.getElementById('update-color').value.trim();
+        const f = document.getElementById('fabric-select').value;
+        const styleInitial = document.getElementById('update-style').value;
+        const sku = document.getElementById('generated-sku').value;
+        const qty = parseInt(document.getElementById('update-qty').value)||0;
+        
+        if(!p) {showToast("กรุณากรอกชื่อลาย","error"); return;}
+        
+        const now = new Date(); 
+        const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
         let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: `ผู้สร้าง (${currentUsername}) สร้างสินค้าเริ่มต้น` }];
+        
         let allUploadedImgs = [];
         STYLES.forEach(st => {
             if (styleImagesObj[st] && styleImagesObj[st].length > 0) allUploadedImgs = allUploadedImgs.concat(styleImagesObj[st]);
         });
+        
         let initialCover = allUploadedImgs.length > 0 ? allUploadedImgs[0] : "";
         let newProd = { 
             'SKU': sku, 
@@ -1357,17 +1651,26 @@
             'coverImage': initialCover, 
             'logs': initialLogs 
         };
-        STYLES.forEach(st => SIZES.forEach(sz => newProd[`${st} ${sz}`] = (st===styleInitial && sz===document.getElementById('update-size').value) ? qty : 0));
+        
+        STYLES.forEach(st => {
+            SIZES.forEach(sz => {
+                newProd[`${st} ${sz}`] = (st===styleInitial && sz===document.getElementById('update-size').value) ? qty : 0;
+            });
+        });
+
         try{ 
             await setDoc(doc(db,"products",String(sku)), newProd); 
             showToast(`เพิ่มสินค้าสำเร็จ!`); 
+            
             document.getElementById('update-pattern').value=''; 
             document.getElementById('update-qty').value=''; 
             styleImagesObj = { "แขนสั้นขาสั้น": [], "แขนสั้นขายยาว": [], "แขนยาวขายยาว": [], "กระโปรง": [] };
+            
             STYLES.forEach(st => {
                 let pv = document.getElementById(`preview-${st}`);
                 if(pv) { pv.innerHTML = ''; pv.style.display = 'none'; }
             });
+            
             generateSKU(); 
             switchMode('check'); 
         }catch(e){
@@ -1375,7 +1678,50 @@
         }
     };
 
-    window.generatePrintReport = async function() { showToast("กำลังเตรียมรายงาน..."); try { const qs = await getDocs(collection(db, "products")); let all = []; qs.forEach(d => all.push(d.data())); if(all.length===0) return; const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; let html = ""; FABRICS.forEach(f => { let items = all.filter(x => x.fabric === f); if(items.length>0) { html += `<div class="print-page"><div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div><table class="print-table"><thead><tr><th>รูปภาพ</th><th>SKU</th><th>สี</th>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${items.map(p=>{ let img = getDisplayCoverImage(p); return `<tr><td>${img?`<img src="${img}" class="print-img">`:`-`}</td><td><b>${p['SKU']}</b></td><td>${p['สี']||'-'}</td>${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}</tr>` }).join('')}</tbody></table></div>`; } }); document.getElementById('print-section').innerHTML = html; setTimeout(()=>window.print(), 500); } catch(e){} };
+    window.generatePrintReport = async function() { 
+        showToast("กำลังเตรียมรายงาน..."); 
+        try { 
+            const qs = await getDocs(collection(db, "products")); 
+            let all = []; 
+            qs.forEach(d => all.push(d.data())); 
+            if(all.length===0) return; 
+            
+            const cols = ["แขนสั้นขาสั้น 43", "แขนสั้นขายยาว 43", "แขนยาวขายยาว 43", "แขนสั้นขาสั้น 48", "แขนสั้นขายยาว 48", "แขนยาวขายยาว 48", "แขนสั้นขาสั้น 52", "แขนสั้นขายยาว 52", "แขนยาวขายยาว 52", "กระโปรง 43", "กระโปรง 48", "กระโปรง 52", "กระโปรง 60"]; 
+            let html = ""; 
+            
+            FABRICS.forEach(f => { 
+                let items = all.filter(x => x.fabric === f); 
+                if(items.length>0) { 
+                    html += `<div class="print-page">
+                                <div class="print-header"><h2>รายงาน - ผ้า${f}</h2></div>
+                                <table class="print-table">
+                                    <thead>
+                                        <tr>
+                                            <th>รูปภาพ</th>
+                                            <th>SKU</th>
+                                            <th>สี</th>
+                                            ${cols.map(c=>`<th>${c}</th>`).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${items.map(p=>{ 
+                                            let img = getDisplayCoverImage(p); 
+                                            return `<tr>
+                                                        <td>${img?`<img src="${img}" class="print-img">`:`-`}</td>
+                                                        <td><b>${p['SKU']}</b></td>
+                                                        <td>${p['สี']||'-'}</td>
+                                                        ${cols.map(c=>`<td>${(p[c]>0)?p[c]:''}</td>`).join('')}
+                                                    </tr>` 
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>`; 
+                } 
+            }); 
+            document.getElementById('print-section').innerHTML = html; 
+            setTimeout(()=>window.print(), 500); 
+        } catch(e){} 
+    };
 
     window.openStockChartModal = function() {
         document.getElementById('stockChartModal').style.display = 'flex';
@@ -1407,11 +1753,14 @@
         let today = new Date();
         today.setHours(0, 0, 0, 0);
         creationDate.setHours(0, 0, 0, 0);
+        
         let diffTime = today.getTime() - creationDate.getTime();
         let diffDays = Math.floor(diffTime / (1000 * 3600 * 24)) + 1;
         if (diffDays < 1) diffDays = 1;
+        
         let actualDays = Math.min(requestedDays, diffDays);
         let dates = [];
+        
         for (let i = actualDays - 1; i >= 0; i--) {
             let d = new Date(today);
             d.setDate(today.getDate() - i);
@@ -1426,6 +1775,7 @@
         let currentVal = currentActiveProduct ? (parseInt(currentActiveProduct[`${style} ${size}`]) || 0) : 0;
         let data = [];
         let val = currentVal;
+        
         for (let i = 0; i < totalDays; i++) {
             data.unshift(val);
             let change = Math.floor(Math.random() * 3) - 1;
@@ -1444,6 +1794,7 @@
                 const x = activePoint.element.x;
                 const topY = chart.scales.y.top;
                 const bottomY = chart.scales.y.bottom;
+                
                 ctx.save();
                 ctx.beginPath();
                 ctx.moveTo(x, topY);
@@ -1465,6 +1816,7 @@
         const { dates, count } = getChartDatesAndRange(requestedDays);
         const selectedStyles = Array.from(document.querySelectorAll('.style-chk:checked')).map(el => el.value);
         const selectedSizes = Array.from(document.querySelectorAll('.size-chk:checked')).map(el => el.value);
+        
         let chartDatasets = [];
         selectedStyles.forEach(style => {
             selectedSizes.forEach(size => {
@@ -1537,7 +1889,7 @@
         document.getElementById('product-grid').innerHTML = `
             <div class="search-prompt-box">
                 <h2 style="font-size:1.4rem; color: var(--accent-color); margin-bottom: 8px;">📦 ยินดีต้อนรับสู่ระบบสต๊อก</h2>
-                <p style="font-size:1rem; color: #6b7280; font-weight: 400 !important;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อเริ่มต้นดึงข้อมูลสต๊อก</p>
+                <p style="font-size:1rem; color: #6b7280;">คลิกปุ่ม <b>"🔍 ค้นหา"</b> ด้านบนเพื่อเริ่มต้นดึงข้อมูลสต๊อก</p>
             </div>
         `;
         fetchWarehouseOrders();
