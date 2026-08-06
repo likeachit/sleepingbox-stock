@@ -729,6 +729,31 @@
         return map[styleName] || styleName;
     }
 
+    // สร้าง snapshot สต๊อกครบ 16 ช่อง (style x size) ณ เวลาที่บันทึก log ใช้สำหรับฟีเจอร์เปรียบเทียบสต๊อกย้อนหลัง
+    function buildFullStockSnapshot(baseProduct, partialUpdates = {}) {
+        let snapshot = {};
+        STYLES.forEach(s => SIZES.forEach(z => {
+            let key = `${s} ${z}`;
+            snapshot[key] = partialUpdates.hasOwnProperty(key) ? partialUpdates[key] : (parseInt(baseProduct ? baseProduct[key] : 0) || 0);
+        }));
+        return snapshot;
+    }
+
+    function parseLogDateStr(dateStr) {
+        try {
+            let datePart = dateStr.split(' ')[0];
+            let parts = datePart.split('/');
+            if (parts.length === 3) {
+                let day = parseInt(parts[0]);
+                let month = parseInt(parts[1]) - 1;
+                let year = parseInt(parts[2]);
+                if (year > 2500) year -= 543;
+                return new Date(year, month, day, 23, 59, 59);
+            }
+        } catch(e) {}
+        return null;
+    }
+
     let currentUsername = "ชิต"; 
     let productsData = []; 
     let currentFabric = "ซาติน"; 
@@ -749,6 +774,8 @@
     let minAllowedDateStr = "";
     let selectedImageForCover = "";
     let myDeepChart = null;
+    let productsMapCache = null;
+    let ordersUnsubscribe = null;
 
     // Toast Notification
     window.showToast = function(message, type="success") { 
@@ -911,14 +938,17 @@
         previewBox.style.display = 'flex';
         
         try {
-            for (let i = 0; i < files.length; i++) {
-                const compressedFile = await compressImage(files[i], 1200, 0.8);
-                const storageRef = ref(storage, `products/styles_${Date.now()}_${i}_${files[i].name}`);
+            const uploadTasks = Array.from(files).map(async (file, i) => {
+                const compressedFile = await compressImage(file, 1200, 0.8);
+                const storageRef = ref(storage, `products/styles_${Date.now()}_${i}_${file.name}`);
                 const snapshot = await uploadBytes(storageRef, compressedFile);
-                const downloadURL = await getDownloadURL(snapshot.ref);
+                return getDownloadURL(snapshot.ref);
+            });
+            const downloadURLs = await Promise.all(uploadTasks);
+            downloadURLs.forEach(downloadURL => {
                 styleImagesObj[styleName].push(downloadURL);
                 previewBox.innerHTML += `<img src="${downloadURL}" alt="Preview" style="height: 55px; width: 55px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border-color);">`;
-            }
+            });
             showToast(`อัปโหลดรูป (${styleName}) สำเร็จ!`);
         } catch (error) {
             showToast("อัปโหลดรูปไม่สำเร็จ", "error");
@@ -935,14 +965,17 @@
         previewBox.style.display = 'flex';
         
         try {
-            for (let i = 0; i < files.length; i++) {
-                const compressedFile = await compressImage(files[i], 1200, 0.8);
-                const storageRef = ref(storage, `products/modal_add_${Date.now()}_${i}_${files[i].name}`);
+            const uploadTasks = Array.from(files).map(async (file, i) => {
+                const compressedFile = await compressImage(file, 1200, 0.8);
+                const storageRef = ref(storage, `products/modal_add_${Date.now()}_${i}_${file.name}`);
                 const snapshot = await uploadBytes(storageRef, compressedFile);
-                const downloadURL = await getDownloadURL(snapshot.ref);
+                return getDownloadURL(snapshot.ref);
+            });
+            const downloadURLs = await Promise.all(uploadTasks);
+            downloadURLs.forEach(downloadURL => {
                 stagedModalImagesObj[styleName].push(downloadURL);
                 previewBox.innerHTML += `<img src="${downloadURL}" alt="Preview" style="height: 50px; width: 50px; object-fit: cover; border-radius: 10px; border: 2px solid var(--border-color);">`;
-            }
+            });
             showToast("เพิ่มรูปลงคิวสำเร็จ!");
         } catch (error) {
             showToast("อัปโหลดรูปไม่สำเร็จ", "error");
@@ -1244,22 +1277,26 @@
         let stockInputs = document.querySelectorAll('.stock-input');
         let updates = {};
         let orderItems = [];
+        let stockExceeded = false;
 
         stockInputs.forEach(input => {
+            if (stockExceeded) return;
             let key = input.getAttribute('data-key');
-            let originalVal = parseInt(input.getAttribute('data-original')) || 0;
             let requestedQty = input.value === "" ? 0 : parseInt(input.value);
             let currentQty = parseInt(currentActiveProduct[key]) || 0;
 
             if (requestedQty > 0) {
                 if (requestedQty > currentQty) {
                     showToast(`จำนวน ${key} เกินกว่าสต๊อกที่มี (${currentQty})`, "error");
-                    throw new Error("Stock exceeded");
+                    stockExceeded = true;
+                    return;
                 }
                 updates[key] = currentQty - requestedQty;
                 orderItems.push({ item: key, qty: requestedQty });
             }
         });
+
+        if (stockExceeded) return;
 
         if (orderItems.length === 0) {
             showToast("กรุณาระบุจำนวนสินค้าที่ต้องการเติมอย่างน้อย 1 รายการ", "error");
@@ -1270,7 +1307,7 @@
             const now = new Date();
             const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             let logs = currentActiveProduct['logs'] || [];
-            logs.push({ date: dateStr, type: 'หน้าร้านเบิก', note: `ผู้ขอ (${currentUsername}) ส่งคำขอเติมสต๊อก` });
+            logs.push({ date: dateStr, type: 'หน้าร้านเบิก', note: `ผู้ขอ (${currentUsername}) ส่งคำขอเติมสต๊อก`, snapshot: buildFullStockSnapshot(currentActiveProduct, updates) });
             updates['logs'] = logs;
 
             await updateDoc(doc(db, "products", String(activeSku)), updates);
@@ -1293,22 +1330,26 @@
             closeModal();
             triggerSearch();
         } catch (e) {
-            if(e.message !== "Stock exceeded") showToast("ส่งคำขอไม่สำเร็จ", "error");
+            showToast("ส่งคำขอไม่สำเร็จ", "error");
         }
     };
 
     window.fetchWarehouseOrders = async function() {
+        if (ordersUnsubscribe) return;
+
         const container = document.getElementById('orders-list-container');
         container.innerHTML = `<div class="loader-container"><div class="spinner"></div><p>กำลังโหลด...</p></div>`;
-        let allProductsMap = {};
-        
-        try {
-            const prodSnap = await getDocs(collection(db, "products"));
-            prodSnap.forEach(d => { let p = d.data(); allProductsMap[p['SKU']] = p; });
-        } catch(e) {}
+
+        if (!productsMapCache) {
+            productsMapCache = {};
+            try {
+                const prodSnap = await getDocs(collection(db, "products"));
+                prodSnap.forEach(d => { let p = d.data(); productsMapCache[p['SKU']] = p; });
+            } catch(e) {}
+        }
 
         const q = query(collection(db, "store_orders"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
+        ordersUnsubscribe = onSnapshot(q, (snapshot) => {
             let orders = [];
             let pendingCount = 0;
             
@@ -1349,7 +1390,7 @@
                     actionBtnHtml = `<span style="font-size:0.85rem; color:#059669; font-weight:500;">เสร็จสิ้น</span>`;
                 }
 
-                let pData = allProductsMap[order.sku];
+                let pData = productsMapCache[order.sku];
                 let itemImg = order.coverImage || (pData ? getDisplayCoverImage(pData) : "");
                 let imgThumbHtml = itemImg 
                     ? `<div class="order-img-wrapper" onclick="openOrderImageLightbox('${itemImg}')" title="คลิกเพื่อดูรูปใหญ่"><img src="${itemImg}" alt="Order Image" class="order-img-thumb"><div class="order-zoom-badge">🔍</div></div>` 
@@ -1414,7 +1455,7 @@
             const now = new Date();
             const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             let logs = prodData['logs'] || [];
-            logs.push({ date: dateStr, type: 'ยกเลิกออเดอร์', note: `ผู้ใช้ (${currentUsername}) ยกเลิกคำขอเติมสต๊อก (คืนสต๊อกอัตโนมัติ)` });
+            logs.push({ date: dateStr, type: 'ยกเลิกออเดอร์', note: `ผู้ใช้ (${currentUsername}) ยกเลิกคำขอเติมสต๊อก (คืนสต๊อกอัตโนมัติ)`, snapshot: buildFullStockSnapshot(prodData, updates) });
             updates['logs'] = logs;
 
             await updateDoc(prodRef, updates);
@@ -1452,40 +1493,63 @@
     
     window.closeLogModal = function() { document.getElementById('logSubModal').style.display = 'none'; };
 
+    // หา snapshot สต๊อก ณ วันที่ dateInputStr (YYYY-MM-DD) จาก log ล่าสุดที่ไม่เกินวันนั้น
+    function getStockSnapshotAsOf(dateInputStr) {
+        let targetTime = new Date(dateInputStr + 'T23:59:59').getTime();
+        let bestSnapshot = null;
+        let bestTime = -Infinity;
+        (activeProductLogs || []).forEach(log => {
+            if (!log.snapshot) return;
+            let logDate = parseLogDateStr(log.date);
+            if (!logDate) return;
+            let logTime = logDate.getTime();
+            if (logTime <= targetTime && logTime > bestTime) {
+                bestTime = logTime;
+                bestSnapshot = log.snapshot;
+            }
+        });
+        return bestSnapshot;
+    }
+
     window.renderComparisonTable = function() {
         const date1 = document.getElementById('compare-date-1').value;
         const date2 = document.getElementById('compare-date-2').value;
         const tbody = document.getElementById('comparison-stock-data');
         const noteEl = document.getElementById('comparison-status-note');
-        
-        if(!date1 || !date2 || !currentActiveProduct) { 
-            tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-color); padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`; 
-            return; 
+
+        if(!date1 || !date2 || !currentActiveProduct) {
+            tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-color); padding: 20px;">กรุณาเลือกช่วงเวลาทั้ง 2 ช่วง</td></tr>`;
+            return;
         }
-        
-        let formatThai = (dStr) => { 
-            let d = new Date(dStr); 
-            return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`; 
+
+        let formatThai = (dStr) => {
+            let d = new Date(dStr);
+            return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`;
         };
-        
-        noteEl.innerHTML = `📌 เปรียบเทียบระหว่างวันที่ ${formatThai(date1)} และ ${formatThai(date2)}`;
-        
+
+        let snap1 = getStockSnapshotAsOf(date1);
+        let snap2 = getStockSnapshotAsOf(date2);
+
+        noteEl.innerHTML = (snap1 && snap2)
+            ? `📌 เปรียบเทียบระหว่างวันที่ ${formatThai(date1)} และ ${formatThai(date2)}`
+            : `📌 เปรียบเทียบระหว่างวันที่ ${formatThai(date1)} และ ${formatThai(date2)} (บางช่วงยังไม่มีประวัติบันทึกไว้ ใช้ 0 เป็นค่าเริ่มต้น)`;
+
         let html = '';
         STYLES.forEach(s => {
             let abbr = getStyleAbbr(s);
             let row = `<tr><td><b>${abbr}</b></td>`;
             SIZES.forEach(z => {
-                let currentVal = currentActiveProduct[`${s} ${z}`] || 0;
-                let val1 = currentVal; 
-                let val2 = currentVal; 
-                let diff = val2 - val1; 
+                let key = `${s} ${z}`;
+                let val1 = snap1 ? (snap1[key] || 0) : 0;
+                let val2 = snap2 ? (snap2[key] || 0) : 0;
+                let diff = val2 - val1;
                 let diffText = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : `0`;
                 let diffClass = diff > 0 ? 'diff-pos' : diff < 0 ? 'diff-neg' : 'diff-zero';
                 row += `<td>${val2} <span class="${diffClass}">(${diffText})</span></td>`;
-            }); 
+            });
             html += row + `</tr>`;
-        }); 
-        
+        });
+
         tbody.innerHTML = html;
     };
 
@@ -1595,7 +1659,7 @@
         
         const now = new Date(); 
         const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        activeProductLogs.push({ date: dateStr, type: 'อัปเดตสต๊อก', note: `ผู้แก้ไข (${currentUsername}) แก้ไขจำนวนสต๊อกผ่านตาราง` }); 
+        activeProductLogs.push({ date: dateStr, type: 'อัปเดตสต๊อก', note: `ผู้แก้ไข (${currentUsername}) แก้ไขจำนวนสต๊อกผ่านตาราง`, snapshot: buildFullStockSnapshot(currentActiveProduct, ud) });
         ud['logs'] = activeProductLogs;
 
         try{ 
@@ -1631,32 +1695,35 @@
         
         if(!p) {showToast("กรุณากรอกชื่อลาย","error"); return;}
         
-        const now = new Date(); 
+        const now = new Date();
         const dateStr = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-        let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: `ผู้สร้าง (${currentUsername}) สร้างสินค้าเริ่มต้น` }];
-        
+
         let allUploadedImgs = [];
         STYLES.forEach(st => {
             if (styleImagesObj[st] && styleImagesObj[st].length > 0) allUploadedImgs = allUploadedImgs.concat(styleImagesObj[st]);
         });
-        
+
         let initialCover = allUploadedImgs.length > 0 ? allUploadedImgs[0] : "";
-        let newProd = { 
-            'SKU': sku, 
-            'ชื่อลาย': p, 
-            'สี': c, 
-            'fabric': f, 
-            'รูปภาพสินค้า': allUploadedImgs, 
-            'styleImages': styleImagesObj, 
-            'coverImage': initialCover, 
-            'logs': initialLogs 
-        };
-        
+        let stockFields = {};
         STYLES.forEach(st => {
             SIZES.forEach(sz => {
-                newProd[`${st} ${sz}`] = (st===styleInitial && sz===document.getElementById('update-size').value) ? qty : 0;
+                stockFields[`${st} ${sz}`] = (st===styleInitial && sz===document.getElementById('update-size').value) ? qty : 0;
             });
         });
+
+        let initialLogs = [{ date: dateStr, type: 'รับเข้า', note: `ผู้สร้าง (${currentUsername}) สร้างสินค้าเริ่มต้น`, snapshot: stockFields }];
+
+        let newProd = {
+            'SKU': sku,
+            'ชื่อลาย': p,
+            'สี': c,
+            'fabric': f,
+            'รูปภาพสินค้า': allUploadedImgs,
+            'styleImages': styleImagesObj,
+            'coverImage': initialCover,
+            'logs': initialLogs,
+            ...stockFields
+        };
 
         try{ 
             await setDoc(doc(db,"products",String(sku)), newProd); 
@@ -1732,18 +1799,8 @@
 
     const getProductCreationDate = () => {
         if (currentActiveProduct && currentActiveProduct['logs'] && currentActiveProduct['logs'].length > 0) {
-            let firstLogDateStr = currentActiveProduct['logs'][0].date;
-            try {
-                let datePart = firstLogDateStr.split(' ')[0];
-                let parts = datePart.split('/');
-                if (parts.length === 3) {
-                    let day = parseInt(parts[0]);
-                    let month = parseInt(parts[1]) - 1;
-                    let year = parseInt(parts[2]);
-                    if (year > 2500) year -= 543;
-                    return new Date(year, month, day);
-                }
-            } catch(e) {}
+            let parsed = parseLogDateStr(currentActiveProduct['logs'][0].date);
+            if (parsed) return parsed;
         }
         return new Date();
     };
